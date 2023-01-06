@@ -1,0 +1,4 @@
+debug: true
+listen: 0.0.0.0
+port: 7091
+interval: 60
