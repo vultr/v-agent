@@ -40,6 +40,30 @@ var (
 	memoryBuffered  *prometheus.GaugeVec
 	memorySwapTotal *prometheus.GaugeVec
 	memorySwapFree  *prometheus.GaugeVec
+
+	// guest nic metrics
+	nicBytes        *prometheus.GaugeVec
+	nicBytesTX      *prometheus.GaugeVec
+	nicBytesRX      *prometheus.GaugeVec
+	nicPackets      *prometheus.GaugeVec
+	nicPacketsTX    *prometheus.GaugeVec
+	nicPacketsRX    *prometheus.GaugeVec
+	nicErrors       *prometheus.GaugeVec
+	nicErrorsTX     *prometheus.GaugeVec
+	nicErrorsRX     *prometheus.GaugeVec
+	nicDrop         *prometheus.GaugeVec
+	nicDropTX       *prometheus.GaugeVec
+	nicDropRX       *prometheus.GaugeVec
+	nicFIFO         *prometheus.GaugeVec
+	nicFIFOTX       *prometheus.GaugeVec
+	nicFIFORX       *prometheus.GaugeVec
+	nicFrameRX      *prometheus.GaugeVec
+	nicCollsTX      *prometheus.GaugeVec
+	nicCompressed   *prometheus.GaugeVec
+	nicCompressedTX *prometheus.GaugeVec
+	nicCompressedRX *prometheus.GaugeVec
+	nicCarrierTX    *prometheus.GaugeVec
+	nicMulticastRX  *prometheus.GaugeVec
 )
 
 // NewMetrics initializes metrics
@@ -278,6 +302,271 @@ func NewMetrics() {
 		},
 	)
 
+	// nic metrics
+	nicBytes = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_bytes",
+			Help: "nic stats: total bytes",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
+	nicBytesTX = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_bytes_tx",
+			Help: "nic stats: total bytes tx",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
+	nicBytesRX = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_bytes_rx",
+			Help: "nic stats: total bytes rx",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
+	nicPackets = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_packets",
+			Help: "nic stats: total packets",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
+	nicPacketsTX = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_packets_tx",
+			Help: "nic stats: total packets tx",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
+	nicPacketsRX = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_packets_rx",
+			Help: "nic stats: total packets rx",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
+	nicErrors = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_errors",
+			Help: "nic stats: total errors",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
+	nicErrorsTX = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_errors_tx",
+			Help: "nic stats: total errors tx",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
+	nicErrorsRX = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_errors_rx",
+			Help: "nic stats: total errors rx",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
+	nicDrop = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_drop",
+			Help: "nic stats: total drop",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
+	nicDropTX = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_drop_tx",
+			Help: "nic stats: total drop tx",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
+	nicDropRX = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_drop_rx",
+			Help: "nic stats: total drop rx",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
+	nicFIFO = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_fifo",
+			Help: "nic stats: total fifo",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
+	nicFIFOTX = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_fifo_tx",
+			Help: "nic stats: total fifo tx",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
+	nicFIFORX = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_fifo_rx",
+			Help: "nic stats: total fifo rx",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
+	nicFrameRX = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_frame_rx",
+			Help: "nic stats: total frame rx",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
+	nicCollsTX = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_colls_tx",
+			Help: "nic stats: total colls tx",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
+	nicCompressed = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_compressed",
+			Help: "nic stats: total compressed",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
+	nicCompressedTX = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_compressed_tx",
+			Help: "nic stats: total compressed tx",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
+	nicCompressedRX = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_compressed_rx",
+			Help: "nic stats: total compressed rx",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
+	nicCarrierTX = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_carrier_tx",
+			Help: "nic stats: total carrier tx",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
+	nicMulticastRX = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_nic_multicast_rx",
+			Help: "nic stats: total multicast rx",
+		},
+		[]string{
+			"hostname",
+			"subid",
+			"nic",
+		},
+	)
+
 }
 
 // Gather gathers updates metrics
@@ -309,6 +598,15 @@ func Gather() error {
 		}
 	} else {
 		log.Info("Not gathering memory metrics")
+	}
+
+	if config.NICMetricCollectionEnabled() {
+		log.Info("Gathering nic metrics")
+		if err := gatherNICMetrics(); err != nil {
+			return err
+		}
+	} else {
+		log.Info("Not gathering nic metrics")
 	}
 
 	return nil
@@ -458,6 +756,50 @@ func gatherMemoryMetrics() error {
 	memoryBuffered.WithLabelValues(hostname, *subid).Set(float64(memory.Buffers))
 	memorySwapTotal.WithLabelValues(hostname, *subid).Set(float64(memory.SwapTotal))
 	memorySwapFree.WithLabelValues(hostname, *subid).Set(float64(memory.SwapFree))
+
+	return nil
+}
+
+func gatherNICMetrics() error {
+	hostname, err := os.Hostname()
+	if err != nil {
+		return err
+	}
+
+	subid, err := config.GetSubID()
+	if err != nil {
+		return err
+	}
+
+	nicStats, err := getNICStats()
+	if err != nil {
+		return err
+	}
+
+	for i := range nicStats {
+		nicBytes.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].Bytes))
+		nicBytesTX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].BytesTX))
+		nicBytesRX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].BytesRX))
+		nicPackets.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].Packets))
+		nicPacketsTX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].PacketsTX))
+		nicPacketsRX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].PacketsRX))
+		nicErrors.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].Errors))
+		nicErrorsTX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].ErrorsTX))
+		nicErrorsRX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].ErrorsRX))
+		nicDrop.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].Drop))
+		nicDropTX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].DropTX))
+		nicDropRX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].DropRX))
+		nicFIFO.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].FIFO))
+		nicFIFOTX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].FIFOTX))
+		nicFIFORX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].FIFORX))
+		nicFrameRX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].FrameRX))
+		nicCollsTX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].CollsTX))
+		nicCompressed.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].Compressed))
+		nicCompressedTX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].CompressedTX))
+		nicCompressedRX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].CompressedRX))
+		nicCarrierTX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].CarrierTX))
+		nicMulticastRX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].MulticastRX))
+	}
 
 	return nil
 }

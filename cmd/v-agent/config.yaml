@@ -14,3 +14,5 @@ metrics_config:
     enabled: true
   memory:
     enabled: true
+  nic:
+    enabled: true

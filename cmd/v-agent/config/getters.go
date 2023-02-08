@@ -75,3 +75,16 @@ func MemoryMetricCollectionEnabled() bool {
 
 	return cfg.MetricsConfig.Memory.Enabled
 }
+
+// NICMetricCollectionEnabled returns true/false if memory nic collection enabled
+func NICMetricCollectionEnabled() bool {
+	log := zap.L().Sugar()
+
+	cfg, err := GetConfig()
+	if err != nil {
+		log.Error(err)
+		return true
+	}
+
+	return cfg.MetricsConfig.NIC.Enabled
+}
