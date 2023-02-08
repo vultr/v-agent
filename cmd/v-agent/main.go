@@ -8,11 +8,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/prometheus/client_golang/prometheus"
 	"github.com/vultr/v-agent/cmd/v-agent/api"
 	"github.com/vultr/v-agent/cmd/v-agent/config"
 	"github.com/vultr/v-agent/metrics"
 
+	"github.com/prometheus/client_golang/prometheus"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 )

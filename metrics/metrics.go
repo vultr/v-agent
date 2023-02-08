@@ -8,6 +8,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	dto "github.com/prometheus/client_model/go"
+	"github.com/vultr/v-agent/cmd/v-agent/config"
 	prompb "go.buf.build/grpc/go/prometheus/prometheus"
 )
 
@@ -29,6 +30,7 @@ func NewMetrics() {
 		},
 		[]string{
 			"hostname",
+			"subid",
 		},
 	)
 
@@ -39,6 +41,7 @@ func NewMetrics() {
 		},
 		[]string{
 			"hostname",
+			"subid",
 		},
 	)
 
@@ -49,6 +52,7 @@ func NewMetrics() {
 		},
 		[]string{
 			"hostname",
+			"subid",
 		},
 	)
 
@@ -59,6 +63,7 @@ func NewMetrics() {
 		},
 		[]string{
 			"hostname",
+			"subid",
 		},
 	)
 
@@ -69,6 +74,7 @@ func NewMetrics() {
 		},
 		[]string{
 			"hostname",
+			"subid",
 		},
 	)
 
@@ -154,16 +160,21 @@ func gatherHostLoadavgMetrics() error {
 		return err
 	}
 
+	subid, err := config.GetSubID()
+	if err != nil {
+		return err
+	}
+
 	loadavg, err := getLoadavg()
 	if err != nil {
 		return err
 	}
 
-	hostLoadavgLoad1.WithLabelValues(hostname).Set(loadavg.Load1)
-	hostLoadavgLoad5.WithLabelValues(hostname).Set(loadavg.Load5)
-	hostLoadavgLoad15.WithLabelValues(hostname).Set(loadavg.Load15)
-	hostLoadavgTasksRunning.WithLabelValues(hostname).Set(float64(loadavg.TasksRunning))
-	hostLoadavgTasksTotal.WithLabelValues(hostname).Set(float64(loadavg.TasksTotal))
+	hostLoadavgLoad1.WithLabelValues(hostname, *subid).Set(loadavg.Load1)
+	hostLoadavgLoad5.WithLabelValues(hostname, *subid).Set(loadavg.Load5)
+	hostLoadavgLoad15.WithLabelValues(hostname, *subid).Set(loadavg.Load15)
+	hostLoadavgTasksRunning.WithLabelValues(hostname, *subid).Set(float64(loadavg.TasksRunning))
+	hostLoadavgTasksTotal.WithLabelValues(hostname, *subid).Set(float64(loadavg.TasksTotal))
 
 	return nil
 }

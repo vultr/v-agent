@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/vultr/v-agent/cmd/v-agent/util"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/yaml.v3"
@@ -23,6 +24,7 @@ type Config struct {
 	Listen        string `yaml:"listen"`
 	Port          uint   `yaml:"port"`
 	Interval      uint   `yaml:"interval"`
+	SubID         string `yaml:"subid"`
 	Endpoint      string `yaml:"endpoint"`
 	BasicAuthUser string `yaml:"basic_auth_user"`
 	BasicAuthPass string `yaml:"basic_auth_pass"`
@@ -72,6 +74,7 @@ func initCLI(config *Config) {
 	flag.UintVar(&config.Port, "port", 8080, "Listen port") //nolint
 	flag.StringVar(&config.ConfigFile, "config", "./config.yaml", "Path for the config.yaml configuration file")
 	flag.UintVar(&config.Interval, "interval", 60, "Metrics gather interval") //nolint
+	flag.StringVar(&config.SubID, "subid", "", "Subid")
 	flag.StringVar(&config.Endpoint, "endpoint", "http://localhost:8080", "Endpoint to remotely write metrics to")
 	flag.StringVar(&config.BasicAuthUser, "basic-auth-user", "", "Basic auth user")
 	flag.StringVar(&config.BasicAuthPass, "basic-auth-pass", "", "Basic auth password")
@@ -128,7 +131,10 @@ func initEnv(config *Config) error {
 	listen := os.Getenv("LISTEN")
 	port := os.Getenv("PORT")
 	interval := os.Getenv("INTERVAL")
-	remoteWriteEndpoint := os.Getenv("REMOTE_WRITE_ENDPOINT")
+	subid := os.Getenv("SUBID")
+	endpoint := os.Getenv("ENDPOINT")
+	basicAuthUser := os.Getenv("BASIC_AUTH_USER")
+	basicAuthPass := os.Getenv("BASIC_AUTH_PASS")
 
 	if listen != "" {
 		config.Listen = listen
@@ -152,20 +158,46 @@ func initEnv(config *Config) error {
 		config.Interval = uint(p)
 	}
 
-	if remoteWriteEndpoint != "" {
-		config.Endpoint = remoteWriteEndpoint
+	if subid != "" {
+		config.SubID = subid
+	}
+
+	if endpoint != "" {
+		config.Endpoint = endpoint
+	}
+
+	if basicAuthUser != "" {
+		config.BasicAuthUser = basicAuthUser
+	}
+
+	if basicAuthPass != "" {
+		config.BasicAuthPass = basicAuthPass
 	}
 
 	return nil
 }
 
 func checkConfig(config *Config) error {
+	log := zap.L().Sugar()
+
 	if config.Port > 65535 { //nolint
 		return fmt.Errorf("port: %d is not valid", config.Port)
 	}
 
 	if config.Interval < 1 {
 		return fmt.Errorf("interval: %d is not valid", config.Interval)
+	}
+
+	if config.SubID == "" {
+		log.Info("subid is not set, pulling from metadata server")
+
+		subid, err := util.GetSubID()
+		if err != nil {
+			return err
+		}
+
+		log.Infof("setting subid to %s", *subid)
+		config.SubID = *subid
 	}
 
 	if !strings.HasPrefix(config.Endpoint, "http") {

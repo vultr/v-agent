@@ -3,6 +3,7 @@ listen: 0.0.0.0
 port: 7091
 interval: 5
 #endpoint: http://localhost:8080/api/v1/rw
+subid: ""
 endpoint: https://metrics.vultrlabs.com/api/v1/push
 basic_auth_user: vke
 basic_auth_pass: rQyJT8h6mbmNYaXE4RrxWReC
