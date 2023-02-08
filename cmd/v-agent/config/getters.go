@@ -62,3 +62,16 @@ func CPUMetricCollectionEnabled() bool {
 
 	return cfg.MetricsConfig.CPU.Enabled
 }
+
+// MemoryMetricCollectionEnabled returns true/false if memory metrics collection enabled
+func MemoryMetricCollectionEnabled() bool {
+	log := zap.L().Sugar()
+
+	cfg, err := GetConfig()
+	if err != nil {
+		log.Error(err)
+		return true
+	}
+
+	return cfg.MetricsConfig.Memory.Enabled
+}

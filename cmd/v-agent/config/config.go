@@ -39,6 +39,7 @@ type Config struct {
 type MetricsConfig struct {
 	LoadAvg LoadAvg `yaml:"load_avg"`
 	CPU     CPU     `yaml:"cpu"`
+	Memory  Memory  `yaml:"memory"`
 }
 
 // LoadAvg configuration
@@ -48,6 +49,11 @@ type LoadAvg struct {
 
 // CPU configuration
 type CPU struct {
+	Enabled bool `yaml:"enabled"`
+}
+
+// Memory configuration
+type Memory struct {
 	Enabled bool `yaml:"enabled"`
 }
 

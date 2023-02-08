@@ -32,6 +32,14 @@ var (
 	cpuStealPct     *prometheus.GaugeVec
 	cpuGuestPct     *prometheus.GaugeVec
 	cpuGuestNicePct *prometheus.GaugeVec
+
+	// memory metrics
+	memoryTotal     *prometheus.GaugeVec
+	memoryFree      *prometheus.GaugeVec
+	memoryCached    *prometheus.GaugeVec
+	memoryBuffered  *prometheus.GaugeVec
+	memorySwapTotal *prometheus.GaugeVec
+	memorySwapFree  *prometheus.GaugeVec
 )
 
 // NewMetrics initializes metrics
@@ -203,6 +211,73 @@ func NewMetrics() {
 		},
 	)
 
+	// memory metrics
+	memoryTotal = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_memory_total",
+			Help: "total memory",
+		},
+		[]string{
+			"hostname",
+			"subid",
+		},
+	)
+
+	memoryFree = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_memory_free",
+			Help: "hosts free (non cached/buffered) memory",
+		},
+		[]string{
+			"hostname",
+			"subid",
+		},
+	)
+
+	memoryCached = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_memory_cached",
+			Help: "cached memory",
+		},
+		[]string{
+			"hostname",
+			"subid",
+		},
+	)
+
+	memoryBuffered = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_memory_buffered",
+			Help: "buffered memory",
+		},
+		[]string{
+			"hostname",
+			"subid",
+		},
+	)
+
+	memorySwapTotal = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_memory_swap_total",
+			Help: "total swap",
+		},
+		[]string{
+			"hostname",
+			"subid",
+		},
+	)
+
+	memorySwapFree = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_memory_swap_free",
+			Help: "free swap",
+		},
+		[]string{
+			"hostname",
+			"subid",
+		},
+	)
+
 }
 
 // Gather gathers updates metrics
@@ -225,6 +300,15 @@ func Gather() error {
 		}
 	} else {
 		log.Info("Not gathering cpu metrics")
+	}
+
+	if config.MemoryMetricCollectionEnabled() {
+		log.Info("Gathering memory metrics")
+		if err := gatherMemoryMetrics(); err != nil {
+			return err
+		}
+	} else {
+		log.Info("Not gathering memory metrics")
 	}
 
 	return nil
@@ -348,6 +432,32 @@ func gatherCPUMetrics() error {
 	cpuStealPct.WithLabelValues(hostname, *subid).Set((float64(cpuUtil.Steal) / float64(cpuUtil.Idle)) * float64(100))
 	cpuGuestPct.WithLabelValues(hostname, *subid).Set((float64(cpuUtil.Guest) / float64(cpuUtil.Idle)) * float64(100))
 	cpuGuestNicePct.WithLabelValues(hostname, *subid).Set((float64(cpuUtil.GuestNice) / float64(cpuUtil.Idle)) * float64(100))
+
+	return nil
+}
+
+func gatherMemoryMetrics() error {
+	hostname, err := os.Hostname()
+	if err != nil {
+		return err
+	}
+
+	subid, err := config.GetSubID()
+	if err != nil {
+		return err
+	}
+
+	memory, err := getMeminfo()
+	if err != nil {
+		return err
+	}
+
+	memoryTotal.WithLabelValues(hostname, *subid).Set(float64(memory.MemTotal))
+	memoryFree.WithLabelValues(hostname, *subid).Set(float64(memory.MemFree))
+	memoryCached.WithLabelValues(hostname, *subid).Set(float64(memory.Cached))
+	memoryBuffered.WithLabelValues(hostname, *subid).Set(float64(memory.Buffers))
+	memorySwapTotal.WithLabelValues(hostname, *subid).Set(float64(memory.SwapTotal))
+	memorySwapFree.WithLabelValues(hostname, *subid).Set(float64(memory.SwapFree))
 
 	return nil
 }
