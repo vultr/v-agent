@@ -14,17 +14,30 @@ import (
 )
 
 var (
-	hostLoadavgLoad1        *prometheus.GaugeVec
-	hostLoadavgLoad5        *prometheus.GaugeVec
-	hostLoadavgLoad15       *prometheus.GaugeVec
-	hostLoadavgTasksRunning *prometheus.GaugeVec
-	hostLoadavgTasksTotal   *prometheus.GaugeVec
+	// load avg metrics
+	loadavgLoad1        *prometheus.GaugeVec
+	loadavgLoad5        *prometheus.GaugeVec
+	loadavgLoad15       *prometheus.GaugeVec
+	loadavgTasksRunning *prometheus.GaugeVec
+	loadavgTasksTotal   *prometheus.GaugeVec
+
+	// cpu metrics
+	cpuCores        *prometheus.GaugeVec
+	cpuUtilPct      *prometheus.GaugeVec
+	cpuUserPct      *prometheus.GaugeVec
+	cpuSystemPct    *prometheus.GaugeVec
+	cpuIOWaitPct    *prometheus.GaugeVec
+	cpuIRQPct       *prometheus.GaugeVec
+	cpuSoftIRQPct   *prometheus.GaugeVec
+	cpuStealPct     *prometheus.GaugeVec
+	cpuGuestPct     *prometheus.GaugeVec
+	cpuGuestNicePct *prometheus.GaugeVec
 )
 
 // NewMetrics initializes metrics
 func NewMetrics() {
-	// host loadavg metrics
-	hostLoadavgLoad1 = promauto.NewGaugeVec(
+	// load avg metrics
+	loadavgLoad1 = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "v_loadavg_load1",
 			Help: "loadavg over 1 minute",
@@ -35,7 +48,7 @@ func NewMetrics() {
 		},
 	)
 
-	hostLoadavgLoad5 = promauto.NewGaugeVec(
+	loadavgLoad5 = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "v_loadavg_load5",
 			Help: "loadavg over 5 minutes",
@@ -46,7 +59,7 @@ func NewMetrics() {
 		},
 	)
 
-	hostLoadavgLoad15 = promauto.NewGaugeVec(
+	loadavgLoad15 = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "v_loadavg_load15",
 			Help: "loadavg over 15 minutes",
@@ -57,7 +70,7 @@ func NewMetrics() {
 		},
 	)
 
-	hostLoadavgTasksRunning = promauto.NewGaugeVec(
+	loadavgTasksRunning = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "v_tasks_running",
 			Help: "current running tasks/processes",
@@ -68,10 +81,121 @@ func NewMetrics() {
 		},
 	)
 
-	hostLoadavgTasksTotal = promauto.NewGaugeVec(
+	loadavgTasksTotal = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "v_tasks_total",
 			Help: "current total tasks/processes",
+		},
+		[]string{
+			"hostname",
+			"subid",
+		},
+	)
+
+	// cpu metrics
+	cpuCores = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_cpu_cores",
+			Help: "total cpu cores",
+		},
+		[]string{
+			"hostname",
+			"subid",
+		},
+	)
+
+	cpuUtilPct = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_cpu_util_pct",
+			Help: "utilization cpu percent",
+		},
+		[]string{
+			"hostname",
+			"subid",
+		},
+	)
+
+	cpuUserPct = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_cpu_user_pct",
+			Help: "user utilization cpu percent",
+		},
+		[]string{
+			"hostname",
+			"subid",
+		},
+	)
+
+	cpuSystemPct = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_cpu_system_pct",
+			Help: "system utilization cpu percent",
+		},
+		[]string{
+			"hostname",
+			"subid",
+		},
+	)
+
+	cpuIOWaitPct = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_cpu_iowait_pct",
+			Help: "iowait utilization cpu percent",
+		},
+		[]string{
+			"hostname",
+			"subid",
+		},
+	)
+
+	cpuIRQPct = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_cpu_irq_pct",
+			Help: "irq utilization cpu percent",
+		},
+		[]string{
+			"hostname",
+			"subid",
+		},
+	)
+
+	cpuSoftIRQPct = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_cpu_soft_irq_pct",
+			Help: "soft irq utilization cpu percent",
+		},
+		[]string{
+			"hostname",
+			"subid",
+		},
+	)
+
+	cpuStealPct = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_cpu_steal_pct",
+			Help: "steal utilization cpu percent",
+		},
+		[]string{
+			"hostname",
+			"subid",
+		},
+	)
+
+	cpuGuestPct = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_cpu_guest_pct",
+			Help: "guest utilization cpu percent",
+		},
+		[]string{
+			"hostname",
+			"subid",
+		},
+	)
+
+	cpuGuestNicePct = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_cpu_guest_nice_pct",
+			Help: "guest nice utilization cpu percent",
 		},
 		[]string{
 			"hostname",
@@ -87,11 +211,20 @@ func Gather() error {
 
 	if config.LoadAvgMetricCollectionEnabled() {
 		log.Info("Gathering load_avg metrics")
-		if err := gatherHostLoadavgMetrics(); err != nil {
+		if err := gatherLoadavgMetrics(); err != nil {
 			return err
 		}
 	} else {
 		log.Info("Not gathering load_avg metrics")
+	}
+
+	if config.CPUMetricCollectionEnabled() {
+		log.Info("Gathering cpu metrics")
+		if err := gatherCPUMetrics(); err != nil {
+			return err
+		}
+	} else {
+		log.Info("Not gathering cpu metrics")
 	}
 
 	return nil
@@ -162,7 +295,7 @@ func GetMetricsAsTimeSeries(in []*dto.MetricFamily) []*prompb.TimeSeries {
 // Reset some metrics may need to be reset
 func Reset() {}
 
-func gatherHostLoadavgMetrics() error {
+func gatherLoadavgMetrics() error {
 	hostname, err := os.Hostname()
 	if err != nil {
 		return err
@@ -178,11 +311,43 @@ func gatherHostLoadavgMetrics() error {
 		return err
 	}
 
-	hostLoadavgLoad1.WithLabelValues(hostname, *subid).Set(loadavg.Load1)
-	hostLoadavgLoad5.WithLabelValues(hostname, *subid).Set(loadavg.Load5)
-	hostLoadavgLoad15.WithLabelValues(hostname, *subid).Set(loadavg.Load15)
-	hostLoadavgTasksRunning.WithLabelValues(hostname, *subid).Set(float64(loadavg.TasksRunning))
-	hostLoadavgTasksTotal.WithLabelValues(hostname, *subid).Set(float64(loadavg.TasksTotal))
+	loadavgLoad1.WithLabelValues(hostname, *subid).Set(loadavg.Load1)
+	loadavgLoad5.WithLabelValues(hostname, *subid).Set(loadavg.Load5)
+	loadavgLoad15.WithLabelValues(hostname, *subid).Set(loadavg.Load15)
+	loadavgTasksRunning.WithLabelValues(hostname, *subid).Set(float64(loadavg.TasksRunning))
+	loadavgTasksTotal.WithLabelValues(hostname, *subid).Set(float64(loadavg.TasksTotal))
+
+	return nil
+}
+
+func gatherCPUMetrics() error {
+	hostname, err := os.Hostname()
+	if err != nil {
+		return err
+	}
+
+	subid, err := config.GetSubID()
+	if err != nil {
+		return err
+	}
+
+	cpuUtil, err := getCPUUtil()
+	if err != nil {
+		return err
+	}
+
+	cpuInUse := float64(cpuUtil.User + cpuUtil.Nice + cpuUtil.System + cpuUtil.IOWait + cpuUtil.IRQ + cpuUtil.SoftIRQ + cpuUtil.Steal + cpuUtil.Guest + cpuUtil.GuestNice)
+
+	cpuCores.WithLabelValues(hostname, *subid).Set(float64(getHostCPUs()))
+	cpuUtilPct.WithLabelValues(hostname, *subid).Set((cpuInUse / float64(cpuUtil.Idle)) * float64(100))
+	cpuUserPct.WithLabelValues(hostname, *subid).Set((float64(cpuUtil.User) / float64(cpuUtil.Idle)) * float64(100))
+	cpuSystemPct.WithLabelValues(hostname, *subid).Set((float64(cpuUtil.System) / float64(cpuUtil.Idle)) * float64(100))
+	cpuIOWaitPct.WithLabelValues(hostname, *subid).Set((float64(cpuUtil.IOWait) / float64(cpuUtil.Idle)) * float64(100))
+	cpuIRQPct.WithLabelValues(hostname, *subid).Set((float64(cpuUtil.IRQ) / float64(cpuUtil.Idle)) * float64(100))
+	cpuSoftIRQPct.WithLabelValues(hostname, *subid).Set((float64(cpuUtil.SoftIRQ) / float64(cpuUtil.Idle)) * float64(100))
+	cpuStealPct.WithLabelValues(hostname, *subid).Set((float64(cpuUtil.Steal) / float64(cpuUtil.Idle)) * float64(100))
+	cpuGuestPct.WithLabelValues(hostname, *subid).Set((float64(cpuUtil.Guest) / float64(cpuUtil.Idle)) * float64(100))
+	cpuGuestNicePct.WithLabelValues(hostname, *subid).Set((float64(cpuUtil.GuestNice) / float64(cpuUtil.Idle)) * float64(100))
 
 	return nil
 }

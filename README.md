@@ -22,3 +22,6 @@ Authentication is passive via headers; if the headers are missing or invalid the
 
 ## Configuration
 Both have a `config.yaml` file. Both have CLI switches. Both configurations can be overridden with envionment variables.
+
+## Building
+Note: Agent must be built with cgo disabled for VKE guests, not doing so will result in GLIBC errors being thrown: `CGO_ENABLED=0 go build -o v-agent cmd/v-agent/main.go`

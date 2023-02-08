@@ -49,3 +49,16 @@ func LoadAvgMetricCollectionEnabled() bool {
 
 	return cfg.MetricsConfig.LoadAvg.Enabled
 }
+
+// CPUMetricCollectionEnabled returns true/false if cpu metrics collection enabled
+func CPUMetricCollectionEnabled() bool {
+	log := zap.L().Sugar()
+
+	cfg, err := GetConfig()
+	if err != nil {
+		log.Error(err)
+		return true
+	}
+
+	return cfg.MetricsConfig.CPU.Enabled
+}

@@ -10,3 +10,5 @@ basic_auth_pass: rQyJT8h6mbmNYaXE4RrxWReC
 metrics_config:
   load_avg:
     enabled: true
+  cpu:
+    enabled: true
