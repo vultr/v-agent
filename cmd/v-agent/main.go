@@ -8,8 +8,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/vultr/v-agent/api"
-	"github.com/vultr/v-agent/config"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/vultr/v-agent/cmd/v-agent/api"
+	"github.com/vultr/v-agent/cmd/v-agent/config"
 	"github.com/vultr/v-agent/metrics"
 
 	"go.uber.org/zap"
@@ -92,6 +93,41 @@ func main() {
 					}
 
 					log.Infof("metrics worker: Gathered metrics in %s", time.Since(start).Round(time.Millisecond))
+
+					log.Infof("metrics worker: Pushing metrics to %s", cfg.Endpoint)
+
+					start = time.Now()
+
+					mf, err := prometheus.DefaultGatherer.Gather()
+					if err != nil {
+						log.Error(err)
+						continue
+					}
+
+					tsList := metrics.GetMetricsAsTimeSeries(mf)
+
+					var ba *metrics.BasicAuth
+					if cfg.BasicAuthUser != "" && cfg.BasicAuthPass != "" {
+						ba = &metrics.BasicAuth{
+							Username: cfg.BasicAuthUser,
+							Password: cfg.BasicAuthPass,
+						}
+					}
+
+					wc, err := metrics.NewWriteClient(cfg.Endpoint, &metrics.HTTPConfig{
+						Timeout:   5 * time.Second,
+						BasicAuth: ba,
+					})
+					if err != nil {
+						log.Error(err)
+						continue
+					}
+
+					if err := wc.Store(context.Background(), tsList); err != nil {
+						log.Error(err)
+					}
+
+					log.Infof("metrics worker: Pushed metrics in %s", time.Since(start).Round(time.Millisecond))
 				}
 			}
 

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -18,10 +19,10 @@ var config *Config
 type Config struct {
 	ConfigFile string
 
-	Debug    bool   `yaml:"debug"`
-	Listen   string `yaml:"listen"`
-	Port     uint   `yaml:"port"`
-	Interval uint   `yaml:"interval"`
+	Debug         bool   `yaml:"debug"`
+	Listen        string `yaml:"listen"`
+	Port          uint   `yaml:"port"`
+	MimirEndpoint string `yaml:"mimir_endpoint"`
 
 	zapConfig *zap.Config
 	zapLogger *zap.Logger
@@ -67,7 +68,7 @@ func initCLI(config *Config) {
 	flag.StringVar(&config.Listen, "listen", "0.0.0.0", "Listen address")
 	flag.UintVar(&config.Port, "port", 8080, "Listen port") //nolint
 	flag.StringVar(&config.ConfigFile, "config", "./config.yaml", "Path for the config.yaml configuration file")
-	flag.UintVar(&config.Interval, "interval", 60, "Metrics gather interval") //nolint
+	flag.StringVar(&config.MimirEndpoint, "remote-write-endpoint", "http://localhost:8080", "Endpoint to remotely write metrics to")
 	flag.Parse()
 }
 
@@ -120,7 +121,7 @@ func initLogging(config *Config) {
 func initEnv(config *Config) error {
 	listen := os.Getenv("LISTEN")
 	port := os.Getenv("PORT")
-	interval := os.Getenv("INTERVAL")
+	remoteWriteEndpoint := os.Getenv("REMOTE_WRITE_ENDPOINT")
 
 	if listen != "" {
 		config.Listen = listen
@@ -135,13 +136,8 @@ func initEnv(config *Config) error {
 		config.Port = uint(p)
 	}
 
-	if interval != "" {
-		p, err := strconv.Atoi(interval)
-		if err != nil {
-			return err
-		}
-
-		config.Interval = uint(p)
+	if remoteWriteEndpoint != "" {
+		config.MimirEndpoint = remoteWriteEndpoint
 	}
 
 	return nil
@@ -152,8 +148,8 @@ func checkConfig(config *Config) error {
 		return fmt.Errorf("port: %d is not valid", config.Port)
 	}
 
-	if config.Interval < 1 {
-		return fmt.Errorf("interval: %d is not valid", config.Interval)
+	if !strings.HasPrefix(config.MimirEndpoint, "http") {
+		return fmt.Errorf("remote_write_endpoint: should start with http/https")
 	}
 
 	return nil

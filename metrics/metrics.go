@@ -3,9 +3,12 @@ package metrics
 
 import (
 	"os"
+	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
+	dto "github.com/prometheus/client_model/go"
+	prompb "go.buf.build/grpc/go/prometheus/prometheus"
 )
 
 var (
@@ -78,6 +81,68 @@ func Gather() error {
 	}
 
 	return nil
+}
+
+// RemoteWrite performs a remote write to the specified endpoint
+func RemoteWrite(endpoint string) error {
+	return nil
+}
+
+// GetMetricsAsTimeSeries returns metrics as timeseries for remote write
+func GetMetricsAsTimeSeries(in []*dto.MetricFamily) []*prompb.TimeSeries {
+	var tsList []*prompb.TimeSeries
+
+	for i := range in {
+		metricName := *in[i].Name
+
+		// Extract name/value of other labels and set
+		for j := range in[i].Metric {
+			var labels []*prompb.Label
+			var ts prompb.TimeSeries
+			metricType := *in[i].Type
+			var metricValue float64
+
+			// Set __name__ label for metric name
+			labels = append(labels, &prompb.Label{
+				Name:  "__name__",
+				Value: metricName,
+			})
+
+			// For each label pair append
+			for k := range in[i].Metric[j].Label {
+				labels = append(labels, &prompb.Label{
+					Name:  *in[i].Metric[j].Label[k].Name,
+					Value: *in[i].Metric[j].Label[k].Value,
+				})
+			}
+
+			// Extract metric value
+			switch metricType {
+			case dto.MetricType_COUNTER:
+				metricValue = in[i].Metric[0].Counter.GetValue()
+			case dto.MetricType_GAUGE:
+				metricValue = in[i].Metric[0].Gauge.GetValue()
+			case dto.MetricType_HISTOGRAM:
+				metricValue = in[i].Metric[0].Histogram.GetSampleSum()
+			case dto.MetricType_SUMMARY:
+				metricValue = in[i].Metric[0].Summary.GetSampleSum()
+			case dto.MetricType_UNTYPED:
+				metricValue = in[i].Metric[0].Untyped.GetValue()
+			}
+
+			sample := &prompb.Sample{
+				Timestamp: time.Now().UnixNano() / int64(time.Millisecond),
+				Value:     metricValue,
+			}
+
+			ts.Labels = labels
+			ts.Samples = []*prompb.Sample{sample}
+
+			tsList = append(tsList, &ts)
+		}
+	}
+
+	return tsList
 }
 
 // Reset some metrics may need to be reset
