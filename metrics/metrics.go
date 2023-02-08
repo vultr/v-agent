@@ -41,7 +41,7 @@ var (
 	memorySwapTotal *prometheus.GaugeVec
 	memorySwapFree  *prometheus.GaugeVec
 
-	// guest nic metrics
+	// nic metrics
 	nicBytes        *prometheus.GaugeVec
 	nicBytesTX      *prometheus.GaugeVec
 	nicBytesRX      *prometheus.GaugeVec
@@ -75,6 +75,7 @@ func NewMetrics() {
 			Help: "loadavg over 1 minute",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 		},
@@ -86,6 +87,7 @@ func NewMetrics() {
 			Help: "loadavg over 5 minutes",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 		},
@@ -97,6 +99,7 @@ func NewMetrics() {
 			Help: "loadavg over 15 minutes",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 		},
@@ -108,6 +111,7 @@ func NewMetrics() {
 			Help: "current running tasks/processes",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 		},
@@ -119,6 +123,7 @@ func NewMetrics() {
 			Help: "current total tasks/processes",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 		},
@@ -131,6 +136,7 @@ func NewMetrics() {
 			Help: "total cpu cores",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 		},
@@ -142,6 +148,7 @@ func NewMetrics() {
 			Help: "utilization cpu percent",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 		},
@@ -153,6 +160,7 @@ func NewMetrics() {
 			Help: "user utilization cpu percent",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 		},
@@ -164,6 +172,7 @@ func NewMetrics() {
 			Help: "system utilization cpu percent",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 		},
@@ -175,6 +184,7 @@ func NewMetrics() {
 			Help: "iowait utilization cpu percent",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 		},
@@ -186,6 +196,7 @@ func NewMetrics() {
 			Help: "irq utilization cpu percent",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 		},
@@ -197,6 +208,7 @@ func NewMetrics() {
 			Help: "soft irq utilization cpu percent",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 		},
@@ -208,6 +220,7 @@ func NewMetrics() {
 			Help: "steal utilization cpu percent",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 		},
@@ -219,6 +232,7 @@ func NewMetrics() {
 			Help: "guest utilization cpu percent",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 		},
@@ -230,6 +244,7 @@ func NewMetrics() {
 			Help: "guest nice utilization cpu percent",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 		},
@@ -242,6 +257,7 @@ func NewMetrics() {
 			Help: "total memory",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 		},
@@ -253,6 +269,7 @@ func NewMetrics() {
 			Help: "hosts free (non cached/buffered) memory",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 		},
@@ -264,6 +281,7 @@ func NewMetrics() {
 			Help: "cached memory",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 		},
@@ -275,6 +293,7 @@ func NewMetrics() {
 			Help: "buffered memory",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 		},
@@ -286,6 +305,7 @@ func NewMetrics() {
 			Help: "total swap",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 		},
@@ -297,6 +317,7 @@ func NewMetrics() {
 			Help: "free swap",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 		},
@@ -309,6 +330,7 @@ func NewMetrics() {
 			Help: "nic stats: total bytes",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -321,6 +343,7 @@ func NewMetrics() {
 			Help: "nic stats: total bytes tx",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -333,6 +356,7 @@ func NewMetrics() {
 			Help: "nic stats: total bytes rx",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -345,6 +369,7 @@ func NewMetrics() {
 			Help: "nic stats: total packets",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -357,6 +382,7 @@ func NewMetrics() {
 			Help: "nic stats: total packets tx",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -369,6 +395,7 @@ func NewMetrics() {
 			Help: "nic stats: total packets rx",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -381,6 +408,7 @@ func NewMetrics() {
 			Help: "nic stats: total errors",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -393,6 +421,7 @@ func NewMetrics() {
 			Help: "nic stats: total errors tx",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -405,6 +434,7 @@ func NewMetrics() {
 			Help: "nic stats: total errors rx",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -417,6 +447,7 @@ func NewMetrics() {
 			Help: "nic stats: total drop",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -429,6 +460,7 @@ func NewMetrics() {
 			Help: "nic stats: total drop tx",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -441,6 +473,7 @@ func NewMetrics() {
 			Help: "nic stats: total drop rx",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -453,6 +486,7 @@ func NewMetrics() {
 			Help: "nic stats: total fifo",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -465,6 +499,7 @@ func NewMetrics() {
 			Help: "nic stats: total fifo tx",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -477,6 +512,7 @@ func NewMetrics() {
 			Help: "nic stats: total fifo rx",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -489,6 +525,7 @@ func NewMetrics() {
 			Help: "nic stats: total frame rx",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -501,6 +538,7 @@ func NewMetrics() {
 			Help: "nic stats: total colls tx",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -513,6 +551,7 @@ func NewMetrics() {
 			Help: "nic stats: total compressed",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -525,6 +564,7 @@ func NewMetrics() {
 			Help: "nic stats: total compressed tx",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -537,6 +577,7 @@ func NewMetrics() {
 			Help: "nic stats: total compressed rx",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -549,6 +590,7 @@ func NewMetrics() {
 			Help: "nic stats: total carrier tx",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -561,6 +603,7 @@ func NewMetrics() {
 			Help: "nic stats: total multicast rx",
 		},
 		[]string{
+			"product",
 			"hostname",
 			"subid",
 			"nic",
@@ -688,16 +731,21 @@ func gatherLoadavgMetrics() error {
 		return err
 	}
 
+	product, err := config.GetProduct()
+	if err != nil {
+		return err
+	}
+
 	loadavg, err := getLoadavg()
 	if err != nil {
 		return err
 	}
 
-	loadavgLoad1.WithLabelValues(hostname, *subid).Set(loadavg.Load1)
-	loadavgLoad5.WithLabelValues(hostname, *subid).Set(loadavg.Load5)
-	loadavgLoad15.WithLabelValues(hostname, *subid).Set(loadavg.Load15)
-	loadavgTasksRunning.WithLabelValues(hostname, *subid).Set(float64(loadavg.TasksRunning))
-	loadavgTasksTotal.WithLabelValues(hostname, *subid).Set(float64(loadavg.TasksTotal))
+	loadavgLoad1.WithLabelValues(*product, hostname, *subid).Set(loadavg.Load1)
+	loadavgLoad5.WithLabelValues(*product, hostname, *subid).Set(loadavg.Load5)
+	loadavgLoad15.WithLabelValues(*product, hostname, *subid).Set(loadavg.Load15)
+	loadavgTasksRunning.WithLabelValues(*product, hostname, *subid).Set(float64(loadavg.TasksRunning))
+	loadavgTasksTotal.WithLabelValues(*product, hostname, *subid).Set(float64(loadavg.TasksTotal))
 
 	return nil
 }
@@ -713,6 +761,11 @@ func gatherCPUMetrics() error {
 		return err
 	}
 
+	product, err := config.GetProduct()
+	if err != nil {
+		return err
+	}
+
 	cpuUtil, err := getCPUUtil()
 	if err != nil {
 		return err
@@ -720,16 +773,16 @@ func gatherCPUMetrics() error {
 
 	cpuInUse := float64(cpuUtil.User + cpuUtil.Nice + cpuUtil.System + cpuUtil.IOWait + cpuUtil.IRQ + cpuUtil.SoftIRQ + cpuUtil.Steal + cpuUtil.Guest + cpuUtil.GuestNice)
 
-	cpuCores.WithLabelValues(hostname, *subid).Set(float64(getHostCPUs()))
-	cpuUtilPct.WithLabelValues(hostname, *subid).Set((cpuInUse / float64(cpuUtil.Idle)) * float64(100))
-	cpuUserPct.WithLabelValues(hostname, *subid).Set((float64(cpuUtil.User) / float64(cpuUtil.Idle)) * float64(100))
-	cpuSystemPct.WithLabelValues(hostname, *subid).Set((float64(cpuUtil.System) / float64(cpuUtil.Idle)) * float64(100))
-	cpuIOWaitPct.WithLabelValues(hostname, *subid).Set((float64(cpuUtil.IOWait) / float64(cpuUtil.Idle)) * float64(100))
-	cpuIRQPct.WithLabelValues(hostname, *subid).Set((float64(cpuUtil.IRQ) / float64(cpuUtil.Idle)) * float64(100))
-	cpuSoftIRQPct.WithLabelValues(hostname, *subid).Set((float64(cpuUtil.SoftIRQ) / float64(cpuUtil.Idle)) * float64(100))
-	cpuStealPct.WithLabelValues(hostname, *subid).Set((float64(cpuUtil.Steal) / float64(cpuUtil.Idle)) * float64(100))
-	cpuGuestPct.WithLabelValues(hostname, *subid).Set((float64(cpuUtil.Guest) / float64(cpuUtil.Idle)) * float64(100))
-	cpuGuestNicePct.WithLabelValues(hostname, *subid).Set((float64(cpuUtil.GuestNice) / float64(cpuUtil.Idle)) * float64(100))
+	cpuCores.WithLabelValues(*product, hostname, *subid).Set(float64(getHostCPUs()))
+	cpuUtilPct.WithLabelValues(*product, hostname, *subid).Set((cpuInUse / float64(cpuUtil.Idle)) * float64(100))
+	cpuUserPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.User) / float64(cpuUtil.Idle)) * float64(100))
+	cpuSystemPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.System) / float64(cpuUtil.Idle)) * float64(100))
+	cpuIOWaitPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.IOWait) / float64(cpuUtil.Idle)) * float64(100))
+	cpuIRQPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.IRQ) / float64(cpuUtil.Idle)) * float64(100))
+	cpuSoftIRQPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.SoftIRQ) / float64(cpuUtil.Idle)) * float64(100))
+	cpuStealPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.Steal) / float64(cpuUtil.Idle)) * float64(100))
+	cpuGuestPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.Guest) / float64(cpuUtil.Idle)) * float64(100))
+	cpuGuestNicePct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.GuestNice) / float64(cpuUtil.Idle)) * float64(100))
 
 	return nil
 }
@@ -745,17 +798,22 @@ func gatherMemoryMetrics() error {
 		return err
 	}
 
+	product, err := config.GetProduct()
+	if err != nil {
+		return err
+	}
+
 	memory, err := getMeminfo()
 	if err != nil {
 		return err
 	}
 
-	memoryTotal.WithLabelValues(hostname, *subid).Set(float64(memory.MemTotal))
-	memoryFree.WithLabelValues(hostname, *subid).Set(float64(memory.MemFree))
-	memoryCached.WithLabelValues(hostname, *subid).Set(float64(memory.Cached))
-	memoryBuffered.WithLabelValues(hostname, *subid).Set(float64(memory.Buffers))
-	memorySwapTotal.WithLabelValues(hostname, *subid).Set(float64(memory.SwapTotal))
-	memorySwapFree.WithLabelValues(hostname, *subid).Set(float64(memory.SwapFree))
+	memoryTotal.WithLabelValues(*product, hostname, *subid).Set(float64(memory.MemTotal))
+	memoryFree.WithLabelValues(*product, hostname, *subid).Set(float64(memory.MemFree))
+	memoryCached.WithLabelValues(*product, hostname, *subid).Set(float64(memory.Cached))
+	memoryBuffered.WithLabelValues(*product, hostname, *subid).Set(float64(memory.Buffers))
+	memorySwapTotal.WithLabelValues(*product, hostname, *subid).Set(float64(memory.SwapTotal))
+	memorySwapFree.WithLabelValues(*product, hostname, *subid).Set(float64(memory.SwapFree))
 
 	return nil
 }
@@ -771,34 +829,39 @@ func gatherNICMetrics() error {
 		return err
 	}
 
+	product, err := config.GetProduct()
+	if err != nil {
+		return err
+	}
+
 	nicStats, err := getNICStats()
 	if err != nil {
 		return err
 	}
 
 	for i := range nicStats {
-		nicBytes.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].Bytes))
-		nicBytesTX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].BytesTX))
-		nicBytesRX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].BytesRX))
-		nicPackets.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].Packets))
-		nicPacketsTX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].PacketsTX))
-		nicPacketsRX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].PacketsRX))
-		nicErrors.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].Errors))
-		nicErrorsTX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].ErrorsTX))
-		nicErrorsRX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].ErrorsRX))
-		nicDrop.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].Drop))
-		nicDropTX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].DropTX))
-		nicDropRX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].DropRX))
-		nicFIFO.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].FIFO))
-		nicFIFOTX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].FIFOTX))
-		nicFIFORX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].FIFORX))
-		nicFrameRX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].FrameRX))
-		nicCollsTX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].CollsTX))
-		nicCompressed.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].Compressed))
-		nicCompressedTX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].CompressedTX))
-		nicCompressedRX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].CompressedRX))
-		nicCarrierTX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].CarrierTX))
-		nicMulticastRX.WithLabelValues(hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].MulticastRX))
+		nicBytes.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].Bytes))
+		nicBytesTX.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].BytesTX))
+		nicBytesRX.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].BytesRX))
+		nicPackets.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].Packets))
+		nicPacketsTX.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].PacketsTX))
+		nicPacketsRX.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].PacketsRX))
+		nicErrors.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].Errors))
+		nicErrorsTX.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].ErrorsTX))
+		nicErrorsRX.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].ErrorsRX))
+		nicDrop.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].Drop))
+		nicDropTX.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].DropTX))
+		nicDropRX.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].DropRX))
+		nicFIFO.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].FIFO))
+		nicFIFOTX.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].FIFOTX))
+		nicFIFORX.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].FIFORX))
+		nicFrameRX.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].FrameRX))
+		nicCollsTX.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].CollsTX))
+		nicCompressed.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].Compressed))
+		nicCompressedTX.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].CompressedTX))
+		nicCompressedRX.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].CompressedRX))
+		nicCarrierTX.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].CarrierTX))
+		nicMulticastRX.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].MulticastRX))
 	}
 
 	return nil

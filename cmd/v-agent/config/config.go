@@ -25,6 +25,7 @@ type Config struct {
 	Port          uint          `yaml:"port"`
 	Interval      uint          `yaml:"interval"`
 	SubID         string        `yaml:"subid"`
+	Product       string        `yaml:"product"`
 	Endpoint      string        `yaml:"endpoint"`
 	BasicAuthUser string        `yaml:"basic_auth_user"`
 	BasicAuthPass string        `yaml:"basic_auth_pass"`
@@ -104,6 +105,7 @@ func initCLI(config *Config) {
 	flag.StringVar(&config.ConfigFile, "config", "./config.yaml", "Path for the config.yaml configuration file")
 	flag.UintVar(&config.Interval, "interval", 60, "Metrics gather interval") //nolint
 	flag.StringVar(&config.SubID, "subid", "", "Subid")
+	flag.StringVar(&config.Product, "product", "", "Product")
 	flag.StringVar(&config.Endpoint, "endpoint", "http://localhost:8080", "Endpoint to remotely write metrics to")
 	flag.StringVar(&config.BasicAuthUser, "basic-auth-user", "", "Basic auth user")
 	flag.StringVar(&config.BasicAuthPass, "basic-auth-pass", "", "Basic auth password")
@@ -161,6 +163,7 @@ func initEnv(config *Config) error {
 	port := os.Getenv("PORT")
 	interval := os.Getenv("INTERVAL")
 	subid := os.Getenv("SUBID")
+	product := os.Getenv("PRODUCT")
 	endpoint := os.Getenv("ENDPOINT")
 	basicAuthUser := os.Getenv("BASIC_AUTH_USER")
 	basicAuthPass := os.Getenv("BASIC_AUTH_PASS")
@@ -189,6 +192,10 @@ func initEnv(config *Config) error {
 
 	if subid != "" {
 		config.SubID = subid
+	}
+
+	if product != "" {
+		config.Product = product
 	}
 
 	if endpoint != "" {
@@ -227,6 +234,12 @@ func checkConfig(config *Config) error {
 
 		log.Infof("setting subid to %s", *subid)
 		config.SubID = *subid
+	}
+
+	if config.Product == "" {
+		log.Info("product is not set, setting to \"unknown\"")
+
+		config.Product = "unknown"
 	}
 
 	if !strings.HasPrefix(config.Endpoint, "http") {

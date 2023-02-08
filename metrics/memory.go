@@ -46,7 +46,7 @@ func getMeminfo() (*MemInfo, error) {
 
 		splitted := strings.Fields(data)
 
-		for _ = range splitted {
+		for _ = range splitted { //nolint
 			if splitted[0] == "MemTotal:" {
 				val, err1 := strconv.ParseUint(splitted[1], 10, 64)
 

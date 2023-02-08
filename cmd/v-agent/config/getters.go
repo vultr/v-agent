@@ -37,6 +37,16 @@ func GetSubID() (*string, error) {
 	return &cfg.SubID, nil
 }
 
+// GetProduct returns underlying product name
+func GetProduct() (*string, error) {
+	cfg, err := GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return &cfg.Product, nil
+}
+
 // LoadAvgMetricCollectionEnabled returns true/false if load_avg metrics collection enabled
 func LoadAvgMetricCollectionEnabled() bool {
 	log := zap.L().Sugar()
