@@ -7,3 +7,6 @@ subid: ""
 endpoint: https://metrics.vultrlabs.com/api/v1/push
 basic_auth_user: vke
 basic_auth_pass: rQyJT8h6mbmNYaXE4RrxWReC
+metrics_config:
+  load_avg:
+    enabled: true

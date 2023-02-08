@@ -10,6 +10,7 @@ import (
 	dto "github.com/prometheus/client_model/go"
 	"github.com/vultr/v-agent/cmd/v-agent/config"
 	prompb "go.buf.build/grpc/go/prometheus/prometheus"
+	"go.uber.org/zap"
 )
 
 var (
@@ -82,8 +83,15 @@ func NewMetrics() {
 
 // Gather gathers updates metrics
 func Gather() error {
-	if err := gatherHostLoadavgMetrics(); err != nil {
-		return err
+	log := zap.L().Sugar()
+
+	if config.LoadAvgMetricCollectionEnabled() {
+		log.Info("Gathering load_avg metrics")
+		if err := gatherHostLoadavgMetrics(); err != nil {
+			return err
+		}
+	} else {
+		log.Info("Not gathering load_avg metrics")
 	}
 
 	return nil

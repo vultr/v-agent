@@ -20,18 +20,29 @@ var config *Config
 type Config struct {
 	ConfigFile string
 
-	Debug         bool   `yaml:"debug"`
-	Listen        string `yaml:"listen"`
-	Port          uint   `yaml:"port"`
-	Interval      uint   `yaml:"interval"`
-	SubID         string `yaml:"subid"`
-	Endpoint      string `yaml:"endpoint"`
-	BasicAuthUser string `yaml:"basic_auth_user"`
-	BasicAuthPass string `yaml:"basic_auth_pass"`
+	Debug         bool          `yaml:"debug"`
+	Listen        string        `yaml:"listen"`
+	Port          uint          `yaml:"port"`
+	Interval      uint          `yaml:"interval"`
+	SubID         string        `yaml:"subid"`
+	Endpoint      string        `yaml:"endpoint"`
+	BasicAuthUser string        `yaml:"basic_auth_user"`
+	BasicAuthPass string        `yaml:"basic_auth_pass"`
+	MetricsConfig MetricsConfig `yaml:"metrics_config"`
 
 	zapConfig *zap.Config
 	zapLogger *zap.Logger
 	zapSugar  *zap.SugaredLogger
+}
+
+// MetricsConfig contains metrics configuration
+type MetricsConfig struct {
+	LoadAvg LoadAvg `yaml:"load_avg"`
+}
+
+// LoadAvg configuration
+type LoadAvg struct {
+	Enabled bool `yaml:"enabled"`
 }
 
 // NewConfig returns a Config struct that can be used to reference configuration

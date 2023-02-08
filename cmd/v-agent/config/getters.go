@@ -3,6 +3,8 @@ package config
 
 import (
 	"errors"
+
+	"go.uber.org/zap"
 )
 
 var (
@@ -33,4 +35,17 @@ func GetSubID() (*string, error) {
 	}
 
 	return &cfg.SubID, nil
+}
+
+// LoadAvgMetricCollectionEnabled returns true/false if load_avg metrics collection enabled
+func LoadAvgMetricCollectionEnabled() bool {
+	log := zap.L().Sugar()
+
+	cfg, err := GetConfig()
+	if err != nil {
+		log.Error(err)
+		return true
+	}
+
+	return cfg.MetricsConfig.LoadAvg.Enabled
 }
