@@ -47,6 +47,16 @@ func GetProduct() (*string, error) {
 	return &cfg.Product, nil
 }
 
+// GetDiskStatsFilter returns the regex for the disk stats filter
+func GetDiskStatsFilter() (*string, error) {
+	cfg, err := GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return &cfg.MetricsConfig.DiskStats.Filter, nil
+}
+
 // LoadAvgMetricCollectionEnabled returns true/false if load_avg metrics collection enabled
 func LoadAvgMetricCollectionEnabled() bool {
 	log := zap.L().Sugar()
@@ -97,4 +107,17 @@ func NICMetricCollectionEnabled() bool {
 	}
 
 	return cfg.MetricsConfig.NIC.Enabled
+}
+
+// DiskStatsMetricCollectionEnabled returns true/false if memory diskstats collection enabled
+func DiskStatsMetricCollectionEnabled() bool {
+	log := zap.L().Sugar()
+
+	cfg, err := GetConfig()
+	if err != nil {
+		log.Error(err)
+		return true
+	}
+
+	return cfg.MetricsConfig.DiskStats.Enabled
 }

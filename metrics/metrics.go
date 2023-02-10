@@ -64,6 +64,23 @@ var (
 	nicCompressedRX *prometheus.GaugeVec
 	nicCarrierTX    *prometheus.GaugeVec
 	nicMulticastRX  *prometheus.GaugeVec
+
+	// disk metrics
+	diskStatsReads                  *prometheus.GaugeVec
+	diskStatsReadsMerged            *prometheus.GaugeVec
+	diskStatsSectorsRead            *prometheus.GaugeVec
+	diskStatsMillisecondsReading    *prometheus.GaugeVec
+	diskStatsWritesCompleted        *prometheus.GaugeVec
+	diskStatsWritesMerged           *prometheus.GaugeVec
+	diskStatsSectorsWritten         *prometheus.GaugeVec
+	diskStatsMillisecondsWriting    *prometheus.GaugeVec
+	diskStatsIOsInProgress          *prometheus.GaugeVec
+	diskStatsMillisecondsInIOs      *prometheus.GaugeVec
+	diskStatsWeightedIOsInMS        *prometheus.GaugeVec
+	diskStatsDiscards               *prometheus.GaugeVec
+	diskStatsDiscardsMerged         *prometheus.GaugeVec
+	diskStatsSectorsDiscarded       *prometheus.GaugeVec
+	diskStatsMillisecondsDiscarding *prometheus.GaugeVec
 )
 
 // NewMetrics initializes metrics
@@ -610,6 +627,188 @@ func NewMetrics() {
 		},
 	)
 
+	// disk stats
+	diskStatsReads = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_disk_stats_read",
+			Help: "disk stats: read",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"device",
+		},
+	)
+	diskStatsReadsMerged = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_disk_stats_reads_merged",
+			Help: "disk stats: merged reads",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"device",
+		},
+	)
+	diskStatsSectorsRead = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_disk_stats_sectors_read",
+			Help: "disk stats: sectors",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"device",
+		},
+	)
+	diskStatsMillisecondsReading = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_disk_stats_ms_reading",
+			Help: "disk stats: milliseconds reading",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"device",
+		},
+	)
+	diskStatsWritesCompleted = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_disk_stats_writes_completed",
+			Help: "disk stats: writes completed",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"device",
+		},
+	)
+	diskStatsWritesMerged = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_disk_stats_writes_merged",
+			Help: "disk stats: writes merged",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"device",
+		},
+	)
+	diskStatsSectorsWritten = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_disk_stats_sectors_written",
+			Help: "disk stats: sectors written",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"device",
+		},
+	)
+	diskStatsMillisecondsWriting = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_disk_stats_milliseconds_writing",
+			Help: "disk stats: milliseconds writing",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"device",
+		},
+	)
+	diskStatsIOsInProgress = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_disk_stats_io_ip",
+			Help: "disk stats: IO in progress",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"device",
+		},
+	)
+	diskStatsMillisecondsInIOs = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_disk_stats_millseconds_in_io",
+			Help: "disk stats: milliseconds in IO",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"device",
+		},
+	)
+	diskStatsWeightedIOsInMS = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_disk_stats_weighted_io_in_ms",
+			Help: "disk stats: weighted IOs in milliseconds",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"device",
+		},
+	)
+	diskStatsDiscards = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_disk_stats_discards",
+			Help: "disk stats: discards",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"device",
+		},
+	)
+	diskStatsDiscardsMerged = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_disk_stats_discards_merged",
+			Help: "disk stats: merged discards",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"device",
+		},
+	)
+	diskStatsSectorsDiscarded = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_disk_stats_sectors_discarded",
+			Help: "disk stats: sectors discarded",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"device",
+		},
+	)
+	diskStatsMillisecondsDiscarding = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_disk_stats_milliseconds_discarding",
+			Help: "disk stats: milliseconds discarding",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"device",
+		},
+	)
+
 }
 
 // Gather gathers updates metrics
@@ -650,6 +849,15 @@ func Gather() error {
 		}
 	} else {
 		log.Info("Not gathering nic metrics")
+	}
+
+	if config.DiskStatsMetricCollectionEnabled() {
+		log.Info("Gathering disk stats metrics")
+		if err := gatherDiskMetrics(); err != nil {
+			return err
+		}
+	} else {
+		log.Info("Not gathering disk stats metrics")
 	}
 
 	return nil
@@ -862,6 +1070,48 @@ func gatherNICMetrics() error {
 		nicCompressedRX.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].CompressedRX))
 		nicCarrierTX.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].CarrierTX))
 		nicMulticastRX.WithLabelValues(*product, hostname, *subid, nicStats[i].Interface).Set(float64(nicStats[i].MulticastRX))
+	}
+
+	return nil
+}
+
+func gatherDiskMetrics() error {
+	diskStats, err := getDiskStatsUtil()
+	if err != nil {
+		return err
+	}
+
+	hostname, err := os.Hostname()
+	if err != nil {
+		return err
+	}
+
+	subid, err := config.GetSubID()
+	if err != nil {
+		return err
+	}
+
+	product, err := config.GetProduct()
+	if err != nil {
+		return err
+	}
+
+	for i := range diskStats {
+		diskStatsReads.WithLabelValues(*product, hostname, *subid, diskStats[i].Device).Set(float64(diskStats[i].Reads))
+		diskStatsReadsMerged.WithLabelValues(*product, hostname, *subid, diskStats[i].Device).Set(float64(diskStats[i].ReadsMerged))
+		diskStatsSectorsRead.WithLabelValues(*product, hostname, *subid, diskStats[i].Device).Set(float64(diskStats[i].SectorsRead))
+		diskStatsMillisecondsReading.WithLabelValues(*product, hostname, *subid, diskStats[i].Device).Set(float64(diskStats[i].MillisecondsReading))
+		diskStatsWritesCompleted.WithLabelValues(*product, hostname, *subid, diskStats[i].Device).Set(float64(diskStats[i].WritesCompleted))
+		diskStatsWritesMerged.WithLabelValues(*product, hostname, *subid, diskStats[i].Device).Set(float64(diskStats[i].WritesMerged))
+		diskStatsSectorsWritten.WithLabelValues(*product, hostname, *subid, diskStats[i].Device).Set(float64(diskStats[i].SectorsWritten))
+		diskStatsMillisecondsWriting.WithLabelValues(*product, hostname, *subid, diskStats[i].Device).Set(float64(diskStats[i].MillisecondsWriting))
+		diskStatsIOsInProgress.WithLabelValues(*product, hostname, *subid, diskStats[i].Device).Set(float64(diskStats[i].IOsInProgress))
+		diskStatsMillisecondsInIOs.WithLabelValues(*product, hostname, *subid, diskStats[i].Device).Set(float64(diskStats[i].MillisecondsInIOs))
+		diskStatsWeightedIOsInMS.WithLabelValues(*product, hostname, *subid, diskStats[i].Device).Set(float64(diskStats[i].WeightedIOsInMS))
+		diskStatsDiscards.WithLabelValues(*product, hostname, *subid, diskStats[i].Device).Set(float64(diskStats[i].Discards))
+		diskStatsDiscardsMerged.WithLabelValues(*product, hostname, *subid, diskStats[i].Device).Set(float64(diskStats[i].DiscardsMerged))
+		diskStatsSectorsDiscarded.WithLabelValues(*product, hostname, *subid, diskStats[i].Device).Set(float64(diskStats[i].SectorsDiscarded))
+		diskStatsMillisecondsDiscarding.WithLabelValues(*product, hostname, *subid, diskStats[i].Device).Set(float64(diskStats[i].MillisecondsDiscarding))
 	}
 
 	return nil

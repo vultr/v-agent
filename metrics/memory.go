@@ -43,6 +43,9 @@ func getMeminfo() (*MemInfo, error) {
 		if err != nil && err != io.EOF {
 			return nil, err
 		}
+		if err == io.EOF {
+			break
+		}
 
 		splitted := strings.Fields(data)
 
@@ -96,10 +99,6 @@ func getMeminfo() (*MemInfo, error) {
 
 				meminfo.SwapFree = val * 1024
 			}
-		}
-
-		if err == io.EOF {
-			break
 		}
 	}
 

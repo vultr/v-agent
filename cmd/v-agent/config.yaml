@@ -17,3 +17,6 @@ metrics_config:
     enabled: true
   nic:
     enabled: true
+  disk_stats:
+    enabled: true
+    filter: "sr0" # regex
