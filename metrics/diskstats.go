@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/vultr/v-agent/cmd/v-agent/config"
+
 	"go.uber.org/zap"
 )
 
@@ -90,7 +91,6 @@ func getDiskStatsUtil() ([]*DiskStats, error) {
 }
 
 // getDiskStats reads /proc/diskstats
-// statistics including swap
 func getDiskStats() ([]*DiskStats, error) {
 	log := zap.L().Sugar()
 

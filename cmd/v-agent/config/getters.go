@@ -96,7 +96,7 @@ func MemoryMetricCollectionEnabled() bool {
 	return cfg.MetricsConfig.Memory.Enabled
 }
 
-// NICMetricCollectionEnabled returns true/false if memory nic collection enabled
+// NICMetricCollectionEnabled returns true/false if nic collection enabled
 func NICMetricCollectionEnabled() bool {
 	log := zap.L().Sugar()
 
@@ -109,7 +109,7 @@ func NICMetricCollectionEnabled() bool {
 	return cfg.MetricsConfig.NIC.Enabled
 }
 
-// DiskStatsMetricCollectionEnabled returns true/false if memory diskstats collection enabled
+// DiskStatsMetricCollectionEnabled returns true/false if diskstats collection enabled
 func DiskStatsMetricCollectionEnabled() bool {
 	log := zap.L().Sugar()
 
@@ -120,4 +120,17 @@ func DiskStatsMetricCollectionEnabled() bool {
 	}
 
 	return cfg.MetricsConfig.DiskStats.Enabled
+}
+
+// FileSystemMetricCollectionEnabled returns true/false if filesystem collection enabled
+func FileSystemMetricCollectionEnabled() bool {
+	log := zap.L().Sugar()
+
+	cfg, err := GetConfig()
+	if err != nil {
+		log.Error(err)
+		return true
+	}
+
+	return cfg.MetricsConfig.Filesystem.Enabled
 }

@@ -38,11 +38,12 @@ type Config struct {
 
 // MetricsConfig contains metrics configuration
 type MetricsConfig struct {
-	LoadAvg   LoadAvg   `yaml:"load_avg"`
-	CPU       CPU       `yaml:"cpu"`
-	Memory    Memory    `yaml:"memory"`
-	NIC       NIC       `yaml:"nic"`
-	DiskStats DiskStats `yaml:"disk_stats"`
+	LoadAvg    LoadAvg    `yaml:"load_avg"`
+	CPU        CPU        `yaml:"cpu"`
+	Memory     Memory     `yaml:"memory"`
+	NIC        NIC        `yaml:"nic"`
+	DiskStats  DiskStats  `yaml:"disk_stats"`
+	Filesystem Filesystem `yaml:"file_system"`
 }
 
 // LoadAvg configuration
@@ -69,6 +70,11 @@ type NIC struct {
 type DiskStats struct {
 	Enabled bool   `yaml:"enabled"`
 	Filter  string `yaml:"filter"`
+}
+
+// Filesystem configuration
+type Filesystem struct {
+	Enabled bool `yaml:"enabled"`
 }
 
 // NewConfig returns a Config struct that can be used to reference configuration

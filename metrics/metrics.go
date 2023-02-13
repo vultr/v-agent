@@ -81,6 +81,14 @@ var (
 	diskStatsDiscardsMerged         *prometheus.GaugeVec
 	diskStatsSectorsDiscarded       *prometheus.GaugeVec
 	diskStatsMillisecondsDiscarding *prometheus.GaugeVec
+
+	// filesystem metrics
+	fsInodes     *prometheus.GaugeVec
+	fsInodesUsed *prometheus.GaugeVec
+	fsInodesUtil *prometheus.GaugeVec
+	fsBytes      *prometheus.GaugeVec
+	fsBytesUsed  *prometheus.GaugeVec
+	fsBytesUtil  *prometheus.GaugeVec
 )
 
 // NewMetrics initializes metrics
@@ -809,6 +817,86 @@ func NewMetrics() {
 		},
 	)
 
+	// filesystem
+	fsInodes = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_fs_inodes",
+			Help: "filesystem inodes total",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"device",
+			"mount",
+		},
+	)
+	fsInodesUsed = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_fs_inodes_used",
+			Help: "filesystem inodes used",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"device",
+			"mount",
+		},
+	)
+	fsInodesUtil = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_fs_inodes_util",
+			Help: "filesystem inodes used percentage",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"device",
+			"mount",
+		},
+	)
+	fsBytes = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_fs_bytes",
+			Help: "filesystem bytes total",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"device",
+			"mount",
+		},
+	)
+	fsBytesUsed = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_fs_bytes_used",
+			Help: "filesystem bytes used",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"device",
+			"mount",
+		},
+	)
+	fsBytesUtil = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_fs_bytes_util",
+			Help: "filesystem bytes used percentage",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"device",
+			"mount",
+		},
+	)
+
 }
 
 // Gather gathers updates metrics
@@ -858,6 +946,15 @@ func Gather() error {
 		}
 	} else {
 		log.Info("Not gathering disk stats metrics")
+	}
+
+	if config.FileSystemMetricCollectionEnabled() {
+		log.Info("Gathering file system metrics")
+		if err := gatherFilesystemMetrics(); err != nil {
+			return err
+		}
+	} else {
+		log.Info("Not gathering file system metrics")
 	}
 
 	return nil
@@ -1112,6 +1209,39 @@ func gatherDiskMetrics() error {
 		diskStatsDiscardsMerged.WithLabelValues(*product, hostname, *subid, diskStats[i].Device).Set(float64(diskStats[i].DiscardsMerged))
 		diskStatsSectorsDiscarded.WithLabelValues(*product, hostname, *subid, diskStats[i].Device).Set(float64(diskStats[i].SectorsDiscarded))
 		diskStatsMillisecondsDiscarding.WithLabelValues(*product, hostname, *subid, diskStats[i].Device).Set(float64(diskStats[i].MillisecondsDiscarding))
+	}
+
+	return nil
+}
+
+func gatherFilesystemMetrics() error {
+	fsStats, err := getFilesystemUtil()
+	if err != nil {
+		return err
+	}
+
+	hostname, err := os.Hostname()
+	if err != nil {
+		return err
+	}
+
+	subid, err := config.GetSubID()
+	if err != nil {
+		return err
+	}
+
+	product, err := config.GetProduct()
+	if err != nil {
+		return err
+	}
+
+	for i := range fsStats {
+		fsInodes.WithLabelValues(*product, hostname, *subid, fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].Inodes))
+		fsInodesUsed.WithLabelValues(*product, hostname, *subid, fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].InodesUsed))
+		fsInodesUtil.WithLabelValues(*product, hostname, *subid, fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].InodesUtil))
+		fsBytes.WithLabelValues(*product, hostname, *subid, fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].BytesTotal))
+		fsBytesUsed.WithLabelValues(*product, hostname, *subid, fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].BytesUsed))
+		fsBytesUtil.WithLabelValues(*product, hostname, *subid, fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].BytesUtil))
 	}
 
 	return nil

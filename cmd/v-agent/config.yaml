@@ -20,3 +20,5 @@ metrics_config:
   disk_stats:
     enabled: true
     filter: "sr0" # regex
+  file_system:
+    enabled: true
