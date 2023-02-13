@@ -44,6 +44,7 @@ type MetricsConfig struct {
 	NIC        NIC        `yaml:"nic"`
 	DiskStats  DiskStats  `yaml:"disk_stats"`
 	Filesystem Filesystem `yaml:"file_system"`
+	Kubernetes Kubernetes `yaml:"kubernetes"`
 }
 
 // LoadAvg configuration
@@ -75,6 +76,13 @@ type DiskStats struct {
 // Filesystem configuration
 type Filesystem struct {
 	Enabled bool `yaml:"enabled"`
+}
+
+// Kubernetes config
+type Kubernetes struct {
+	Enabled    bool   `yaml:"enabled"`
+	Endpoint   string `yaml:"endpoint"`
+	Kubeconfig string `yaml:"kubeconfig"`
 }
 
 // NewConfig returns a Config struct that can be used to reference configuration
@@ -180,6 +188,7 @@ func initEnv(config *Config) error {
 	endpoint := os.Getenv("ENDPOINT")
 	basicAuthUser := os.Getenv("BASIC_AUTH_USER")
 	basicAuthPass := os.Getenv("BASIC_AUTH_PASS")
+	kubeconfig := os.Getenv("KUBECONFIG")
 
 	if listen != "" {
 		config.Listen = listen
@@ -221,6 +230,10 @@ func initEnv(config *Config) error {
 
 	if basicAuthPass != "" {
 		config.BasicAuthPass = basicAuthPass
+	}
+
+	if kubeconfig != "" {
+		config.MetricsConfig.Kubernetes.Kubeconfig = kubeconfig
 	}
 
 	return nil

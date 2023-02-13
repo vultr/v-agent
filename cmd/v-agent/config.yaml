@@ -22,3 +22,7 @@ metrics_config:
     filter: "sr0" # regex
   file_system:
     enabled: true
+  kubernetes:
+    enabled: true
+    endpoint: https://localhost:6443
+    kubeconfig: /var/lib/kubernetes/admin.kubeconfig

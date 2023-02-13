@@ -89,6 +89,9 @@ var (
 	fsBytes      *prometheus.GaugeVec
 	fsBytesUsed  *prometheus.GaugeVec
 	fsBytesUtil  *prometheus.GaugeVec
+
+	// kubernetes
+	kubeApiServerHealthz *prometheus.GaugeVec
 )
 
 // NewMetrics initializes metrics
@@ -897,6 +900,18 @@ func NewMetrics() {
 		},
 	)
 
+	// kubernetes
+	kubeApiServerHealthz = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_kube_apiserver_healthy",
+			Help: "kube-apiserver /healthz, 1 = healthy, 0 = not healthy",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+		},
+	)
 }
 
 // Gather gathers updates metrics
@@ -955,6 +970,15 @@ func Gather() error {
 		}
 	} else {
 		log.Info("Not gathering file system metrics")
+	}
+
+	if config.KubernetesMetricCollectionEnabled() {
+		log.Info("Gathering kubernetes metrics")
+		if err := gatherKubernetesMetrics(); err != nil {
+			return err
+		}
+	} else {
+		log.Info("Not gathering kubernetes metrics")
 	}
 
 	return nil
@@ -1243,6 +1267,41 @@ func gatherFilesystemMetrics() error {
 		fsBytesUsed.WithLabelValues(*product, hostname, *subid, fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].BytesUsed))
 		fsBytesUtil.WithLabelValues(*product, hostname, *subid, fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].BytesUtil))
 	}
+
+	return nil
+}
+
+func gatherKubernetesMetrics() error {
+	log := zap.L().Sugar()
+
+	hostname, err := os.Hostname()
+	if err != nil {
+		return err
+	}
+
+	subid, err := config.GetSubID()
+	if err != nil {
+		return err
+	}
+
+	product, err := config.GetProduct()
+	if err != nil {
+		return err
+	}
+
+	if err := DoKubeApiServerHealthCheck(); err != nil {
+		log.Error(err)
+
+		kubeApiServerHealthz.WithLabelValues(*product, hostname, *subid).Set(float64(0))
+
+		return nil
+	} else {
+		kubeApiServerHealthz.WithLabelValues(*product, hostname, *subid).Set(float64(1))
+	}
+
+	//if err := ProbeKubeApiServerMetrics(); err != nil {
+	//	return err
+	//}
 
 	return nil
 }

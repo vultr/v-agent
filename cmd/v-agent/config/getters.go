@@ -57,6 +57,16 @@ func GetDiskStatsFilter() (*string, error) {
 	return &cfg.MetricsConfig.DiskStats.Filter, nil
 }
 
+// GetKubeconfig returns path to kubeconfig
+func GetKubeconfig() (*string, error) {
+	cfg, err := GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return &cfg.MetricsConfig.Kubernetes.Kubeconfig, nil
+}
+
 // LoadAvgMetricCollectionEnabled returns true/false if load_avg metrics collection enabled
 func LoadAvgMetricCollectionEnabled() bool {
 	log := zap.L().Sugar()
@@ -133,4 +143,17 @@ func FileSystemMetricCollectionEnabled() bool {
 	}
 
 	return cfg.MetricsConfig.Filesystem.Enabled
+}
+
+// KubernetesMetricCollectionEnabled returns true/false if Kubernetes collection enabled
+func KubernetesMetricCollectionEnabled() bool {
+	log := zap.L().Sugar()
+
+	cfg, err := GetConfig()
+	if err != nil {
+		log.Error(err)
+		return true
+	}
+
+	return cfg.MetricsConfig.Kubernetes.Enabled
 }
