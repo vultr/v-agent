@@ -5,15 +5,15 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/vultr/v-agent/cmd/v-agent/config"
-
-	"github.com/levigross/grequests"
 )
 
 var (
@@ -29,6 +29,8 @@ type HealthResp struct {
 
 // DoEtcdHealthCheck probes /health and returns nil or ErrKubeApiServerUnhealthy, or some other error
 func DoEtcdHealthCheck() error {
+	var jsonResp HealthResp
+
 	caCert, err := config.GetEtcdCACert()
 	if err != nil {
 		return err
@@ -54,6 +56,7 @@ func DoEtcdHealthCheck() error {
 				RootCAs:      caCertPool,
 				Certificates: []tls.Certificate{certPair},
 			},
+			DisableKeepAlives: true, // very important, prevents connection pooling, which can leak connections
 		},
 		Timeout: 5 * time.Second,
 	}
@@ -63,17 +66,18 @@ func DoEtcdHealthCheck() error {
 		return err
 	}
 
-	resp, err := grequests.Get(fmt.Sprintf("%s/health", *endpoint),
-		&grequests.RequestOptions{
-			HTTPClient: client,
-		})
+	resp, err := client.Get(fmt.Sprintf("%s/health", *endpoint))
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close() //nolint
+
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
 
-	var jsonResp HealthResp
-
-	if err := resp.JSON(&jsonResp); err != nil {
+	if err := json.Unmarshal(data, &jsonResp); err != nil {
 		return err
 	}
 
@@ -111,6 +115,7 @@ func ProbeEtcdMetrics() ([]byte, error) {
 				RootCAs:      caCertPool,
 				Certificates: []tls.Certificate{certPair},
 			},
+			DisableKeepAlives: true, // very important, prevents connection pooling, which can leak connections
 		},
 		Timeout: 5 * time.Second,
 	}
@@ -120,15 +125,18 @@ func ProbeEtcdMetrics() ([]byte, error) {
 		return nil, err
 	}
 
-	resp, err := grequests.Get(fmt.Sprintf("%s/metrics", *endpoint),
-		&grequests.RequestOptions{
-			HTTPClient: client,
-		})
+	resp, err := client.Get(fmt.Sprintf("%s/metrics", *endpoint))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close() //nolint
+
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	return resp.Bytes(), nil
+	return data, nil
 }
 
 // ScrapeEtcdMetrics scrapes kube-apiserver /metrics endpoint and remote writes the metrics
