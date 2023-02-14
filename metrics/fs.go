@@ -11,7 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// mounts from /proc/mounts
+// Mounts from /proc/mounts
 type Mounts struct {
 	Device    string
 	Mount     string
@@ -21,6 +21,7 @@ type Mounts struct {
 	BootCheck bool
 }
 
+// FilesystemStats stats
 type FilesystemStats struct {
 	Device     string
 	Mount      string
@@ -65,11 +66,11 @@ func getFilesystemUtil() ([]*FilesystemStats, error) {
 			Inodes:     df.Files,
 			InodesFree: df.Ffree,
 			InodesUsed: df.Files - df.Ffree,
-			InodesUtil: float64(((float64(df.Files) - float64(df.Ffree)) / float64(df.Files)) * 100),
+			InodesUtil: ((float64(df.Files) - float64(df.Ffree)) / float64(df.Files)) * 100,
 			BytesTotal: uint64(df.Bsize) * totalBlocks,
 			BytesFree:  uint64(df.Bsize) * freeBlocks,
 			BytesUsed:  bytesUsed,
-			BytesUtil:  float64(float64(bytesUsed) / (float64(df.Bsize) * float64(totalBlocks)) * 100),
+			BytesUtil:  float64(bytesUsed) / (float64(df.Bsize) * float64(totalBlocks)) * 100,
 		})
 	}
 
@@ -87,7 +88,7 @@ func getMounts() ([]*Mounts, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer mountsFD.Close()
+	defer mountsFD.Close() //nolint
 
 	reader := bufio.NewReader(mountsFD)
 
@@ -103,7 +104,7 @@ func getMounts() ([]*Mounts, error) {
 		}
 
 		splitted := strings.Fields(data)
-		if len(splitted) != 6 {
+		if len(splitted) != 6 { //nolint
 			break
 		}
 

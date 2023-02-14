@@ -103,7 +103,7 @@ func getDiskStats() ([]*DiskStats, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer procDiskStatsFD.Close()
+	defer procDiskStatsFD.Close() //nolint
 
 	reader := bufio.NewReader(procDiskStatsFD)
 
@@ -126,7 +126,7 @@ func getDiskStats() ([]*DiskStats, error) {
 		}
 
 		splitted := strings.Fields(data)
-		if len(splitted) != 18 {
+		if len(splitted) != 18 { //nolint
 			break
 		}
 

@@ -52,7 +52,7 @@ func getProcStat() (*ProcStatCPU, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer procStat.Close()
+	defer procStat.Close() //nolint
 
 	reader := bufio.NewReader(procStat)
 

@@ -13,12 +13,12 @@ import (
 )
 
 var (
-	// ErrKubeApiServerUnhealthy returned if response is not "ok" from /healthz
-	ErrKubeApiServerUnhealthy = errors.New("kube-apiserver unhealthy")
+	// ErrKubeAPIServerUnhealthy returned if response is not "ok" from /healthz
+	ErrKubeAPIServerUnhealthy = errors.New("kube-apiserver unhealthy")
 )
 
-// DoKubeApiServerHealthCheck probes /healthz and returns nil or ErrKubeApiServerUnhealthy, or some other error
-func DoKubeApiServerHealthCheck() error {
+// DoKubeAPIServerHealthCheck probes /healthz and returns nil or ErrKubeAPIServerUnhealthy, or some other error
+func DoKubeAPIServerHealthCheck() error {
 	kubeconfig, err := config.GetKubeconfig()
 	if err != nil {
 		return err
@@ -41,13 +41,13 @@ func DoKubeApiServerHealthCheck() error {
 
 	if string(content) == "ok" {
 		return nil
-	} else {
-		return ErrKubeApiServerUnhealthy
 	}
+
+	return ErrKubeAPIServerUnhealthy
 }
 
-// ProbeKubeApiServerMetrics probes /metrics from kube-apiserver
-func ProbeKubeApiServerMetrics() ([]byte, error) {
+// ProbeKubeAPIServerMetrics probes /metrics from kube-apiserver
+func ProbeKubeAPIServerMetrics() ([]byte, error) {
 	kubeconfig, err := config.GetKubeconfig()
 	if err != nil {
 		return nil, err
@@ -63,7 +63,7 @@ func ProbeKubeApiServerMetrics() ([]byte, error) {
 		return nil, err
 	}
 
-	content, err := clientset.Discovery().RESTClient().Get().Timeout(5 * time.Second).AbsPath("/metrics").DoRaw(context.TODO())
+	content, err := clientset.Discovery().RESTClient().Get().Timeout(5 * time.Second).AbsPath("/metrics").DoRaw(context.TODO()) //nolint
 	if err != nil {
 		return nil, err
 	}
@@ -71,19 +71,19 @@ func ProbeKubeApiServerMetrics() ([]byte, error) {
 	return content, nil
 }
 
-// ScrapeKubeApiServerMetrics scrapes kube-apiserver /metrics endpoint and remote writes the metrics
-func ScrapeKubeApiServerMetrics() error {
-	kApiserverResp, err := ProbeKubeApiServerMetrics()
+// ScrapeKubeAPIServerMetrics scrapes kube-apiserver /metrics endpoint and remote writes the metrics
+func ScrapeKubeAPIServerMetrics() error {
+	apiserverResp, err := ProbeKubeAPIServerMetrics()
 	if err != nil {
 		return err
 	}
 
-	kApiserverMetrics, err := parseMetrics(kApiserverResp)
+	apiserverMetrics, err := parseMetrics(apiserverResp)
 	if err != nil {
 		return err
 	}
 
-	tsList := GetMetricsAsTimeSeries(kApiserverMetrics)
+	tsList := GetMetricsAsTimeSeries(apiserverMetrics)
 
 	cfg, err := config.GetConfig()
 	if err != nil {

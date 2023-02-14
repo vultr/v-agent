@@ -41,7 +41,7 @@ func getNICStats() ([]NICMetrics, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer procNetDev.Close()
+	defer procNetDev.Close() //nolint
 
 	reader := bufio.NewReader(procNetDev)
 
@@ -57,7 +57,7 @@ func getNICStats() ([]NICMetrics, error) {
 
 		splitted := strings.Fields(data)
 
-		if len(splitted) != 17 {
+		if len(splitted) != 17 { //nolint
 			continue
 		}
 

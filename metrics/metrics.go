@@ -93,7 +93,7 @@ var (
 	fsBytesUtil  *prometheus.GaugeVec
 
 	// kubernetes
-	kubeApiServerHealthz *prometheus.GaugeVec
+	kubeAPIServerHealthz *prometheus.GaugeVec
 
 	// etcd
 	etcdServerHealth *prometheus.GaugeVec
@@ -906,7 +906,7 @@ func NewMetrics() {
 	)
 
 	// kubernetes
-	kubeApiServerHealthz = promauto.NewGaugeVec(
+	kubeAPIServerHealthz = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "v_kube_apiserver_healthy",
 			Help: "kube-apiserver /healthz, 1 = healthy, 0 = not healthy",
@@ -1130,15 +1130,15 @@ func gatherCPUMetrics() error {
 	cpuInUse := float64(cpuUtil.User + cpuUtil.Nice + cpuUtil.System + cpuUtil.IOWait + cpuUtil.IRQ + cpuUtil.SoftIRQ + cpuUtil.Steal + cpuUtil.Guest + cpuUtil.GuestNice)
 
 	cpuCores.WithLabelValues(*product, hostname, *subid).Set(float64(getHostCPUs()))
-	cpuUtilPct.WithLabelValues(*product, hostname, *subid).Set((cpuInUse / float64(cpuUtil.Idle)) * float64(100))
-	cpuUserPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.User) / float64(cpuUtil.Idle)) * float64(100))
-	cpuSystemPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.System) / float64(cpuUtil.Idle)) * float64(100))
-	cpuIOWaitPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.IOWait) / float64(cpuUtil.Idle)) * float64(100))
-	cpuIRQPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.IRQ) / float64(cpuUtil.Idle)) * float64(100))
-	cpuSoftIRQPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.SoftIRQ) / float64(cpuUtil.Idle)) * float64(100))
-	cpuStealPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.Steal) / float64(cpuUtil.Idle)) * float64(100))
-	cpuGuestPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.Guest) / float64(cpuUtil.Idle)) * float64(100))
-	cpuGuestNicePct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.GuestNice) / float64(cpuUtil.Idle)) * float64(100))
+	cpuUtilPct.WithLabelValues(*product, hostname, *subid).Set((cpuInUse / float64(cpuUtil.Idle)) * float64(100))                        //nolint
+	cpuUserPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.User) / float64(cpuUtil.Idle)) * float64(100))           //nolint
+	cpuSystemPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.System) / float64(cpuUtil.Idle)) * float64(100))       //nolint
+	cpuIOWaitPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.IOWait) / float64(cpuUtil.Idle)) * float64(100))       //nolint
+	cpuIRQPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.IRQ) / float64(cpuUtil.Idle)) * float64(100))             //nolint
+	cpuSoftIRQPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.SoftIRQ) / float64(cpuUtil.Idle)) * float64(100))     //nolint
+	cpuStealPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.Steal) / float64(cpuUtil.Idle)) * float64(100))         //nolint
+	cpuGuestPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.Guest) / float64(cpuUtil.Idle)) * float64(100))         //nolint
+	cpuGuestNicePct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.GuestNice) / float64(cpuUtil.Idle)) * float64(100)) //nolint
 
 	return nil
 }
@@ -1289,10 +1289,10 @@ func gatherFilesystemMetrics() error {
 	for i := range fsStats {
 		fsInodes.WithLabelValues(*product, hostname, *subid, fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].Inodes))
 		fsInodesUsed.WithLabelValues(*product, hostname, *subid, fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].InodesUsed))
-		fsInodesUtil.WithLabelValues(*product, hostname, *subid, fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].InodesUtil))
+		fsInodesUtil.WithLabelValues(*product, hostname, *subid, fsStats[i].Device, fsStats[i].Mount).Set(fsStats[i].InodesUtil)
 		fsBytes.WithLabelValues(*product, hostname, *subid, fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].BytesTotal))
 		fsBytesUsed.WithLabelValues(*product, hostname, *subid, fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].BytesUsed))
-		fsBytesUtil.WithLabelValues(*product, hostname, *subid, fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].BytesUtil))
+		fsBytesUtil.WithLabelValues(*product, hostname, *subid, fsStats[i].Device, fsStats[i].Mount).Set(fsStats[i].BytesUtil)
 	}
 
 	return nil
@@ -1316,15 +1316,15 @@ func gatherKubernetesMetrics() error {
 		return err
 	}
 
-	if err := DoKubeApiServerHealthCheck(); err != nil {
+	if err := DoKubeAPIServerHealthCheck(); err != nil {
 		log.Error(err)
 
-		kubeApiServerHealthz.WithLabelValues(*product, hostname, *subid).Set(float64(0))
+		kubeAPIServerHealthz.WithLabelValues(*product, hostname, *subid).Set(float64(0))
 	} else {
-		kubeApiServerHealthz.WithLabelValues(*product, hostname, *subid).Set(float64(1))
+		kubeAPIServerHealthz.WithLabelValues(*product, hostname, *subid).Set(float64(1))
 	}
 
-	if err := ScrapeKubeApiServerMetrics(); err != nil {
+	if err := ScrapeKubeAPIServerMetrics(); err != nil {
 		return err
 	}
 

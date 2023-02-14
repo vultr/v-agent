@@ -31,7 +31,7 @@ func getMeminfo() (*MemInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer procMemInfoFD.Close()
+	defer procMemInfoFD.Close() //nolint
 
 	reader := bufio.NewReader(procMemInfoFD)
 

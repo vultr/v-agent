@@ -7,8 +7,8 @@ import (
 	"crypto/x509"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/vultr/v-agent/cmd/v-agent/config"
@@ -18,10 +18,10 @@ import (
 
 var (
 	// ErrEtcdUnhealthy returned if response is not "true" from /health
-	ErrEtcdUnhealthy = errors.New("kube-apiserver unhealthy")
+	ErrEtcdUnhealthy = errors.New("etcd unhealthy")
 )
 
-// HealthResp response for /health is marshalled to this
+// HealthResp response for /health is marshaled to this
 type HealthResp struct {
 	Health string `json:"health"`
 	Reason string `json:"reason"`
@@ -42,7 +42,7 @@ func DoEtcdHealthCheck() error {
 		return err
 	}
 
-	caCertData, _ := ioutil.ReadFile(*caCert)
+	caCertData, _ := os.ReadFile(*caCert)
 	caCertPool := x509.NewCertPool()
 	caCertPool.AppendCertsFromPEM(caCertData)
 
@@ -50,7 +50,7 @@ func DoEtcdHealthCheck() error {
 
 	client := &http.Client{
 		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{
+			TLSClientConfig: &tls.Config{ //nolint
 				RootCAs:      caCertPool,
 				Certificates: []tls.Certificate{certPair},
 			},
@@ -79,9 +79,9 @@ func DoEtcdHealthCheck() error {
 
 	if jsonResp.Health == "true" {
 		return nil
-	} else {
-		return ErrEtcdUnhealthy
 	}
+
+	return ErrEtcdUnhealthy
 }
 
 // ProbeEtcdMetrics probes /metrics from etcd
@@ -99,7 +99,7 @@ func ProbeEtcdMetrics() ([]byte, error) {
 		return nil, err
 	}
 
-	caCertData, _ := ioutil.ReadFile(*caCert)
+	caCertData, _ := os.ReadFile(*caCert)
 	caCertPool := x509.NewCertPool()
 	caCertPool.AppendCertsFromPEM(caCertData)
 
@@ -107,7 +107,7 @@ func ProbeEtcdMetrics() ([]byte, error) {
 
 	client := &http.Client{
 		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{
+			TLSClientConfig: &tls.Config{ //nolint
 				RootCAs:      caCertPool,
 				Certificates: []tls.Certificate{certPair},
 			},

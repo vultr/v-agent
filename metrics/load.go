@@ -29,7 +29,7 @@ func getLoadavg() (*Loadavg, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer loadavgFile.Close()
+	defer loadavgFile.Close() //nolint
 
 	reader := bufio.NewReader(loadavgFile)
 
@@ -41,7 +41,7 @@ func getLoadavg() (*Loadavg, error) {
 
 	splitData := strings.Split(data, " ")
 
-	if len(splitData) != 5 {
+	if len(splitData) != 5 { //nolint
 		return nil, fmt.Errorf("expect /proc/loadavg size to be length 5")
 	}
 
@@ -64,7 +64,7 @@ func getLoadavg() (*Loadavg, error) {
 
 	tasks := strings.Split(splitData[3], "/")
 
-	if len(tasks) != 2 {
+	if len(tasks) != 2 { //nolint
 		return nil, fmt.Errorf("expect /proc/loadavg tasks to be length 2")
 	}
 

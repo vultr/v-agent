@@ -6,6 +6,7 @@ import (
 )
 
 var (
+	// ErrConfigNotInitialized returned if the config is not initialized
 	ErrConfigNotInitialized = errors.New("config not initialized")
 )
 
@@ -18,6 +19,7 @@ func GetConfig() (*Config, error) {
 	return nil, ErrConfigNotInitialized
 }
 
+// GetMimirEndpoint returns the mimir endpoint
 func GetMimirEndpoint() string {
 	return config.MimirEndpoint
 }

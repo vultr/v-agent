@@ -86,6 +86,7 @@ type Kubernetes struct {
 	Kubeconfig string `yaml:"kubeconfig"`
 }
 
+// Etcd config
 type Etcd struct {
 	Enabled  bool   `yaml:"enabled"`
 	Endpoint string `yaml:"endpoint"`
