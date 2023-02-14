@@ -2,12 +2,14 @@
 package metrics
 
 import (
+	"bytes"
 	"os"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	dto "github.com/prometheus/client_model/go"
+	"github.com/prometheus/common/expfmt"
 	"github.com/vultr/v-agent/cmd/v-agent/config"
 	prompb "go.buf.build/grpc/go/prometheus/prometheus"
 	"go.uber.org/zap"
@@ -92,6 +94,9 @@ var (
 
 	// kubernetes
 	kubeApiServerHealthz *prometheus.GaugeVec
+
+	// etcd
+	etcdServerHealth *prometheus.GaugeVec
 )
 
 // NewMetrics initializes metrics
@@ -912,6 +917,19 @@ func NewMetrics() {
 			"subid",
 		},
 	)
+
+	// etcd
+	etcdServerHealth = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_etcd_healthy",
+			Help: "etcd /health, 1 = healthy, 0 = not healthy",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+		},
+	)
 }
 
 // Gather gathers updates metrics
@@ -979,6 +997,15 @@ func Gather() error {
 		}
 	} else {
 		log.Info("Not gathering kubernetes metrics")
+	}
+
+	if config.EtcdMetricCollectionEnabled() {
+		log.Info("Gathering etcd metrics")
+		if err := gatherEtcdMetrics(); err != nil {
+			return err
+		}
+	} else {
+		log.Info("Not gathering etcd metrics")
 	}
 
 	return nil
@@ -1293,15 +1320,200 @@ func gatherKubernetesMetrics() error {
 		log.Error(err)
 
 		kubeApiServerHealthz.WithLabelValues(*product, hostname, *subid).Set(float64(0))
-
-		return nil
 	} else {
 		kubeApiServerHealthz.WithLabelValues(*product, hostname, *subid).Set(float64(1))
 	}
 
-	//if err := ProbeKubeApiServerMetrics(); err != nil {
-	//	return err
-	//}
+	if err := ScrapeKubeApiServerMetrics(); err != nil {
+		return err
+	}
 
 	return nil
+}
+
+func gatherEtcdMetrics() error {
+	log := zap.L().Sugar()
+
+	hostname, err := os.Hostname()
+	if err != nil {
+		return err
+	}
+
+	subid, err := config.GetSubID()
+	if err != nil {
+		return err
+	}
+
+	product, err := config.GetProduct()
+	if err != nil {
+		return err
+	}
+
+	if err := DoEtcdHealthCheck(); err != nil {
+		log.Error(err)
+
+		etcdServerHealth.WithLabelValues(*product, hostname, *subid).Set(float64(0))
+	} else {
+		etcdServerHealth.WithLabelValues(*product, hostname, *subid).Set(float64(1))
+	}
+
+	if err := ScrapeEtcdMetrics(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func parseMetrics(data []byte) ([]*dto.MetricFamily, error) {
+	var parser expfmt.TextParser
+	var mf2 []*dto.MetricFamily
+
+	buf := bytes.NewBuffer(data)
+
+	mf, err := parser.TextToMetricFamilies(buf)
+	if err != nil {
+		return nil, err
+	}
+
+	// convert to workable type []*dto.MetricFamily
+	for _, v := range mf {
+		mf2 = append(mf2, v)
+	}
+
+	mf2, err = addLabels(mf2)
+	if err != nil {
+		return nil, err
+	}
+
+	return mf2, nil
+}
+
+// addLabels adds labels to metrics
+//
+// very important for scraped metrics, otherwise they'll be sent without essential labels (subid, etc)
+func addLabels(metrics []*dto.MetricFamily) ([]*dto.MetricFamily, error) {
+	hostname, err := os.Hostname()
+	if err != nil {
+		return nil, err
+	}
+
+	subid, err := config.GetSubID()
+	if err != nil {
+		return nil, err
+	}
+
+	product, err := config.GetProduct()
+	if err != nil {
+		return nil, err
+	}
+
+	hostnameLabel := "hostname"
+	subidLabel := "subid"
+	productLabel := "product"
+
+	for _, v := range metrics {
+		metricType := v.GetType()
+
+		for _, vv := range v.Metric {
+			switch metricType {
+			case dto.MetricType_COUNTER:
+				if vv.Counter == nil {
+					continue
+				}
+
+				vv.Label = append(vv.Label,
+					&dto.LabelPair{
+						Name:  &hostnameLabel,
+						Value: &hostname,
+					},
+					&dto.LabelPair{
+						Name:  &subidLabel,
+						Value: subid,
+					},
+					&dto.LabelPair{
+						Name:  &productLabel,
+						Value: product,
+					},
+				)
+			case dto.MetricType_GAUGE:
+				if vv.Gauge == nil {
+					continue
+				}
+
+				vv.Label = append(vv.Label,
+					&dto.LabelPair{
+						Name:  &hostnameLabel,
+						Value: &hostname,
+					},
+					&dto.LabelPair{
+						Name:  &subidLabel,
+						Value: subid,
+					},
+					&dto.LabelPair{
+						Name:  &productLabel,
+						Value: product,
+					},
+				)
+			case dto.MetricType_UNTYPED:
+				if vv.Untyped == nil {
+					continue
+				}
+
+				vv.Label = append(vv.Label,
+					&dto.LabelPair{
+						Name:  &hostnameLabel,
+						Value: &hostname,
+					},
+					&dto.LabelPair{
+						Name:  &subidLabel,
+						Value: subid,
+					},
+					&dto.LabelPair{
+						Name:  &productLabel,
+						Value: product,
+					},
+				)
+			case dto.MetricType_SUMMARY:
+				if vv.Summary == nil {
+					continue
+				}
+
+				vv.Label = append(vv.Label,
+					&dto.LabelPair{
+						Name:  &hostnameLabel,
+						Value: &hostname,
+					},
+					&dto.LabelPair{
+						Name:  &subidLabel,
+						Value: subid,
+					},
+					&dto.LabelPair{
+						Name:  &productLabel,
+						Value: product,
+					},
+				)
+			case dto.MetricType_HISTOGRAM:
+				if vv.Histogram == nil {
+					continue
+				}
+
+				vv.Label = append(vv.Label,
+					&dto.LabelPair{
+						Name:  &hostnameLabel,
+						Value: &hostname,
+					},
+					&dto.LabelPair{
+						Name:  &subidLabel,
+						Value: subid,
+					},
+					&dto.LabelPair{
+						Name:  &productLabel,
+						Value: product,
+					},
+				)
+			}
+		}
+	}
+
+	return metrics, nil
 }

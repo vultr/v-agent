@@ -67,6 +67,46 @@ func GetKubeconfig() (*string, error) {
 	return &cfg.MetricsConfig.Kubernetes.Kubeconfig, nil
 }
 
+// GetEtcdEndpoint returns etcd endpoint
+func GetEtcdEndpoint() (*string, error) {
+	cfg, err := GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return &cfg.MetricsConfig.Etcd.Endpoint, nil
+}
+
+// GetEtcdCACert returns path to cacert
+func GetEtcdCACert() (*string, error) {
+	cfg, err := GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return &cfg.MetricsConfig.Etcd.CACert, nil
+}
+
+// GetEtcdClientCert returns path to client cert
+func GetEtcdClientCert() (*string, error) {
+	cfg, err := GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return &cfg.MetricsConfig.Etcd.Cert, nil
+}
+
+// GetEtcdClientKey returns path to client key
+func GetEtcdClientKey() (*string, error) {
+	cfg, err := GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return &cfg.MetricsConfig.Etcd.Key, nil
+}
+
 // LoadAvgMetricCollectionEnabled returns true/false if load_avg metrics collection enabled
 func LoadAvgMetricCollectionEnabled() bool {
 	log := zap.L().Sugar()
@@ -156,4 +196,17 @@ func KubernetesMetricCollectionEnabled() bool {
 	}
 
 	return cfg.MetricsConfig.Kubernetes.Enabled
+}
+
+// EtcdMetricCollectionEnabled returns true/false if Etcd collection enabled
+func EtcdMetricCollectionEnabled() bool {
+	log := zap.L().Sugar()
+
+	cfg, err := GetConfig()
+	if err != nil {
+		log.Error(err)
+		return true
+	}
+
+	return cfg.MetricsConfig.Etcd.Enabled
 }

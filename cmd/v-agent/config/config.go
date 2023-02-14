@@ -45,6 +45,7 @@ type MetricsConfig struct {
 	DiskStats  DiskStats  `yaml:"disk_stats"`
 	Filesystem Filesystem `yaml:"file_system"`
 	Kubernetes Kubernetes `yaml:"kubernetes"`
+	Etcd       Etcd       `yaml:"etcd"`
 }
 
 // LoadAvg configuration
@@ -83,6 +84,14 @@ type Kubernetes struct {
 	Enabled    bool   `yaml:"enabled"`
 	Endpoint   string `yaml:"endpoint"`
 	Kubeconfig string `yaml:"kubeconfig"`
+}
+
+type Etcd struct {
+	Enabled  bool   `yaml:"enabled"`
+	Endpoint string `yaml:"endpoint"`
+	CACert   string `yaml:"cacert"`
+	Cert     string `yaml:"cert"`
+	Key      string `yaml:"key"`
 }
 
 // NewConfig returns a Config struct that can be used to reference configuration

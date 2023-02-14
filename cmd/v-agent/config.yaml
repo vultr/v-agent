@@ -26,3 +26,9 @@ metrics_config:
     enabled: true
     endpoint: https://localhost:6443
     kubeconfig: /var/lib/kubernetes/admin.kubeconfig
+  etcd:
+    enabled: true
+    cacert: /var/lib/kubernetes/ca.pem
+    cert: /var/lib/kubernetes/kubernetes.pem
+    key: /var/lib/kubernetes/kubernetes-key.pem
+    endpoint: https://10.1.96.3:2379 # /metrics

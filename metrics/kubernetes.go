@@ -4,7 +4,7 @@ package metrics
 import (
 	"context"
 	"errors"
-	"fmt"
+	"time"
 
 	"github.com/vultr/v-agent/cmd/v-agent/config"
 
@@ -47,30 +47,68 @@ func DoKubeApiServerHealthCheck() error {
 }
 
 // ProbeKubeApiServerMetrics probes /metrics from kube-apiserver
-func ProbeKubeApiServerMetrics() error {
+func ProbeKubeApiServerMetrics() ([]byte, error) {
 	kubeconfig, err := config.GetKubeconfig()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	cfg, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
 	if err != nil {
-		panic(err.Error())
+		return nil, err
 	}
 
 	clientset, err := kubernetes.NewForConfig(cfg)
 	if err != nil {
-		panic(err.Error())
+		return nil, err
 	}
 
-	content, err := clientset.Discovery().RESTClient().Get().AbsPath("/metrics").DoRaw(context.TODO())
+	content, err := clientset.Discovery().RESTClient().Get().Timeout(5 * time.Second).AbsPath("/metrics").DoRaw(context.TODO())
+	if err != nil {
+		return nil, err
+	}
+
+	return content, nil
+}
+
+// ScrapeKubeApiServerMetrics scrapes kube-apiserver /metrics endpoint and remote writes the metrics
+func ScrapeKubeApiServerMetrics() error {
+	kApiserverResp, err := ProbeKubeApiServerMetrics()
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("%s\n", content)
+	kApiserverMetrics, err := parseMetrics(kApiserverResp)
+	if err != nil {
+		return err
+	}
 
-	// TODO: Parse content and turn the metrics into something to send with remote write
+	tsList := GetMetricsAsTimeSeries(kApiserverMetrics)
+
+	cfg, err := config.GetConfig()
+	if err != nil {
+		return err
+	}
+
+	var ba *BasicAuth
+	if cfg.BasicAuthUser != "" && cfg.BasicAuthPass != "" {
+		ba = &BasicAuth{
+			Username: cfg.BasicAuthUser,
+			Password: cfg.BasicAuthPass,
+		}
+	}
+
+	wc, err := NewWriteClient(cfg.Endpoint, &HTTPConfig{
+		Timeout:   5 * time.Second,
+		BasicAuth: ba,
+	})
+	if err != nil {
+		return err
+	}
+
+	if err := wc.Store(context.Background(), tsList); err != nil {
+		return err
+	}
 
 	return nil
 }
