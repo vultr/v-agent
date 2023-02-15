@@ -18,7 +18,8 @@ import (
 )
 
 const (
-	name string = "v-agent"
+	name    string = "v-agent"
+	version string = "v0.0.0"
 )
 
 func main() {
@@ -39,6 +40,8 @@ func main() {
 	}
 
 	log := zap.L().Sugar()
+
+	log.Infof("version: %s", version)
 
 	e, err := api.NewExporterAPI(cfg.Listen, cfg.Port)
 	if err != nil {

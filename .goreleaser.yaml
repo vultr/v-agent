@@ -1,0 +1,52 @@
+before:
+  hooks:
+    - go mod download
+    - go generate ./...
+
+builds:
+  - id: v-agent
+    main: ./cmd/v-agent/main.go
+    binary: v-agent
+    env:
+    - CGO_ENABLED=0
+    mod_timestamp: '{{ .CommitTimestamp }}'
+    flags:
+      - -trimpath #removes all file system paths from the compiled executable
+      - -ldflags
+      - '-s -w'
+    goos:
+      - linux
+    goarch:
+      - amd64
+
+archives:
+  - id: v-agent
+    builds:
+      - v-agent
+    format: zip
+    files:
+      - README.md
+      - src: cmd/v-agent/config.yaml
+        strip_parent: true
+    name_template: 'v-agent_v{{ .Version }}_{{ .Os }}_{{ .Arch }}'
+
+checksum:
+  name_template: 'checksums.txt'
+  algorithm: sha256
+  ids:
+    - v-agent
+
+blobs:
+  - provider: s3
+    endpoint: https://ewr1.vultrobjects.com
+    region: us-east-1
+    bucket: vke-bins # testasdfasdf
+    ids:
+      - v-agent
+    folder: "v-agent/v{{.Version}}/"
+
+release:
+  draft: false
+
+changelog:
+  skip: false

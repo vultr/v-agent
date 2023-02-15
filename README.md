@@ -20,6 +20,27 @@ Authentication is passive via headers; if the headers are missing or invalid the
 - `v-agent`: Gathers and sends metrics to `v-proxy`.
 - `v-proxy`: Receives metrics from `v-agent` and sends to mimir.
 
+### `v-agent`
+`v-agent` is a prometheus compatible remote write client.
+
+All metrics that are specifically created with `v-agent` are prefixed with `v_`. Scraped metrics are not modified other than the addition of labels.
+
+System metrics that are collected:
+- CPU utilization: system, user, steal, utilization, etc.
+- Memory utilization: cached, buffered, utilization, etc.
+- Load average: 1, 5, 15, and tasks
+- Disk stats: writes/reads, etc.
+- Filesystem stats: bytes, inodes, utilization
+- NIC: bytes, packets, errors, etc.
+
+Kubernetes:
+- `v_kube_apiserver_healthy` that is `1` (if healthy) or `0` if not healthy based on response from kube-apiserver `/healthz` endpoint.
+- Every metric from `/metrics`
+
+Etcd:
+- `v_etcd_healthy` that is `1` (if healthy) or `0` if not healthy based on response from etcd `/health` endpoint.
+- Every metric from `/metrics`
+
 ## Configuration
 Both have a `config.yaml` file. Both have CLI switches. Both configurations can be overridden with envionment variables.
 

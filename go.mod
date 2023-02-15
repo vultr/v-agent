@@ -1,6 +1,6 @@
 module github.com/vultr/v-agent
 
-go 1.19
+go 1.20
 
 require (
 	github.com/ansrivas/fiberprometheus/v2 v2.6.0
