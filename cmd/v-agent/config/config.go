@@ -2,6 +2,7 @@
 package config
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -12,6 +13,11 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/yaml.v3"
+)
+
+var (
+	// ErrNotVultrVendor returned if the bios manufacturer is not "Vultr"
+	ErrNotVultrVendor = errors.New("not vultr vendor")
 )
 
 var config *Config
@@ -131,8 +137,8 @@ func NewConfig(name string) (*Config, error) {
 // initCLI initializes CLI switches
 func initCLI(config *Config) {
 	flag.BoolVar(&config.Debug, "debug", true, "Debug output")
-	flag.StringVar(&config.Listen, "listen", "0.0.0.0", "Listen address")
-	flag.UintVar(&config.Port, "port", 8080, "Listen port") //nolint
+	flag.StringVar(&config.Listen, "listen", "127.0.0.1", "Listen address")
+	flag.UintVar(&config.Port, "port", 7091, "Listen port") //nolint
 	flag.StringVar(&config.ConfigFile, "config", "./config.yaml", "Path for the config.yaml configuration file")
 	flag.UintVar(&config.Interval, "interval", 60, "Metrics gather interval") //nolint
 	flag.StringVar(&config.SubID, "subid", "", "Subid")
@@ -251,6 +257,15 @@ func initEnv(config *Config) error {
 
 func checkConfig(config *Config) error {
 	log := zap.L().Sugar()
+
+	vendor, err := util.GetBIOSVendor()
+	if err != nil {
+		return err
+	}
+
+	if *vendor != "Vultr" {
+		return ErrNotVultrVendor
+	}
 
 	if config.Port > 65535 { //nolint
 		return fmt.Errorf("port: %d is not valid", config.Port)
