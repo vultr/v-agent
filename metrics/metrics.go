@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/collectors"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	dto "github.com/prometheus/client_model/go"
 	"github.com/prometheus/common/expfmt"
@@ -101,6 +102,10 @@ var (
 
 // NewMetrics initializes metrics
 func NewMetrics() {
+	prometheus.Unregister(collectors.NewGoCollector())
+	prometheus.Unregister(collectors.NewBuildInfoCollector())
+	prometheus.Unregister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
+
 	// load avg metrics
 	loadavgLoad1 = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
