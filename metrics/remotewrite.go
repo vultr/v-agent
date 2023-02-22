@@ -91,7 +91,6 @@ func (c *WriteClient) Store(ctx context.Context, series []*prompb.TimeSeries) er
 	req.Header.Set("Content-Encoding", "snappy")
 	req.Header.Set("Content-Type", "application/x-protobuf")
 	req.Header.Set("X-Prometheus-Remote-Write-Version", "0.1.0")
-	req.Header.Set("X-Scope-OrgID", "test")
 
 	resp, err := c.hc.Do(req)
 	if err != nil {
