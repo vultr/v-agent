@@ -19,7 +19,7 @@ import (
 
 const (
 	name    string = "v-agent"
-	version string = "v0.0.4"
+	version string = "v0.0.5"
 )
 
 func main() {
@@ -107,7 +107,13 @@ func main() {
 						continue
 					}
 
-					tsList := metrics.GetMetricsAsTimeSeries(mf)
+					mf2, err := metrics.AddLabels(mf)
+					if err != nil {
+						log.Error(err)
+						continue
+					}
+
+					tsList := metrics.GetMetricsAsTimeSeries(mf2)
 
 					var ba *metrics.BasicAuth
 					if cfg.BasicAuthUser != "" && cfg.BasicAuthPass != "" {

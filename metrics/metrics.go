@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/collectors"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	dto "github.com/prometheus/client_model/go"
 	"github.com/prometheus/common/expfmt"
@@ -102,9 +101,9 @@ var (
 
 // NewMetrics initializes metrics
 func NewMetrics() {
-	prometheus.Unregister(collectors.NewGoCollector())
-	prometheus.Unregister(collectors.NewBuildInfoCollector())
-	prometheus.Unregister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
+	//prometheus.Unregister(collectors.NewGoCollector())
+	//prometheus.Unregister(collectors.NewBuildInfoCollector())
+	//prometheus.Unregister(collectors.NewProcessCollector(collectors.//ProcessCollectorOpts{}))
 
 	// load avg metrics
 	loadavgLoad1 = promauto.NewGaugeVec(
@@ -1385,7 +1384,7 @@ func parseMetrics(data []byte) ([]*dto.MetricFamily, error) {
 		mf2 = append(mf2, v)
 	}
 
-	mf2, err = addLabels(mf2)
+	mf2, err = AddLabels(mf2)
 	if err != nil {
 		return nil, err
 	}
@@ -1393,10 +1392,10 @@ func parseMetrics(data []byte) ([]*dto.MetricFamily, error) {
 	return mf2, nil
 }
 
-// addLabels adds labels to metrics
+// AddLabels adds labels to metrics
 //
 // very important for scraped metrics, otherwise they'll be sent without essential labels (subid, etc)
-func addLabels(metrics []*dto.MetricFamily) ([]*dto.MetricFamily, error) {
+func AddLabels(metrics []*dto.MetricFamily) ([]*dto.MetricFamily, error) {
 	hostname, err := os.Hostname()
 	if err != nil {
 		return nil, err
@@ -1426,96 +1425,242 @@ func addLabels(metrics []*dto.MetricFamily) ([]*dto.MetricFamily, error) {
 					continue
 				}
 
-				vv.Label = append(vv.Label,
-					&dto.LabelPair{
-						Name:  &hostnameLabel,
-						Value: &hostname,
-					},
-					&dto.LabelPair{
-						Name:  &subidLabel,
-						Value: subid,
-					},
-					&dto.LabelPair{
-						Name:  &productLabel,
-						Value: product,
-					},
-				)
+				labels := vv.GetLabel()
+
+				hasHostname := false
+				hasSubid := false
+				hasProduct := false
+
+				for i := range labels {
+					switch *labels[i].Name {
+					case "hostname":
+						hasHostname = true
+					case "subid":
+						hasSubid = true
+					case "product":
+						hasProduct = true
+					}
+				}
+
+				if !hasHostname {
+					vv.Label = append(vv.Label,
+						&dto.LabelPair{
+							Name:  &hostnameLabel,
+							Value: &hostname,
+						},
+					)
+				}
+
+				if !hasSubid {
+					vv.Label = append(vv.Label,
+						&dto.LabelPair{
+							Name:  &subidLabel,
+							Value: subid,
+						},
+					)
+				}
+
+				if !hasProduct {
+					vv.Label = append(vv.Label,
+						&dto.LabelPair{
+							Name:  &productLabel,
+							Value: product,
+						},
+					)
+				}
+
 			case dto.MetricType_GAUGE:
 				if vv.Gauge == nil {
 					continue
 				}
 
-				vv.Label = append(vv.Label,
-					&dto.LabelPair{
-						Name:  &hostnameLabel,
-						Value: &hostname,
-					},
-					&dto.LabelPair{
-						Name:  &subidLabel,
-						Value: subid,
-					},
-					&dto.LabelPair{
-						Name:  &productLabel,
-						Value: product,
-					},
-				)
+				labels := vv.GetLabel()
+
+				hasHostname := false
+				hasSubid := false
+				hasProduct := false
+
+				for i := range labels {
+					switch *labels[i].Name {
+					case "hostname":
+						hasHostname = true
+					case "subid":
+						hasSubid = true
+					case "product":
+						hasProduct = true
+					}
+				}
+
+				if !hasHostname {
+					vv.Label = append(vv.Label,
+						&dto.LabelPair{
+							Name:  &hostnameLabel,
+							Value: &hostname,
+						},
+					)
+				}
+
+				if !hasSubid {
+					vv.Label = append(vv.Label,
+						&dto.LabelPair{
+							Name:  &subidLabel,
+							Value: subid,
+						},
+					)
+				}
+
+				if !hasProduct {
+					vv.Label = append(vv.Label,
+						&dto.LabelPair{
+							Name:  &productLabel,
+							Value: product,
+						},
+					)
+				}
 			case dto.MetricType_UNTYPED:
 				if vv.Untyped == nil {
 					continue
 				}
 
-				vv.Label = append(vv.Label,
-					&dto.LabelPair{
-						Name:  &hostnameLabel,
-						Value: &hostname,
-					},
-					&dto.LabelPair{
-						Name:  &subidLabel,
-						Value: subid,
-					},
-					&dto.LabelPair{
-						Name:  &productLabel,
-						Value: product,
-					},
-				)
+				labels := vv.GetLabel()
+
+				hasHostname := false
+				hasSubid := false
+				hasProduct := false
+
+				for i := range labels {
+					switch *labels[i].Name {
+					case "hostname":
+						hasHostname = true
+					case "subid":
+						hasSubid = true
+					case "product":
+						hasProduct = true
+					}
+				}
+
+				if !hasHostname {
+					vv.Label = append(vv.Label,
+						&dto.LabelPair{
+							Name:  &hostnameLabel,
+							Value: &hostname,
+						},
+					)
+				}
+
+				if !hasSubid {
+					vv.Label = append(vv.Label,
+						&dto.LabelPair{
+							Name:  &subidLabel,
+							Value: subid,
+						},
+					)
+				}
+
+				if !hasProduct {
+					vv.Label = append(vv.Label,
+						&dto.LabelPair{
+							Name:  &productLabel,
+							Value: product,
+						},
+					)
+				}
 			case dto.MetricType_SUMMARY:
 				if vv.Summary == nil {
 					continue
 				}
 
-				vv.Label = append(vv.Label,
-					&dto.LabelPair{
-						Name:  &hostnameLabel,
-						Value: &hostname,
-					},
-					&dto.LabelPair{
-						Name:  &subidLabel,
-						Value: subid,
-					},
-					&dto.LabelPair{
-						Name:  &productLabel,
-						Value: product,
-					},
-				)
+				labels := vv.GetLabel()
+
+				hasHostname := false
+				hasSubid := false
+				hasProduct := false
+
+				for i := range labels {
+					switch *labels[i].Name {
+					case "hostname":
+						hasHostname = true
+					case "subid":
+						hasSubid = true
+					case "product":
+						hasProduct = true
+					}
+				}
+
+				if !hasHostname {
+					vv.Label = append(vv.Label,
+						&dto.LabelPair{
+							Name:  &hostnameLabel,
+							Value: &hostname,
+						},
+					)
+				}
+
+				if !hasSubid {
+					vv.Label = append(vv.Label,
+						&dto.LabelPair{
+							Name:  &subidLabel,
+							Value: subid,
+						},
+					)
+				}
+
+				if !hasProduct {
+					vv.Label = append(vv.Label,
+						&dto.LabelPair{
+							Name:  &productLabel,
+							Value: product,
+						},
+					)
+				}
 			case dto.MetricType_HISTOGRAM:
 				if vv.Histogram == nil {
 					continue
 				}
 
-				vv.Label = append(vv.Label,
-					&dto.LabelPair{
-						Name:  &hostnameLabel,
-						Value: &hostname,
-					},
-					&dto.LabelPair{
-						Name:  &subidLabel,
-						Value: subid,
-					},
-					&dto.LabelPair{
-						Name:  &productLabel,
-						Value: product,
-					},
-				)
+				labels := vv.GetLabel()
+
+				hasHostname := false
+				hasSubid := false
+				hasProduct := false
+
+				for i := range labels {
+					switch *labels[i].Name {
+					case "hostname":
+						hasHostname = true
+					case "subid":
+						hasSubid = true
+					case "product":
+						hasProduct = true
+					}
+				}
+
+				if !hasHostname {
+					vv.Label = append(vv.Label,
+						&dto.LabelPair{
+							Name:  &hostnameLabel,
+							Value: &hostname,
+						},
+					)
+				}
+
+				if !hasSubid {
+					vv.Label = append(vv.Label,
+						&dto.LabelPair{
+							Name:  &subidLabel,
+							Value: subid,
+						},
+					)
+				}
+
+				if !hasProduct {
+					vv.Label = append(vv.Label,
+						&dto.LabelPair{
+							Name:  &productLabel,
+							Value: product,
+						},
+					)
+				}
 			}
 		}
 	}
