@@ -16,13 +16,30 @@ type ProcStatCPU struct {
 	User, Nice, System, Idle, IOWait, IRQ, SoftIRQ, Steal, Guest, GuestNice int
 }
 
+var prev ProcStatCPU
+
 func getCPUUtil() (*ProcStatCPU, error) {
 	cpuStat1, err := getProcStat()
 	if err != nil {
 		return nil, err
 	}
 
-	return cpuStat1, nil
+	stat := &ProcStatCPU{
+		User:      cpuStat1.User - prev.User,
+		Nice:      cpuStat1.Nice - prev.Nice,
+		System:    cpuStat1.System - prev.System,
+		Idle:      cpuStat1.Idle - prev.Idle,
+		IOWait:    cpuStat1.IOWait - prev.IOWait,
+		IRQ:       cpuStat1.IRQ - prev.IRQ,
+		SoftIRQ:   cpuStat1.SoftIRQ - prev.SoftIRQ,
+		Steal:     cpuStat1.Steal - prev.Steal,
+		Guest:     cpuStat1.Guest - prev.Guest,
+		GuestNice: cpuStat1.GuestNice - prev.GuestNice,
+	}
+
+	prev = *cpuStat1
+
+	return stat, nil
 }
 
 func getProcStat() (*ProcStatCPU, error) {
