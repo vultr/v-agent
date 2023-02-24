@@ -9,7 +9,6 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-	"time"
 )
 
 // ProcStatCPU container for CPU metrics
@@ -23,28 +22,7 @@ func getCPUUtil() (*ProcStatCPU, error) {
 		return nil, err
 	}
 
-	time.Sleep(1 * time.Second) // wait 1 second to capture another snapshot
-
-	cpuStat2, err := getProcStat()
-	if err != nil {
-		return nil, err
-	}
-
-	// calculate delta between cpuStat2/cpuStat1
-	deltaCPUStat := ProcStatCPU{
-		User:      cpuStat2.User - cpuStat1.User,
-		Nice:      cpuStat2.Nice - cpuStat1.Nice,
-		System:    cpuStat2.System - cpuStat1.System,
-		Idle:      cpuStat2.Idle - cpuStat1.Idle,
-		IOWait:    cpuStat2.IOWait - cpuStat1.IOWait,
-		IRQ:       cpuStat2.IRQ - cpuStat1.IRQ,
-		SoftIRQ:   cpuStat2.SoftIRQ - cpuStat1.SoftIRQ,
-		Steal:     cpuStat2.Steal - cpuStat1.Steal,
-		Guest:     cpuStat2.Guest - cpuStat1.Guest,
-		GuestNice: cpuStat2.GuestNice - cpuStat1.GuestNice,
-	}
-
-	return &deltaCPUStat, nil
+	return cpuStat1, nil
 }
 
 func getProcStat() (*ProcStatCPU, error) {

@@ -23,6 +23,16 @@ func GetConfig() (*Config, error) {
 	return nil, ErrConfigNotInitialized
 }
 
+// GetVersion returns application version
+func GetVersion() (*string, error) {
+	cfg, err := GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return &cfg.Version, nil
+}
+
 // GetSubID returns the subid
 func GetSubID() (*string, error) {
 	cfg, err := GetConfig()
