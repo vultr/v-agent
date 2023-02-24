@@ -16,6 +16,8 @@ import (
 )
 
 var (
+	vAgentVersion *prometheus.GaugeVec
+
 	// load avg metrics
 	loadavgLoad1        *prometheus.GaugeVec
 	loadavgLoad5        *prometheus.GaugeVec
@@ -26,6 +28,7 @@ var (
 	// cpu metrics
 	cpuCores        *prometheus.GaugeVec
 	cpuUtilPct      *prometheus.GaugeVec
+	cpuIdlePct      *prometheus.GaugeVec
 	cpuUserPct      *prometheus.GaugeVec
 	cpuSystemPct    *prometheus.GaugeVec
 	cpuIOWaitPct    *prometheus.GaugeVec
@@ -101,6 +104,19 @@ var (
 
 // NewMetrics initializes metrics
 func NewMetrics() {
+	vAgentVersion = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_agent_version",
+			Help: "the version of v-agent (metadata)",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"version",
+		},
+	)
+
 	// load avg metrics
 	loadavgLoad1 = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
@@ -179,6 +195,18 @@ func NewMetrics() {
 		prometheus.GaugeOpts{
 			Name: "v_cpu_util_pct",
 			Help: "utilization cpu percent",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+		},
+	)
+
+	cpuIdlePct = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_cpu_idle_pct",
+			Help: "idle cpu percent",
 		},
 		[]string{
 			"product",
@@ -936,6 +964,10 @@ func NewMetrics() {
 func Gather() error {
 	log := zap.L().Sugar()
 
+	if err := gatherMetadataMetrics(); err != nil {
+		return err
+	}
+
 	if config.LoadAvgMetricCollectionEnabled() {
 		log.Info("Gathering load_avg metrics")
 		if err := gatherLoadavgMetrics(); err != nil {
@@ -1076,6 +1108,32 @@ func GetMetricsAsTimeSeries(in []*dto.MetricFamily) []*prompb.TimeSeries {
 // Reset some metrics may need to be reset
 func Reset() {}
 
+func gatherMetadataMetrics() error {
+	hostname, err := os.Hostname()
+	if err != nil {
+		return err
+	}
+
+	subid, err := config.GetSubID()
+	if err != nil {
+		return err
+	}
+
+	product, err := config.GetProduct()
+	if err != nil {
+		return err
+	}
+
+	version, err := config.GetVersion()
+	if err != nil {
+		return err
+	}
+
+	vAgentVersion.WithLabelValues(*product, hostname, *subid, *version).Set(0)
+
+	return nil
+}
+
 func gatherLoadavgMetrics() error {
 	hostname, err := os.Hostname()
 	if err != nil {
@@ -1127,18 +1185,30 @@ func gatherCPUMetrics() error {
 		return err
 	}
 
-	cpuInUse := float64(cpuUtil.User + cpuUtil.Nice + cpuUtil.System + cpuUtil.IOWait + cpuUtil.IRQ + cpuUtil.SoftIRQ + cpuUtil.Steal + cpuUtil.Guest + cpuUtil.GuestNice)
+	cpuTotalTime := float64(cpuUtil.User + cpuUtil.Nice + cpuUtil.System + cpuUtil.Idle + cpuUtil.IOWait + cpuUtil.IRQ + cpuUtil.SoftIRQ + cpuUtil.Steal + cpuUtil.Guest + cpuUtil.GuestNice)
+
+	idleTime := float64(cpuUtil.Idle) / cpuTotalTime
+	inUseTime := 1 - idleTime
+	userTime := float64(cpuUtil.User) / cpuTotalTime
+	systemTime := float64(cpuUtil.System) / cpuTotalTime
+	iowaitTime := float64(cpuUtil.IOWait) / cpuTotalTime
+	irqTime := float64(cpuUtil.IRQ) / cpuTotalTime
+	sirqTime := float64(cpuUtil.SoftIRQ) / cpuTotalTime
+	stealTime := float64(cpuUtil.Steal) / cpuTotalTime
+	guestTime := float64(cpuUtil.Guest) / cpuTotalTime
+	guestNiceTime := float64(cpuUtil.GuestNice) / cpuTotalTime
 
 	cpuCores.WithLabelValues(*product, hostname, *subid).Set(float64(getHostCPUs()))
-	cpuUtilPct.WithLabelValues(*product, hostname, *subid).Set((cpuInUse / float64(cpuUtil.Idle)) * float64(100))                        //nolint
-	cpuUserPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.User) / float64(cpuUtil.Idle)) * float64(100))           //nolint
-	cpuSystemPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.System) / float64(cpuUtil.Idle)) * float64(100))       //nolint
-	cpuIOWaitPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.IOWait) / float64(cpuUtil.Idle)) * float64(100))       //nolint
-	cpuIRQPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.IRQ) / float64(cpuUtil.Idle)) * float64(100))             //nolint
-	cpuSoftIRQPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.SoftIRQ) / float64(cpuUtil.Idle)) * float64(100))     //nolint
-	cpuStealPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.Steal) / float64(cpuUtil.Idle)) * float64(100))         //nolint
-	cpuGuestPct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.Guest) / float64(cpuUtil.Idle)) * float64(100))         //nolint
-	cpuGuestNicePct.WithLabelValues(*product, hostname, *subid).Set((float64(cpuUtil.GuestNice) / float64(cpuUtil.Idle)) * float64(100)) //nolint
+	cpuUtilPct.WithLabelValues(*product, hostname, *subid).Set(inUseTime * float64(100))          //nolint
+	cpuIdlePct.WithLabelValues(*product, hostname, *subid).Set(idleTime * float64(100))           //nolint
+	cpuUserPct.WithLabelValues(*product, hostname, *subid).Set(userTime * float64(100))           //nolint
+	cpuSystemPct.WithLabelValues(*product, hostname, *subid).Set(systemTime * float64(100))       //nolint
+	cpuIOWaitPct.WithLabelValues(*product, hostname, *subid).Set(iowaitTime * float64(100))       //nolint
+	cpuIRQPct.WithLabelValues(*product, hostname, *subid).Set(irqTime * float64(100))             //nolint
+	cpuSoftIRQPct.WithLabelValues(*product, hostname, *subid).Set(sirqTime * float64(100))        //nolint
+	cpuStealPct.WithLabelValues(*product, hostname, *subid).Set(stealTime * float64(100))         //nolint
+	cpuGuestPct.WithLabelValues(*product, hostname, *subid).Set(guestTime * float64(100))         //nolint
+	cpuGuestNicePct.WithLabelValues(*product, hostname, *subid).Set(guestNiceTime * float64(100)) //nolint
 
 	return nil
 }

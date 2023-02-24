@@ -11,7 +11,7 @@ func TestGetConfig(t *testing.T) {
 		t.Error("expecting GetConfig to return nil")
 	}
 
-	NewConfig("test") //nolint
+	NewConfig("test", "v0.0.0") //nolint
 	c1, _ := GetConfig()
 	if c1 == nil {
 		t.Error("expecting GetConfig to not be nil")

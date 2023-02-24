@@ -26,6 +26,8 @@ var config *Config
 type Config struct {
 	ConfigFile string
 
+	Version string
+
 	Debug         bool          `yaml:"debug"`
 	Listen        string        `yaml:"listen"`
 	Port          uint          `yaml:"port"`
@@ -105,7 +107,7 @@ type Etcd struct {
 // NewConfig does the following:
 //   - Runs initCLI (sets and read CLI switches)
 //   - Runs initConfig (reads config from files)
-func NewConfig(name string) (*Config, error) {
+func NewConfig(name, version string) (*Config, error) {
 	if config == nil {
 		config = &Config{}
 
@@ -130,6 +132,8 @@ func NewConfig(name string) (*Config, error) {
 			return nil, err
 		}
 	}
+
+	config.Version = version
 
 	return config, nil
 }

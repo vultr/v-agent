@@ -19,7 +19,7 @@ import (
 
 const (
 	name    string = "v-agent"
-	version string = "v0.0.5"
+	version string = "v0.0.6"
 )
 
 func main() {
@@ -33,7 +33,7 @@ func main() {
 		cancel()
 	}()
 
-	cfg, err := config.NewConfig(name)
+	cfg, err := config.NewConfig(name, version)
 	if err != nil {
 		logger, _ := zap.NewDevelopment()
 		logger.Sugar().Fatal(err)
