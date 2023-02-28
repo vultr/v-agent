@@ -758,7 +758,7 @@ func NewMetrics() {
 	)
 	diskStatsMillisecondsWriting = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "v_disk_stats_milliseconds_writing",
+			Name: "v_disk_stats_ms_writing",
 			Help: "disk stats: milliseconds writing",
 		},
 		[]string{
@@ -782,7 +782,7 @@ func NewMetrics() {
 	)
 	diskStatsMillisecondsInIOs = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "v_disk_stats_millseconds_in_io",
+			Name: "v_disk_stats_ms_in_io",
 			Help: "disk stats: milliseconds in IO",
 		},
 		[]string{
@@ -842,7 +842,7 @@ func NewMetrics() {
 	)
 	diskStatsMillisecondsDiscarding = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "v_disk_stats_milliseconds_discarding",
+			Name: "v_disk_stats_ms_discarding",
 			Help: "disk stats: milliseconds discarding",
 		},
 		[]string{
