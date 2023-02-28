@@ -19,7 +19,7 @@ import (
 
 const (
 	name    string = "v-agent"
-	version string = "v0.0.7"
+	version string = "v0.0.8"
 )
 
 func main() {
