@@ -9,7 +9,7 @@ require (
 	github.com/levigross/grequests v0.0.0-20221222020224-9eee758d18d5
 	github.com/prometheus/client_golang v1.14.0
 	github.com/prometheus/client_model v0.3.0
-	github.com/prometheus/common v0.39.0
+	github.com/prometheus/common v0.40.0
 	github.com/tidwall/gjson v1.14.4
 	go.buf.build/grpc/go/prometheus/prometheus v1.4.7
 	go.uber.org/zap v1.24.0
