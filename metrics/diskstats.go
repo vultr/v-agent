@@ -9,7 +9,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/vultr/v-agent/cmd/v-agent/config"
 
@@ -43,49 +42,42 @@ type DiskStats struct {
 	MillisecondsDiscarding uint64
 }
 
+var prevDS []*DiskStats
+
 func getDiskStatsUtil() ([]*DiskStats, error) {
 	diskStat1, err := getDiskStats()
 	if err != nil {
 		return nil, err
 	}
 
-	time.Sleep(1 * time.Second) // wait 1 second to capture another snapshot
-
-	diskStat2, err := getDiskStats()
-	if err != nil {
-		return nil, err
-	}
-
 	var ds []*DiskStats
 
-	if len(diskStat2) == len(diskStat1) {
-		for i := range diskStat2 {
-			if diskStat2[i].Device == diskStat1[i].Device {
+	for i := range diskStat1 {
+		for j := range prevDS {
+			if diskStat1[i].Device == prevDS[j].Device {
 				ds = append(ds, &DiskStats{
-					Device:                 diskStat2[i].Device,
-					Reads:                  diskStat2[i].Reads - diskStat1[i].Reads,
-					ReadsMerged:            diskStat2[i].ReadsMerged - diskStat1[i].ReadsMerged,
-					SectorsRead:            diskStat2[i].SectorsRead - diskStat1[i].SectorsRead,
-					MillisecondsReading:    diskStat2[i].MillisecondsReading - diskStat1[i].MillisecondsReading,
-					WritesCompleted:        diskStat2[i].WritesCompleted - diskStat1[i].WritesCompleted,
-					WritesMerged:           diskStat2[i].WritesMerged - diskStat1[i].WritesMerged,
-					SectorsWritten:         diskStat2[i].SectorsWritten - diskStat1[i].SectorsWritten,
-					MillisecondsWriting:    diskStat2[i].MillisecondsWriting - diskStat1[i].MillisecondsWriting,
-					IOsInProgress:          diskStat2[i].IOsInProgress,
-					MillisecondsInIOs:      diskStat2[i].MillisecondsInIOs - diskStat1[i].MillisecondsInIOs,
-					WeightedIOsInMS:        diskStat2[i].WeightedIOsInMS - diskStat1[i].WeightedIOsInMS,
-					Discards:               diskStat2[i].Discards - diskStat1[i].Discards,
-					DiscardsMerged:         diskStat2[i].DiscardsMerged - diskStat1[i].DiscardsMerged,
-					SectorsDiscarded:       diskStat2[i].SectorsDiscarded - diskStat1[i].SectorsDiscarded,
-					MillisecondsDiscarding: diskStat2[i].MillisecondsDiscarding - diskStat1[i].MillisecondsDiscarding,
+					Device:                 diskStat1[i].Device,
+					Reads:                  diskStat1[i].Reads - prevDS[j].Reads,
+					ReadsMerged:            diskStat1[i].ReadsMerged - prevDS[j].ReadsMerged,
+					SectorsRead:            diskStat1[i].SectorsRead - prevDS[j].SectorsRead,
+					MillisecondsReading:    diskStat1[i].MillisecondsReading - prevDS[j].MillisecondsReading,
+					WritesCompleted:        diskStat1[i].WritesCompleted - prevDS[j].WritesCompleted,
+					WritesMerged:           diskStat1[i].WritesMerged - prevDS[j].WritesMerged,
+					SectorsWritten:         diskStat1[i].SectorsWritten - prevDS[j].SectorsWritten,
+					MillisecondsWriting:    diskStat1[i].MillisecondsWriting - prevDS[j].MillisecondsWriting,
+					IOsInProgress:          diskStat1[i].IOsInProgress,
+					MillisecondsInIOs:      diskStat1[i].MillisecondsInIOs - prevDS[j].MillisecondsInIOs,
+					WeightedIOsInMS:        diskStat1[i].WeightedIOsInMS - prevDS[j].WeightedIOsInMS,
+					Discards:               diskStat1[i].Discards - prevDS[j].Discards,
+					DiscardsMerged:         diskStat1[i].DiscardsMerged - prevDS[j].DiscardsMerged,
+					SectorsDiscarded:       diskStat1[i].SectorsDiscarded - prevDS[j].SectorsDiscarded,
+					MillisecondsDiscarding: diskStat1[i].MillisecondsDiscarding - prevDS[j].MillisecondsDiscarding,
 				})
-			} else {
-				continue
 			}
 		}
-	} else {
-		return nil, ErrInconsistentDisksReturned
 	}
+
+	prevDS = diskStat1
 
 	return ds, nil
 }
