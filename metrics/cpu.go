@@ -16,7 +16,7 @@ type ProcStatCPU struct {
 	User, Nice, System, Idle, IOWait, IRQ, SoftIRQ, Steal, Guest, GuestNice int
 }
 
-var prev ProcStatCPU
+var prevCPU ProcStatCPU
 
 func getCPUUtil() (*ProcStatCPU, error) {
 	cpuStat1, err := getProcStat()
@@ -25,19 +25,19 @@ func getCPUUtil() (*ProcStatCPU, error) {
 	}
 
 	stat := &ProcStatCPU{
-		User:      cpuStat1.User - prev.User,
-		Nice:      cpuStat1.Nice - prev.Nice,
-		System:    cpuStat1.System - prev.System,
-		Idle:      cpuStat1.Idle - prev.Idle,
-		IOWait:    cpuStat1.IOWait - prev.IOWait,
-		IRQ:       cpuStat1.IRQ - prev.IRQ,
-		SoftIRQ:   cpuStat1.SoftIRQ - prev.SoftIRQ,
-		Steal:     cpuStat1.Steal - prev.Steal,
-		Guest:     cpuStat1.Guest - prev.Guest,
-		GuestNice: cpuStat1.GuestNice - prev.GuestNice,
+		User:      cpuStat1.User - prevCPU.User,
+		Nice:      cpuStat1.Nice - prevCPU.Nice,
+		System:    cpuStat1.System - prevCPU.System,
+		Idle:      cpuStat1.Idle - prevCPU.Idle,
+		IOWait:    cpuStat1.IOWait - prevCPU.IOWait,
+		IRQ:       cpuStat1.IRQ - prevCPU.IRQ,
+		SoftIRQ:   cpuStat1.SoftIRQ - prevCPU.SoftIRQ,
+		Steal:     cpuStat1.Steal - prevCPU.Steal,
+		Guest:     cpuStat1.Guest - prevCPU.Guest,
+		GuestNice: cpuStat1.GuestNice - prevCPU.GuestNice,
 	}
 
-	prev = *cpuStat1
+	prevCPU = *cpuStat1
 
 	return stat, nil
 }
