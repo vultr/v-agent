@@ -16,7 +16,7 @@ require (
 	golang.org/x/sync v0.1.0
 	google.golang.org/protobuf v1.28.1
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/client-go v0.26.1
+	k8s.io/client-go v0.26.2
 )
 
 require (
@@ -64,7 +64,7 @@ require (
 	go.buf.build/grpc/go/gogo/protobuf v1.4.10 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
-	golang.org/x/net v0.6.0 // indirect
+	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/oauth2 v0.5.0 // indirect
 	golang.org/x/sys v0.5.0 // indirect
 	golang.org/x/term v0.5.0 // indirect
@@ -73,8 +73,8 @@ require (
 	google.golang.org/appengine v1.6.7 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	k8s.io/api v0.26.1 // indirect
-	k8s.io/apimachinery v0.26.1 // indirect
+	k8s.io/api v0.26.2 // indirect
+	k8s.io/apimachinery v0.26.2 // indirect
 	k8s.io/klog/v2 v2.90.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20230210211930-4b0756abdef5 // indirect
 	k8s.io/utils v0.0.0-20230209194617-a36077c30491 // indirect
