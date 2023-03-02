@@ -26,6 +26,10 @@ metrics_config:
     enabled: true
     endpoint: https://localhost:6443
     kubeconfig: /var/lib/kubernetes/admin.kubeconfig
+  konnectivity:
+    enabled: true
+    metrics_endpoint: http://localhost:8133  # /metrics
+    health_endpoint: http://localhost:8092   # /healthz
   etcd:
     enabled: true
     cacert: /var/lib/kubernetes/ca.pem
