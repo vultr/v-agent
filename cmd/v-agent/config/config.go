@@ -46,14 +46,15 @@ type Config struct {
 
 // MetricsConfig contains metrics configuration
 type MetricsConfig struct {
-	LoadAvg    LoadAvg    `yaml:"load_avg"`
-	CPU        CPU        `yaml:"cpu"`
-	Memory     Memory     `yaml:"memory"`
-	NIC        NIC        `yaml:"nic"`
-	DiskStats  DiskStats  `yaml:"disk_stats"`
-	Filesystem Filesystem `yaml:"file_system"`
-	Kubernetes Kubernetes `yaml:"kubernetes"`
-	Etcd       Etcd       `yaml:"etcd"`
+	LoadAvg      LoadAvg      `yaml:"load_avg"`
+	CPU          CPU          `yaml:"cpu"`
+	Memory       Memory       `yaml:"memory"`
+	NIC          NIC          `yaml:"nic"`
+	DiskStats    DiskStats    `yaml:"disk_stats"`
+	Filesystem   Filesystem   `yaml:"file_system"`
+	Kubernetes   Kubernetes   `yaml:"kubernetes"`
+	Konnectivity Konnectivity `yaml:"konnectivity"`
+	Etcd         Etcd         `yaml:"etcd"`
 }
 
 // LoadAvg configuration
@@ -92,6 +93,13 @@ type Kubernetes struct {
 	Enabled    bool   `yaml:"enabled"`
 	Endpoint   string `yaml:"endpoint"`
 	Kubeconfig string `yaml:"kubeconfig"`
+}
+
+// Konnectivity config
+type Konnectivity struct {
+	Enabled         bool   `yaml:"enabled"`
+	MetricsEndpoint string `yaml:"metrics_endpoint"`
+	HealthEndpoint  string `yaml:"health_endpoint"`
 }
 
 // Etcd config
