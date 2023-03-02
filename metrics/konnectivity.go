@@ -46,7 +46,7 @@ func DoKonnectivityHealthCheck() error {
 		return nil
 	}
 
-	return ErrKubeAPIServerUnhealthy
+	return ErrKonnectivityServerUnhealthy
 }
 
 // ProbeKonnectivityMetrics probes /metrics from konnectivity
