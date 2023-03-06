@@ -34,11 +34,15 @@ System metrics that are collected:
 - NIC: bytes, packets, errors, etc.
 
 Kubernetes:
-- `v_kube_apiserver_healthy` that is `1` (if healthy) or `0` if not healthy based on response from kube-apiserver `/healthz` endpoint.
+- `v_kube_apiserver_healthy` that is `0` (if healthy) or `1` if not healthy based on response from kube-apiserver `/healthz` endpoint.
 - Every metric from `/metrics`
 
 Etcd:
-- `v_etcd_healthy` that is `1` (if healthy) or `0` if not healthy based on response from etcd `/health` endpoint.
+- `v_etcd_healthy` that is `0` (if healthy) or `1` if not healthy based on response from etcd `/health` endpoint.
+- Every metric from `/metrics`
+
+Konnectivty:
+- `v_konnectivity_health` that is `0` (if healthy) or `1` if not healthy based on response from konnectivity `/healthz` endpoint.
 - Every metric from `/metrics`
 
 ## Configuration
