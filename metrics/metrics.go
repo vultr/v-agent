@@ -1414,9 +1414,9 @@ func gatherKubernetesMetrics() error {
 	if err := DoKubeAPIServerHealthCheck(); err != nil {
 		log.Error(err)
 
-		kubeAPIServerHealthz.WithLabelValues(*product, hostname, *subid).Set(float64(0))
-	} else {
 		kubeAPIServerHealthz.WithLabelValues(*product, hostname, *subid).Set(float64(1))
+	} else {
+		kubeAPIServerHealthz.WithLabelValues(*product, hostname, *subid).Set(float64(0))
 	}
 
 	if err := ScrapeKubeAPIServerMetrics(); err != nil {
@@ -1447,9 +1447,9 @@ func gatherKonnectivityMetrics() error {
 	if err := DoKonnectivityHealthCheck(); err != nil {
 		log.Error(err)
 
-		konnectivityHealthz.WithLabelValues(*product, hostname, *subid).Set(float64(0))
-	} else {
 		konnectivityHealthz.WithLabelValues(*product, hostname, *subid).Set(float64(1))
+	} else {
+		konnectivityHealthz.WithLabelValues(*product, hostname, *subid).Set(float64(0))
 	}
 
 	if err := ScrapeKonnectivityMetrics(); err != nil {
@@ -1480,9 +1480,9 @@ func gatherEtcdMetrics() error {
 	if err := DoEtcdHealthCheck(); err != nil {
 		log.Error(err)
 
-		etcdServerHealth.WithLabelValues(*product, hostname, *subid).Set(float64(0))
-	} else {
 		etcdServerHealth.WithLabelValues(*product, hostname, *subid).Set(float64(1))
+	} else {
+		etcdServerHealth.WithLabelValues(*product, hostname, *subid).Set(float64(0))
 	}
 
 	if err := ScrapeEtcdMetrics(); err != nil {
