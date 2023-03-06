@@ -98,6 +98,9 @@ var (
 	// kubernetes
 	kubeAPIServerHealthz *prometheus.GaugeVec
 
+	// konnectivity
+	konnectivityHealthz *prometheus.GaugeVec
+
 	// etcd
 	etcdServerHealth *prometheus.GaugeVec
 )
@@ -946,6 +949,19 @@ func NewMetrics() {
 		},
 	)
 
+	// konnectivity
+	konnectivityHealthz = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_konnectivity_healthy",
+			Help: "konnectivity /healthz, 1 = healthy, 0 = not healthy",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+		},
+	)
+
 	// etcd
 	etcdServerHealth = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
@@ -1029,6 +1045,15 @@ func Gather() error {
 		}
 	} else {
 		log.Info("Not gathering kubernetes metrics")
+	}
+
+	if config.KonnectivityMetricCollectionEnabled() {
+		log.Info("Gathering konnectivity metrics")
+		if err := gatherKonnectivityMetrics(); err != nil {
+			return err
+		}
+	} else {
+		log.Info("Not gathering konnectivity metrics")
 	}
 
 	if config.EtcdMetricCollectionEnabled() {
@@ -1389,12 +1414,45 @@ func gatherKubernetesMetrics() error {
 	if err := DoKubeAPIServerHealthCheck(); err != nil {
 		log.Error(err)
 
-		kubeAPIServerHealthz.WithLabelValues(*product, hostname, *subid).Set(float64(0))
-	} else {
 		kubeAPIServerHealthz.WithLabelValues(*product, hostname, *subid).Set(float64(1))
+	} else {
+		kubeAPIServerHealthz.WithLabelValues(*product, hostname, *subid).Set(float64(0))
 	}
 
 	if err := ScrapeKubeAPIServerMetrics(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func gatherKonnectivityMetrics() error {
+	log := zap.L().Sugar()
+
+	hostname, err := os.Hostname()
+	if err != nil {
+		return err
+	}
+
+	subid, err := config.GetSubID()
+	if err != nil {
+		return err
+	}
+
+	product, err := config.GetProduct()
+	if err != nil {
+		return err
+	}
+
+	if err := DoKonnectivityHealthCheck(); err != nil {
+		log.Error(err)
+
+		konnectivityHealthz.WithLabelValues(*product, hostname, *subid).Set(float64(1))
+	} else {
+		konnectivityHealthz.WithLabelValues(*product, hostname, *subid).Set(float64(0))
+	}
+
+	if err := ScrapeKonnectivityMetrics(); err != nil {
 		return err
 	}
 
@@ -1422,9 +1480,9 @@ func gatherEtcdMetrics() error {
 	if err := DoEtcdHealthCheck(); err != nil {
 		log.Error(err)
 
-		etcdServerHealth.WithLabelValues(*product, hostname, *subid).Set(float64(0))
-	} else {
 		etcdServerHealth.WithLabelValues(*product, hostname, *subid).Set(float64(1))
+	} else {
+		etcdServerHealth.WithLabelValues(*product, hostname, *subid).Set(float64(0))
 	}
 
 	if err := ScrapeEtcdMetrics(); err != nil {

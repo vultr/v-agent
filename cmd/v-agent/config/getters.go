@@ -77,6 +77,26 @@ func GetKubeconfig() (*string, error) {
 	return &cfg.MetricsConfig.Kubernetes.Kubeconfig, nil
 }
 
+// GetKonnectivityHealthEndpoint returns health endpoint
+func GetKonnectivityHealthEndpoint() (*string, error) {
+	cfg, err := GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return &cfg.MetricsConfig.Konnectivity.HealthEndpoint, nil
+}
+
+// GetKonnectivityMetricsEndpoint returns metrics endpoint
+func GetKonnectivityMetricsEndpoint() (*string, error) {
+	cfg, err := GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return &cfg.MetricsConfig.Konnectivity.MetricsEndpoint, nil
+}
+
 // GetEtcdEndpoint returns etcd endpoint
 func GetEtcdEndpoint() (*string, error) {
 	cfg, err := GetConfig()
@@ -206,6 +226,19 @@ func KubernetesMetricCollectionEnabled() bool {
 	}
 
 	return cfg.MetricsConfig.Kubernetes.Enabled
+}
+
+// KonnectivityMetricCollectionEnabled returns true/false if Konnectivity collection enabled
+func KonnectivityMetricCollectionEnabled() bool {
+	log := zap.L().Sugar()
+
+	cfg, err := GetConfig()
+	if err != nil {
+		log.Error(err)
+		return true
+	}
+
+	return cfg.MetricsConfig.Konnectivity.Enabled
 }
 
 // EtcdMetricCollectionEnabled returns true/false if Etcd collection enabled
