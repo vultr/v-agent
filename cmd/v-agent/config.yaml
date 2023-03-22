@@ -38,8 +38,8 @@ metrics_config:
     key: /var/lib/kubernetes/kubernetes-key.pem
     endpoint: https://10.1.96.3:2379 # /metrics
   haproxy:
-    enabled: true
+    enabled: false
     endpoint: http://localhost:8404 # /metrics
   ganesha:
-    enabled: true
+    enabled: false
     endpoint: http://localhost:9587 # /metrics
