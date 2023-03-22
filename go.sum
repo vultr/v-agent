@@ -330,8 +330,8 @@ github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5t
 go.buf.build/grpc/go/gogo/protobuf v1.4.9/go.mod h1:2rkC/lMWRLTLC2Bmn8BUP3ED9Kxx7FN3OHk+u7KCHDU=
 go.buf.build/grpc/go/gogo/protobuf v1.4.10 h1:+i4gyVbJ+clcCQ1QwBPfhi3futYyVsTw9tzxF5QIdCE=
 go.buf.build/grpc/go/gogo/protobuf v1.4.10/go.mod h1:2rkC/lMWRLTLC2Bmn8BUP3ED9Kxx7FN3OHk+u7KCHDU=
-go.buf.build/grpc/go/prometheus/prometheus v1.4.7 h1:609Ml7EnVPEDkJX13RjUoSTF/CjPnoNAvZDkr1zTi3s=
-go.buf.build/grpc/go/prometheus/prometheus v1.4.7/go.mod h1:QjrcwuvXQEp/Z0H21rmFvy4QTTnyWvfT5sffq/BlEJU=
+go.buf.build/grpc/go/prometheus/prometheus v1.4.8 h1:HicyRVIOl5tuYe+GpPofal4A9C94XQ+kPv4LqAnRLxg=
+go.buf.build/grpc/go/prometheus/prometheus v1.4.8/go.mod h1:QjrcwuvXQEp/Z0H21rmFvy4QTTnyWvfT5sffq/BlEJU=
 go.opencensus.io v0.21.0/go.mod h1:mSImk1erAIZhrmZN+AvHh14ztQfjbGwt4TtuofqLduU=
 go.opencensus.io v0.22.0/go.mod h1:+kGneAE2xo2IficOXnaByMWTGM9T73dGwxeWcUqIpI8=
 go.opencensus.io v0.22.2/go.mod h1:yxeiOL68Rb0Xd1ddK5vPZ/oVn4vY4Ynel7k9FzqtOIw=
