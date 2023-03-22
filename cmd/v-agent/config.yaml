@@ -40,3 +40,6 @@ metrics_config:
   haproxy:
     enabled: true
     endpoint: http://localhost:8404 # /metrics
+  ganesha:
+    enabled: true
+    endpoint: http://localhost:9587 # /metrics

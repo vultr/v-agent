@@ -292,3 +292,26 @@ func GetHAProxyMetricsEndpoint() (*string, error) {
 
 	return &cfg.MetricsConfig.HAProxy.Endpoint, nil
 }
+
+// GaneshaMetricCollectionEnabled returns true/false if ganesha collection enabled
+func GaneshaMetricCollectionEnabled() bool {
+	log := zap.L().Sugar()
+
+	cfg, err := GetConfig()
+	if err != nil {
+		log.Error(err)
+		return true
+	}
+
+	return cfg.MetricsConfig.Ganesha.Enabled
+}
+
+// GetGaneshaMetricsEndpoint returns health endpoint
+func GetGaneshaMetricsEndpoint() (*string, error) {
+	cfg, err := GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return &cfg.MetricsConfig.Ganesha.Endpoint, nil
+}

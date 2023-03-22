@@ -13,13 +13,13 @@ import (
 )
 
 var (
-	// ErrHAProxyServerUnhealthy returned if response is not status code 200 from /metrics
-	ErrHAProxyServerUnhealthy = errors.New("haproxy unhealthy")
+	// ErrGaneshaServerUnhealthy returned if response is not status code 200 from /metrics
+	ErrGaneshaServerUnhealthy = errors.New("ganesha unhealthy")
 )
 
-// DoHAProxyHealthCheck probes /metrics and returns nil or ErrHAProxyServerUnhealthy, or some other error
-func DoHAProxyHealthCheck() error {
-	endpoint, err := config.GetHAProxyMetricsEndpoint()
+// DoGaneshaHealthCheck probes /metrics and returns nil or ErrGaneshaServerUnhealthy, or some other error
+func DoGaneshaHealthCheck() error {
+	endpoint, err := config.GetGaneshaMetricsEndpoint()
 	if err != nil {
 		return err
 	}
@@ -42,15 +42,15 @@ func DoHAProxyHealthCheck() error {
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return ErrHAProxyServerUnhealthy
+		return ErrGaneshaServerUnhealthy
 	}
 
 	return nil
 }
 
-// ProbeHAProxyMetrics probes /metrics from haproxy
-func ProbeHAProxyMetrics() ([]byte, error) {
-	endpoint, err := config.GetHAProxyMetricsEndpoint()
+// ProbeGaneshaMetrics probes /metrics from ganesha
+func ProbeGaneshaMetrics() ([]byte, error) {
+	endpoint, err := config.GetGaneshaMetricsEndpoint()
 	if err != nil {
 		return nil, err
 	}
@@ -76,9 +76,9 @@ func ProbeHAProxyMetrics() ([]byte, error) {
 	return data, nil
 }
 
-// ScrapeHAProxyMetrics scrapes haproxy /metrics endpoint and remote writes the metrics
-func ScrapeHAProxyMetrics() error {
-	haproxyResp, err := ProbeHAProxyMetrics()
+// ScrapeGaneshaMetrics scrapes ganesha /metrics endpoint and remote writes the metrics
+func ScrapeGaneshaMetrics() error {
+	haproxyResp, err := ProbeGaneshaMetrics()
 	if err != nil {
 		return err
 	}

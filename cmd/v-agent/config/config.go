@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -58,6 +59,7 @@ type MetricsConfig struct {
 	Konnectivity Konnectivity `yaml:"konnectivity"`
 	Etcd         Etcd         `yaml:"etcd"`
 	HAProxy      HAProxy      `yaml:"haproxy"`
+	Ganesha      Ganesha      `yaml:"ganesha"`
 }
 
 // LoadAvg configuration
@@ -116,6 +118,12 @@ type Etcd struct {
 
 // HAProxy config
 type HAProxy struct {
+	Enabled  bool   `yaml:"enabled"`
+	Endpoint string `yaml:"endpoint"`
+}
+
+// Ganesha config
+type Ganesha struct {
 	Enabled  bool   `yaml:"enabled"`
 	Endpoint string `yaml:"endpoint"`
 }
@@ -296,10 +304,9 @@ func checkConfig(config *Config) error {
 		return fmt.Errorf("interval: %d is not valid", config.Interval)
 	}
 
-	if config.Product == "" {
-		log.Info("product is not set, setting to \"unknown\"")
-
-		config.Product = "unknown"
+	re := regexp.MustCompile(`(vke|vfs|vlb)`)
+	if !re.MatchString(config.Product) {
+		return fmt.Errorf("product %q is not valid", config.Product)
 	}
 
 	if config.SubID == "" {

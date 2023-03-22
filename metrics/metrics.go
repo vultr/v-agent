@@ -106,6 +106,9 @@ var (
 
 	// haproxy
 	haproxyHealthy *prometheus.GaugeVec
+
+	// ganesha
+	ganeshaHealthy *prometheus.GaugeVec
 )
 
 // NewMetrics initializes metrics
@@ -1060,6 +1063,20 @@ func NewMetrics() {
 			"vpsid",
 		},
 	)
+
+	// ganesha
+	ganeshaHealthy = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_ganesha_healthy",
+			Help: "ganesha /metrics, 0 = healthy, 1 = not healthy",
+		},
+		[]string{
+			"product",
+			"hostname",
+			"subid",
+			"vpsid",
+		},
+	)
 }
 
 // Gather gathers updates metrics
@@ -1158,6 +1175,15 @@ func Gather() error {
 		}
 	} else {
 		log.Info("Not gathering haproxy metrics")
+	}
+
+	if config.GaneshaMetricCollectionEnabled() {
+		log.Info("Gathering ganesha metrics")
+		if err := gatherGaneshaMetrics(); err != nil {
+			return err
+		}
+	} else {
+		log.Info("Not gathering ganesha metrics")
 	}
 
 	return nil
@@ -1669,6 +1695,44 @@ func gatherHAProxyMetrics() error {
 	}
 
 	if err := ScrapeHAProxyMetrics(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func gatherGaneshaMetrics() error {
+	log := zap.L().Sugar()
+
+	hostname, err := os.Hostname()
+	if err != nil {
+		return err
+	}
+
+	subid, err := config.GetSubID()
+	if err != nil {
+		return err
+	}
+
+	vpsid, err := config.GetVPSID()
+	if err != nil {
+		return err
+	}
+
+	product, err := config.GetProduct()
+	if err != nil {
+		return err
+	}
+
+	if err := DoGaneshaHealthCheck(); err != nil {
+		log.Error(err)
+
+		ganeshaHealthy.WithLabelValues(*product, hostname, *subid, *vpsid).Set(float64(1))
+	} else {
+		ganeshaHealthy.WithLabelValues(*product, hostname, *subid, *vpsid).Set(float64(0))
+	}
+
+	if err := ScrapeGaneshaMetrics(); err != nil {
 		return err
 	}
 

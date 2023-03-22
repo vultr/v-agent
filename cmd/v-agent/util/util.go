@@ -3,11 +3,17 @@ package util
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"net/http"
 	"os"
 
 	"github.com/tidwall/gjson"
+)
+
+var (
+	// ErrUnableToGetSUBID returned if unable to get subid
+	ErrUnableToGetSUBID = errors.New("unable to probe subid")
 )
 
 // GetVPSID returns the VPS ID from http://169.254.169.254/v1.json .instanceid
@@ -65,13 +71,29 @@ func GetSubID(product string) (*string, error) {
 		// TODO call body addr to get subid
 		// blocked until API updated
 
-		subid := gjson.Get(string(body), "data.vke_subid")
+		subid := gjson.Get(string(body), "data.vlb_subid")
+
+		return &subid.Str, nil
+	case "vfs":
+		resp, err := http.Get("http://169.254.169.254/latest/user-data")
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close() //nolint
+
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		// TODO needs implementation
+
+		subid := gjson.Get(string(body), "data.vfs_subid")
 
 		return &subid.Str, nil
 	}
 
-	subid := "unknown"
-	return &subid, nil
+	return nil, ErrUnableToGetSUBID
 }
 
 // GetBIOSVendor returns bios vendor
