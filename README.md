@@ -42,11 +42,19 @@ Etcd:
 - Every metric from `/metrics`
 
 Konnectivty:
-- `v_konnectivity_health` that is `0` (if healthy) or `1` if not healthy based on response from konnectivity `/healthz` endpoint.
+- `v_konnectivity_healthy` that is `0` (if healthy) or `1` if not healthy based on response from konnectivity `/healthz` endpoint.
+- Every metric from `/metrics`
+
+HAProxy:
+- `v_haproxy_healthy` that is `0` (if healthy) or `1` if not healthy based on response from `/metrics` endpoint.
+- Every metric from `/metrics`
+
+Ganesha:
+- `v_ganesha_healthy` that is `0` (if healthy) or `1` if not healthy based on response from `/metrics` endpoint.
 - Every metric from `/metrics`
 
 ## Configuration
 Both have a `config.yaml` file. Both have CLI switches. Both configurations can be overridden with envionment variables.
 
 ## Building
-Note: Agent must be built with cgo disabled for VKE guests, not doing so will result in GLIBC errors being thrown: `CGO_ENABLED=0 go build -o v-agent cmd/v-agent/main.go`
+Note: Agent must be built with cgo disabled, not doing so will result in GLIBC errors being thrown: `CGO_ENABLED=0 go build -o v-agent cmd/v-agent/main.go`
