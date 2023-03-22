@@ -10,9 +10,9 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-// GetSubID returns the SUBID extracted from http://169.254.169.254/latest/user-data | jq '.data.vke_subid'
-func GetSubID() (*string, error) {
-	resp, err := http.Get("http://169.254.169.254/latest/user-data")
+// GetVPSID returns the VPS ID from http://169.254.169.254/v1.json .instanceid
+func GetVPSID() (*string, error) {
+	resp, err := http.Get("http://169.254.169.254/v1.json")
 	if err != nil {
 		return nil, err
 	}
@@ -23,9 +23,55 @@ func GetSubID() (*string, error) {
 		return nil, err
 	}
 
-	subid := gjson.Get(string(body), "data.vke_subid")
+	vpsid := gjson.Get(string(body), "instanceid")
 
-	return &subid.Str, nil
+	return &vpsid.Str, nil
+}
+
+// GetSubID returns the subid of the underlying service
+//
+// vke has one method of extraction of the subid
+// vlb has another method of extraction of the subid
+// vfs will most likely have its own method of extraction of the subid
+func GetSubID(product string) (*string, error) {
+	switch product {
+	case "vke":
+		resp, err := http.Get("http://169.254.169.254/latest/user-data")
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close() //nolint
+
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		subid := gjson.Get(string(body), "data.vke_subid")
+
+		return &subid.Str, nil
+	case "vlb":
+		resp, err := http.Get("http://169.254.169.254/latest/user-data")
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close() //nolint
+
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		// TODO call body addr to get subid
+		// blocked until API updated
+
+		subid := gjson.Get(string(body), "data.vke_subid")
+
+		return &subid.Str, nil
+	}
+
+	subid := "unknown"
+	return &subid, nil
 }
 
 // GetBIOSVendor returns bios vendor

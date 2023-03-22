@@ -12,6 +12,8 @@ var (
 	ErrConfigNotInitialized = errors.New("config not initialized")
 	// ErrSubIDNotSet returned if the subid is empty
 	ErrSubIDNotSet = errors.New("subid is not set")
+	// ErrVPSIDNotSet returned if the vpsid is empty
+	ErrVPSIDNotSet = errors.New("vpsid is not set")
 )
 
 // GetConfig returns config
@@ -45,6 +47,20 @@ func GetSubID() (*string, error) {
 	}
 
 	return &cfg.SubID, nil
+}
+
+// GetVPSID returns the vpsid
+func GetVPSID() (*string, error) {
+	cfg, err := GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	if cfg.VPSID == "" {
+		return nil, ErrVPSIDNotSet
+	}
+
+	return &cfg.VPSID, nil
 }
 
 // GetProduct returns underlying product name
@@ -252,4 +268,27 @@ func EtcdMetricCollectionEnabled() bool {
 	}
 
 	return cfg.MetricsConfig.Etcd.Enabled
+}
+
+// HAProxyMetricCollectionEnabled returns true/false if haproxy collection enabled
+func HAProxyMetricCollectionEnabled() bool {
+	log := zap.L().Sugar()
+
+	cfg, err := GetConfig()
+	if err != nil {
+		log.Error(err)
+		return true
+	}
+
+	return cfg.MetricsConfig.HAProxy.Enabled
+}
+
+// GetHAProxyMetricsEndpoint returns health endpoint
+func GetHAProxyMetricsEndpoint() (*string, error) {
+	cfg, err := GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return &cfg.MetricsConfig.HAProxy.Endpoint, nil
 }

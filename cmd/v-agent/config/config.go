@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/vultr/v-agent/cmd/v-agent/util"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/yaml.v3"
@@ -33,6 +34,7 @@ type Config struct {
 	Port          uint          `yaml:"port"`
 	Interval      uint          `yaml:"interval"`
 	SubID         string        `yaml:"subid"`
+	VPSID         string        `yaml:"vpsid"`
 	Product       string        `yaml:"product"`
 	Endpoint      string        `yaml:"endpoint"`
 	BasicAuthUser string        `yaml:"basic_auth_user"`
@@ -55,6 +57,7 @@ type MetricsConfig struct {
 	Kubernetes   Kubernetes   `yaml:"kubernetes"`
 	Konnectivity Konnectivity `yaml:"konnectivity"`
 	Etcd         Etcd         `yaml:"etcd"`
+	HAProxy      HAProxy      `yaml:"haproxy"`
 }
 
 // LoadAvg configuration
@@ -109,6 +112,12 @@ type Etcd struct {
 	CACert   string `yaml:"cacert"`
 	Cert     string `yaml:"cert"`
 	Key      string `yaml:"key"`
+}
+
+// HAProxy config
+type HAProxy struct {
+	Enabled  bool   `yaml:"enabled"`
+	Endpoint string `yaml:"endpoint"`
 }
 
 // NewConfig returns a Config struct that can be used to reference configuration
@@ -287,10 +296,16 @@ func checkConfig(config *Config) error {
 		return fmt.Errorf("interval: %d is not valid", config.Interval)
 	}
 
+	if config.Product == "" {
+		log.Info("product is not set, setting to \"unknown\"")
+
+		config.Product = "unknown"
+	}
+
 	if config.SubID == "" {
 		log.Info("subid is not set, pulling from metadata server")
 
-		subid, err := util.GetSubID()
+		subid, err := util.GetSubID(config.Product)
 		if err != nil {
 			return err
 		}
@@ -299,10 +314,16 @@ func checkConfig(config *Config) error {
 		config.SubID = *subid
 	}
 
-	if config.Product == "" {
-		log.Info("product is not set, setting to \"unknown\"")
+	if config.VPSID == "" {
+		log.Info("vpsid is not set, pulling from metadata server")
 
-		config.Product = "unknown"
+		vpsid, err := util.GetVPSID()
+		if err != nil {
+			return err
+		}
+
+		log.Infof("setting vpsid to %s", *vpsid)
+		config.VPSID = *vpsid
 	}
 
 	if !strings.HasPrefix(config.Endpoint, "http") {

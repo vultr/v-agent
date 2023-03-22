@@ -4,6 +4,7 @@ port: 7091
 interval: 5
 #endpoint: http://localhost:8080/api/v1/rw
 subid: ""
+vpsid: ""
 product: vke # directly attached to metrics
 endpoint: https://metrics.vultrlabs.com/api/v1/push
 basic_auth_user: ""
@@ -36,3 +37,6 @@ metrics_config:
     cert: /var/lib/kubernetes/kubernetes.pem
     key: /var/lib/kubernetes/kubernetes-key.pem
     endpoint: https://10.1.96.3:2379 # /metrics
+  haproxy:
+    enabled: true
+    endpoint: http://localhost:8404 # /metrics
