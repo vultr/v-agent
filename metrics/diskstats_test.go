@@ -9,7 +9,7 @@ import (
 )
 
 func TestGetDiskStatsUtil(t *testing.T) {
-	config.NewConfig("test", "v0.0.0")
+	config.NewConfig("test", "v0.0.0") //nolint
 
 	p, err := getDiskStatsUtil()
 	if err != nil {
