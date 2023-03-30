@@ -63,17 +63,25 @@ func GetSubID(product string) (*string, error) {
 		}
 		defer resp.Body.Close() //nolint
 
-		body, err := io.ReadAll(resp.Body)
+		realURL, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err
 		}
 
-		// TODO call body addr to get subid
-		// blocked until API updated
+		resp2, err := http.Get(string(realURL))
+		if err != nil {
+			return nil, err
+		}
+		defer resp2.Body.Close() //nolint
 
-		subid := gjson.Get(string(body), "data.vlb_subid")
+		body, err := io.ReadAll(resp2.Body)
+		if err != nil {
+			return nil, err
+		}
 
-		return &subid.Str, nil
+		subid := gjson.Get(string(body), "load_balancer_config.lb_subid")
+
+		return &subid.Raw, nil
 	case "vfs":
 		resp, err := http.Get("http://169.254.169.254/latest/user-data")
 		if err != nil {
