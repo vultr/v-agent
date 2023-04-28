@@ -19,7 +19,7 @@ import (
 
 const (
 	name    string = "v-agent"
-	version string = "v0.0.14"
+	version string = "v1.0.0"
 )
 
 func main() {
@@ -42,6 +42,12 @@ func main() {
 	log := zap.L().Sugar()
 
 	log.Infof("version: %s", version)
+
+	// output labels
+	labels := config.GetLabels()
+	for k, v := range labels {
+		log.Infof("Label: %s = %s", k, v)
+	}
 
 	e, err := api.NewExporterAPI(cfg.Listen, cfg.Port)
 	if err != nil {
@@ -134,6 +140,7 @@ func main() {
 
 					if err := wc.Store(context.Background(), tsList); err != nil {
 						log.Error(err)
+						continue
 					}
 
 					log.Infof("metrics worker: Pushed metrics in %s", time.Since(start).Round(time.Millisecond))

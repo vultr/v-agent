@@ -14,6 +14,8 @@ var (
 	ErrSubIDNotSet = errors.New("subid is not set")
 	// ErrVPSIDNotSet returned if the vpsid is empty
 	ErrVPSIDNotSet = errors.New("vpsid is not set")
+	// ErrLabelNotExist returned when the specified label doesnt exist
+	ErrLabelNotExist = errors.New("label does not exist")
 )
 
 // GetConfig returns config
@@ -35,42 +37,22 @@ func GetVersion() (*string, error) {
 	return &cfg.Version, nil
 }
 
-// GetSubID returns the subid
-func GetSubID() (*string, error) {
-	cfg, err := GetConfig()
-	if err != nil {
-		return nil, err
-	}
-
-	if cfg.SubID == "" {
-		return nil, ErrSubIDNotSet
-	}
-
-	return &cfg.SubID, nil
+// GetLabels returns all labels
+func GetLabels() map[string]string {
+	return labels
 }
 
-// GetVPSID returns the vpsid
-func GetVPSID() (*string, error) {
-	cfg, err := GetConfig()
-	if err != nil {
-		return nil, err
+// GetLabel returns a map[string]string of the requested label or error
+func GetLabel(label string) (map[string]string, error) {
+	l := make(map[string]string)
+	for k, v := range labels {
+		if k == label {
+			l[k] = v
+			return l, nil
+		}
 	}
 
-	if cfg.VPSID == "" {
-		return nil, ErrVPSIDNotSet
-	}
-
-	return &cfg.VPSID, nil
-}
-
-// GetProduct returns underlying product name
-func GetProduct() (*string, error) {
-	cfg, err := GetConfig()
-	if err != nil {
-		return nil, err
-	}
-
-	return &cfg.Product, nil
+	return nil, ErrLabelNotExist
 }
 
 // GetDiskStatsFilter returns the regex for the disk stats filter
@@ -283,7 +265,7 @@ func HAProxyMetricCollectionEnabled() bool {
 	return cfg.MetricsConfig.HAProxy.Enabled
 }
 
-// GetHAProxyMetricsEndpoint returns health endpoint
+// GetHAProxyMetricsEndpoint returns ceph endpoint
 func GetHAProxyMetricsEndpoint() (*string, error) {
 	cfg, err := GetConfig()
 	if err != nil {
@@ -306,7 +288,7 @@ func GaneshaMetricCollectionEnabled() bool {
 	return cfg.MetricsConfig.Ganesha.Enabled
 }
 
-// GetGaneshaMetricsEndpoint returns health endpoint
+// GetGaneshaMetricsEndpoint returns metrics endpoint
 func GetGaneshaMetricsEndpoint() (*string, error) {
 	cfg, err := GetConfig()
 	if err != nil {
@@ -314,4 +296,27 @@ func GetGaneshaMetricsEndpoint() (*string, error) {
 	}
 
 	return &cfg.MetricsConfig.Ganesha.Endpoint, nil
+}
+
+// CephMetricCollectionEnabled returns true/false if ceph collection enabled
+func CephMetricCollectionEnabled() bool {
+	log := zap.L().Sugar()
+
+	cfg, err := GetConfig()
+	if err != nil {
+		log.Error(err)
+		return true
+	}
+
+	return cfg.MetricsConfig.Ceph.Enabled
+}
+
+// GetCephMetricsEndpoint returns metrics endpoint
+func GetCephMetricsEndpoint() (*string, error) {
+	cfg, err := GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return &cfg.MetricsConfig.Ceph.Endpoint, nil
 }
