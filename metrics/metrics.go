@@ -3,7 +3,6 @@ package metrics
 
 import (
 	"bytes"
-	"os"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -1186,6 +1185,15 @@ func Gather() error {
 		log.Info("Not gathering ganesha metrics")
 	}
 
+	if config.CephMetricCollectionEnabled() {
+		log.Info("Gathering ceph metrics")
+		if err := gatherCephMetrics(); err != nil {
+			return err
+		}
+	} else {
+		log.Info("Not gathering ceph metrics")
+	}
+
 	return nil
 }
 
@@ -1255,22 +1263,22 @@ func GetMetricsAsTimeSeries(in []*dto.MetricFamily) []*prompb.TimeSeries {
 func Reset() {}
 
 func gatherMetadataMetrics() error {
-	hostname, err := os.Hostname()
+	hostname, err := config.GetLabel("hostname")
 	if err != nil {
 		return err
 	}
 
-	subid, err := config.GetSubID()
+	subid, err := config.GetLabel("subid")
 	if err != nil {
 		return err
 	}
 
-	vpsid, err := config.GetVPSID()
+	vpsid, err := config.GetLabel("vpsid")
 	if err != nil {
 		return err
 	}
 
-	product, err := config.GetProduct()
+	product, err := config.GetLabel("product")
 	if err != nil {
 		return err
 	}
@@ -1280,28 +1288,28 @@ func gatherMetadataMetrics() error {
 		return err
 	}
 
-	vAgentVersion.WithLabelValues(*product, hostname, *subid, *vpsid, *version).Set(0)
+	vAgentVersion.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], *version).Set(0)
 
 	return nil
 }
 
 func gatherLoadavgMetrics() error {
-	hostname, err := os.Hostname()
+	hostname, err := config.GetLabel("hostname")
 	if err != nil {
 		return err
 	}
 
-	subid, err := config.GetSubID()
+	subid, err := config.GetLabel("subid")
 	if err != nil {
 		return err
 	}
 
-	vpsid, err := config.GetVPSID()
+	vpsid, err := config.GetLabel("vpsid")
 	if err != nil {
 		return err
 	}
 
-	product, err := config.GetProduct()
+	product, err := config.GetLabel("product")
 	if err != nil {
 		return err
 	}
@@ -1311,32 +1319,32 @@ func gatherLoadavgMetrics() error {
 		return err
 	}
 
-	loadavgLoad1.WithLabelValues(*product, hostname, *subid, *vpsid).Set(loadavg.Load1)
-	loadavgLoad5.WithLabelValues(*product, hostname, *subid, *vpsid).Set(loadavg.Load5)
-	loadavgLoad15.WithLabelValues(*product, hostname, *subid, *vpsid).Set(loadavg.Load15)
-	loadavgTasksRunning.WithLabelValues(*product, hostname, *subid, *vpsid).Set(float64(loadavg.TasksRunning))
-	loadavgTasksTotal.WithLabelValues(*product, hostname, *subid, *vpsid).Set(float64(loadavg.TasksTotal))
+	loadavgLoad1.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(loadavg.Load1)
+	loadavgLoad5.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(loadavg.Load5)
+	loadavgLoad15.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(loadavg.Load15)
+	loadavgTasksRunning.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(loadavg.TasksRunning))
+	loadavgTasksTotal.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(loadavg.TasksTotal))
 
 	return nil
 }
 
 func gatherCPUMetrics() error {
-	hostname, err := os.Hostname()
+	hostname, err := config.GetLabel("hostname")
 	if err != nil {
 		return err
 	}
 
-	subid, err := config.GetSubID()
+	subid, err := config.GetLabel("subid")
 	if err != nil {
 		return err
 	}
 
-	vpsid, err := config.GetVPSID()
+	vpsid, err := config.GetLabel("vpsid")
 	if err != nil {
 		return err
 	}
 
-	product, err := config.GetProduct()
+	product, err := config.GetLabel("product")
 	if err != nil {
 		return err
 	}
@@ -1359,38 +1367,38 @@ func gatherCPUMetrics() error {
 	guestTime := float64(cpuUtil.Guest) / cpuTotalTime
 	guestNiceTime := float64(cpuUtil.GuestNice) / cpuTotalTime
 
-	cpuCores.WithLabelValues(*product, hostname, *subid, *vpsid).Set(float64(getHostCPUs()))
-	cpuUtilPct.WithLabelValues(*product, hostname, *subid, *vpsid).Set(inUseTime * float64(100))          //nolint
-	cpuIdlePct.WithLabelValues(*product, hostname, *subid, *vpsid).Set(idleTime * float64(100))           //nolint
-	cpuUserPct.WithLabelValues(*product, hostname, *subid, *vpsid).Set(userTime * float64(100))           //nolint
-	cpuSystemPct.WithLabelValues(*product, hostname, *subid, *vpsid).Set(systemTime * float64(100))       //nolint
-	cpuIOWaitPct.WithLabelValues(*product, hostname, *subid, *vpsid).Set(iowaitTime * float64(100))       //nolint
-	cpuIRQPct.WithLabelValues(*product, hostname, *subid, *vpsid).Set(irqTime * float64(100))             //nolint
-	cpuSoftIRQPct.WithLabelValues(*product, hostname, *subid, *vpsid).Set(sirqTime * float64(100))        //nolint
-	cpuStealPct.WithLabelValues(*product, hostname, *subid, *vpsid).Set(stealTime * float64(100))         //nolint
-	cpuGuestPct.WithLabelValues(*product, hostname, *subid, *vpsid).Set(guestTime * float64(100))         //nolint
-	cpuGuestNicePct.WithLabelValues(*product, hostname, *subid, *vpsid).Set(guestNiceTime * float64(100)) //nolint
+	cpuCores.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(getHostCPUs()))
+	cpuUtilPct.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(inUseTime * float64(100))          //nolint
+	cpuIdlePct.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(idleTime * float64(100))           //nolint
+	cpuUserPct.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(userTime * float64(100))           //nolint
+	cpuSystemPct.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(systemTime * float64(100))       //nolint
+	cpuIOWaitPct.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(iowaitTime * float64(100))       //nolint
+	cpuIRQPct.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(irqTime * float64(100))             //nolint
+	cpuSoftIRQPct.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(sirqTime * float64(100))        //nolint
+	cpuStealPct.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(stealTime * float64(100))         //nolint
+	cpuGuestPct.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(guestTime * float64(100))         //nolint
+	cpuGuestNicePct.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(guestNiceTime * float64(100)) //nolint
 
 	return nil
 }
 
 func gatherMemoryMetrics() error {
-	hostname, err := os.Hostname()
+	hostname, err := config.GetLabel("hostname")
 	if err != nil {
 		return err
 	}
 
-	subid, err := config.GetSubID()
+	subid, err := config.GetLabel("subid")
 	if err != nil {
 		return err
 	}
 
-	vpsid, err := config.GetVPSID()
+	vpsid, err := config.GetLabel("vpsid")
 	if err != nil {
 		return err
 	}
 
-	product, err := config.GetProduct()
+	product, err := config.GetLabel("product")
 	if err != nil {
 		return err
 	}
@@ -1400,33 +1408,33 @@ func gatherMemoryMetrics() error {
 		return err
 	}
 
-	memoryTotal.WithLabelValues(*product, hostname, *subid, *vpsid).Set(float64(memory.MemTotal))
-	memoryFree.WithLabelValues(*product, hostname, *subid, *vpsid).Set(float64(memory.MemFree))
-	memoryCached.WithLabelValues(*product, hostname, *subid, *vpsid).Set(float64(memory.Cached))
-	memoryBuffered.WithLabelValues(*product, hostname, *subid, *vpsid).Set(float64(memory.Buffers))
-	memorySwapTotal.WithLabelValues(*product, hostname, *subid, *vpsid).Set(float64(memory.SwapTotal))
-	memorySwapFree.WithLabelValues(*product, hostname, *subid, *vpsid).Set(float64(memory.SwapFree))
+	memoryTotal.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(memory.MemTotal))
+	memoryFree.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(memory.MemFree))
+	memoryCached.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(memory.Cached))
+	memoryBuffered.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(memory.Buffers))
+	memorySwapTotal.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(memory.SwapTotal))
+	memorySwapFree.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(memory.SwapFree))
 
 	return nil
 }
 
 func gatherNICMetrics() error {
-	hostname, err := os.Hostname()
+	hostname, err := config.GetLabel("hostname")
 	if err != nil {
 		return err
 	}
 
-	subid, err := config.GetSubID()
+	subid, err := config.GetLabel("subid")
 	if err != nil {
 		return err
 	}
 
-	vpsid, err := config.GetVPSID()
+	vpsid, err := config.GetLabel("vpsid")
 	if err != nil {
 		return err
 	}
 
-	product, err := config.GetProduct()
+	product, err := config.GetLabel("product")
 	if err != nil {
 		return err
 	}
@@ -1437,28 +1445,28 @@ func gatherNICMetrics() error {
 	}
 
 	for i := range nicStats {
-		nicBytes.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].Bytes))
-		nicBytesTX.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].BytesTX))
-		nicBytesRX.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].BytesRX))
-		nicPackets.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].Packets))
-		nicPacketsTX.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].PacketsTX))
-		nicPacketsRX.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].PacketsRX))
-		nicErrors.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].Errors))
-		nicErrorsTX.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].ErrorsTX))
-		nicErrorsRX.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].ErrorsRX))
-		nicDrop.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].Drop))
-		nicDropTX.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].DropTX))
-		nicDropRX.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].DropRX))
-		nicFIFO.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].FIFO))
-		nicFIFOTX.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].FIFOTX))
-		nicFIFORX.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].FIFORX))
-		nicFrameRX.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].FrameRX))
-		nicCollsTX.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].CollsTX))
-		nicCompressed.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].Compressed))
-		nicCompressedTX.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].CompressedTX))
-		nicCompressedRX.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].CompressedRX))
-		nicCarrierTX.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].CarrierTX))
-		nicMulticastRX.WithLabelValues(*product, hostname, *subid, *vpsid, nicStats[i].Interface).Set(float64(nicStats[i].MulticastRX))
+		nicBytes.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].Bytes))
+		nicBytesTX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].BytesTX))
+		nicBytesRX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].BytesRX))
+		nicPackets.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].Packets))
+		nicPacketsTX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].PacketsTX))
+		nicPacketsRX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].PacketsRX))
+		nicErrors.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].Errors))
+		nicErrorsTX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].ErrorsTX))
+		nicErrorsRX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].ErrorsRX))
+		nicDrop.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].Drop))
+		nicDropTX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].DropTX))
+		nicDropRX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].DropRX))
+		nicFIFO.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].FIFO))
+		nicFIFOTX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].FIFOTX))
+		nicFIFORX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].FIFORX))
+		nicFrameRX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].FrameRX))
+		nicCollsTX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].CollsTX))
+		nicCompressed.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].Compressed))
+		nicCompressedTX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].CompressedTX))
+		nicCompressedRX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].CompressedRX))
+		nicCarrierTX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].CarrierTX))
+		nicMulticastRX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].MulticastRX))
 	}
 
 	return nil
@@ -1470,42 +1478,42 @@ func gatherDiskMetrics() error {
 		return err
 	}
 
-	hostname, err := os.Hostname()
+	hostname, err := config.GetLabel("hostname")
 	if err != nil {
 		return err
 	}
 
-	subid, err := config.GetSubID()
+	subid, err := config.GetLabel("subid")
 	if err != nil {
 		return err
 	}
 
-	vpsid, err := config.GetVPSID()
+	vpsid, err := config.GetLabel("vpsid")
 	if err != nil {
 		return err
 	}
 
-	product, err := config.GetProduct()
+	product, err := config.GetLabel("product")
 	if err != nil {
 		return err
 	}
 
 	for i := range diskStats {
-		diskStatsReads.WithLabelValues(*product, hostname, *subid, *vpsid, diskStats[i].Device).Set(float64(diskStats[i].Reads))
-		diskStatsReadsMerged.WithLabelValues(*product, hostname, *subid, *vpsid, diskStats[i].Device).Set(float64(diskStats[i].ReadsMerged))
-		diskStatsSectorsRead.WithLabelValues(*product, hostname, *subid, *vpsid, diskStats[i].Device).Set(float64(diskStats[i].SectorsRead))
-		diskStatsMillisecondsReading.WithLabelValues(*product, hostname, *subid, *vpsid, diskStats[i].Device).Set(float64(diskStats[i].MillisecondsReading))
-		diskStatsWritesCompleted.WithLabelValues(*product, hostname, *subid, *vpsid, diskStats[i].Device).Set(float64(diskStats[i].WritesCompleted))
-		diskStatsWritesMerged.WithLabelValues(*product, hostname, *subid, *vpsid, diskStats[i].Device).Set(float64(diskStats[i].WritesMerged))
-		diskStatsSectorsWritten.WithLabelValues(*product, hostname, *subid, *vpsid, diskStats[i].Device).Set(float64(diskStats[i].SectorsWritten))
-		diskStatsMillisecondsWriting.WithLabelValues(*product, hostname, *subid, *vpsid, diskStats[i].Device).Set(float64(diskStats[i].MillisecondsWriting))
-		diskStatsIOsInProgress.WithLabelValues(*product, hostname, *subid, *vpsid, diskStats[i].Device).Set(float64(diskStats[i].IOsInProgress))
-		diskStatsMillisecondsInIOs.WithLabelValues(*product, hostname, *subid, *vpsid, diskStats[i].Device).Set(float64(diskStats[i].MillisecondsInIOs))
-		diskStatsWeightedIOsInMS.WithLabelValues(*product, hostname, *subid, *vpsid, diskStats[i].Device).Set(float64(diskStats[i].WeightedIOsInMS))
-		diskStatsDiscards.WithLabelValues(*product, hostname, *subid, *vpsid, diskStats[i].Device).Set(float64(diskStats[i].Discards))
-		diskStatsDiscardsMerged.WithLabelValues(*product, hostname, *subid, *vpsid, diskStats[i].Device).Set(float64(diskStats[i].DiscardsMerged))
-		diskStatsSectorsDiscarded.WithLabelValues(*product, hostname, *subid, *vpsid, diskStats[i].Device).Set(float64(diskStats[i].SectorsDiscarded))
-		diskStatsMillisecondsDiscarding.WithLabelValues(*product, hostname, *subid, *vpsid, diskStats[i].Device).Set(float64(diskStats[i].MillisecondsDiscarding))
+		diskStatsReads.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].Reads))
+		diskStatsReadsMerged.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].ReadsMerged))
+		diskStatsSectorsRead.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].SectorsRead))
+		diskStatsMillisecondsReading.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].MillisecondsReading))
+		diskStatsWritesCompleted.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].WritesCompleted))
+		diskStatsWritesMerged.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].WritesMerged))
+		diskStatsSectorsWritten.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].SectorsWritten))
+		diskStatsMillisecondsWriting.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].MillisecondsWriting))
+		diskStatsIOsInProgress.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].IOsInProgress))
+		diskStatsMillisecondsInIOs.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].MillisecondsInIOs))
+		diskStatsWeightedIOsInMS.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].WeightedIOsInMS))
+		diskStatsDiscards.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].Discards))
+		diskStatsDiscardsMerged.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].DiscardsMerged))
+		diskStatsSectorsDiscarded.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].SectorsDiscarded))
+		diskStatsMillisecondsDiscarding.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].MillisecondsDiscarding))
 	}
 
 	return nil
@@ -1517,33 +1525,33 @@ func gatherFilesystemMetrics() error {
 		return err
 	}
 
-	hostname, err := os.Hostname()
+	hostname, err := config.GetLabel("hostname")
 	if err != nil {
 		return err
 	}
 
-	subid, err := config.GetSubID()
+	subid, err := config.GetLabel("subid")
 	if err != nil {
 		return err
 	}
 
-	vpsid, err := config.GetVPSID()
+	vpsid, err := config.GetLabel("vpsid")
 	if err != nil {
 		return err
 	}
 
-	product, err := config.GetProduct()
+	product, err := config.GetLabel("product")
 	if err != nil {
 		return err
 	}
 
 	for i := range fsStats {
-		fsInodes.WithLabelValues(*product, hostname, *subid, *vpsid, fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].Inodes))
-		fsInodesUsed.WithLabelValues(*product, hostname, *subid, *vpsid, fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].InodesUsed))
-		fsInodesUtil.WithLabelValues(*product, hostname, *subid, *vpsid, fsStats[i].Device, fsStats[i].Mount).Set(fsStats[i].InodesUtil)
-		fsBytes.WithLabelValues(*product, hostname, *subid, *vpsid, fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].BytesTotal))
-		fsBytesUsed.WithLabelValues(*product, hostname, *subid, *vpsid, fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].BytesUsed))
-		fsBytesUtil.WithLabelValues(*product, hostname, *subid, *vpsid, fsStats[i].Device, fsStats[i].Mount).Set(fsStats[i].BytesUtil)
+		fsInodes.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].Inodes))
+		fsInodesUsed.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].InodesUsed))
+		fsInodesUtil.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], fsStats[i].Device, fsStats[i].Mount).Set(fsStats[i].InodesUtil)
+		fsBytes.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].BytesTotal))
+		fsBytesUsed.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].BytesUsed))
+		fsBytesUtil.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], fsStats[i].Device, fsStats[i].Mount).Set(fsStats[i].BytesUtil)
 	}
 
 	return nil
@@ -1552,22 +1560,22 @@ func gatherFilesystemMetrics() error {
 func gatherKubernetesMetrics() error {
 	log := zap.L().Sugar()
 
-	hostname, err := os.Hostname()
+	hostname, err := config.GetLabel("hostname")
 	if err != nil {
 		return err
 	}
 
-	subid, err := config.GetSubID()
+	subid, err := config.GetLabel("subid")
 	if err != nil {
 		return err
 	}
 
-	vpsid, err := config.GetVPSID()
+	vpsid, err := config.GetLabel("vpsid")
 	if err != nil {
 		return err
 	}
 
-	product, err := config.GetProduct()
+	product, err := config.GetLabel("product")
 	if err != nil {
 		return err
 	}
@@ -1575,9 +1583,9 @@ func gatherKubernetesMetrics() error {
 	if err := DoKubeAPIServerHealthCheck(); err != nil {
 		log.Error(err)
 
-		kubeAPIServerHealthz.WithLabelValues(*product, hostname, *subid, *vpsid).Set(float64(1))
+		kubeAPIServerHealthz.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(1))
 	} else {
-		kubeAPIServerHealthz.WithLabelValues(*product, hostname, *subid, *vpsid).Set(float64(0))
+		kubeAPIServerHealthz.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(0))
 	}
 
 	if err := ScrapeKubeAPIServerMetrics(); err != nil {
@@ -1590,22 +1598,22 @@ func gatherKubernetesMetrics() error {
 func gatherKonnectivityMetrics() error {
 	log := zap.L().Sugar()
 
-	hostname, err := os.Hostname()
+	hostname, err := config.GetLabel("hostname")
 	if err != nil {
 		return err
 	}
 
-	subid, err := config.GetSubID()
+	subid, err := config.GetLabel("subid")
 	if err != nil {
 		return err
 	}
 
-	vpsid, err := config.GetVPSID()
+	vpsid, err := config.GetLabel("vpsid")
 	if err != nil {
 		return err
 	}
 
-	product, err := config.GetProduct()
+	product, err := config.GetLabel("product")
 	if err != nil {
 		return err
 	}
@@ -1613,9 +1621,9 @@ func gatherKonnectivityMetrics() error {
 	if err := DoKonnectivityHealthCheck(); err != nil {
 		log.Error(err)
 
-		konnectivityHealthz.WithLabelValues(*product, hostname, *subid, *vpsid).Set(float64(1))
+		konnectivityHealthz.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(1))
 	} else {
-		konnectivityHealthz.WithLabelValues(*product, hostname, *subid, *vpsid).Set(float64(0))
+		konnectivityHealthz.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(0))
 	}
 
 	if err := ScrapeKonnectivityMetrics(); err != nil {
@@ -1628,22 +1636,22 @@ func gatherKonnectivityMetrics() error {
 func gatherEtcdMetrics() error {
 	log := zap.L().Sugar()
 
-	hostname, err := os.Hostname()
+	hostname, err := config.GetLabel("hostname")
 	if err != nil {
 		return err
 	}
 
-	subid, err := config.GetSubID()
+	subid, err := config.GetLabel("subid")
 	if err != nil {
 		return err
 	}
 
-	vpsid, err := config.GetVPSID()
+	vpsid, err := config.GetLabel("vpsid")
 	if err != nil {
 		return err
 	}
 
-	product, err := config.GetProduct()
+	product, err := config.GetLabel("product")
 	if err != nil {
 		return err
 	}
@@ -1651,9 +1659,9 @@ func gatherEtcdMetrics() error {
 	if err := DoEtcdHealthCheck(); err != nil {
 		log.Error(err)
 
-		etcdServerHealth.WithLabelValues(*product, hostname, *subid, *vpsid).Set(float64(1))
+		etcdServerHealth.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(1))
 	} else {
-		etcdServerHealth.WithLabelValues(*product, hostname, *subid, *vpsid).Set(float64(0))
+		etcdServerHealth.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(0))
 	}
 
 	if err := ScrapeEtcdMetrics(); err != nil {
@@ -1666,22 +1674,22 @@ func gatherEtcdMetrics() error {
 func gatherHAProxyMetrics() error {
 	log := zap.L().Sugar()
 
-	hostname, err := os.Hostname()
+	hostname, err := config.GetLabel("hostname")
 	if err != nil {
 		return err
 	}
 
-	subid, err := config.GetSubID()
+	subid, err := config.GetLabel("subid")
 	if err != nil {
 		return err
 	}
 
-	vpsid, err := config.GetVPSID()
+	vpsid, err := config.GetLabel("vpsid")
 	if err != nil {
 		return err
 	}
 
-	product, err := config.GetProduct()
+	product, err := config.GetLabel("product")
 	if err != nil {
 		return err
 	}
@@ -1689,9 +1697,9 @@ func gatherHAProxyMetrics() error {
 	if err := DoHAProxyHealthCheck(); err != nil {
 		log.Error(err)
 
-		haproxyHealthy.WithLabelValues(*product, hostname, *subid, *vpsid).Set(float64(1))
+		haproxyHealthy.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(1))
 	} else {
-		haproxyHealthy.WithLabelValues(*product, hostname, *subid, *vpsid).Set(float64(0))
+		haproxyHealthy.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(0))
 	}
 
 	if err := ScrapeHAProxyMetrics(); err != nil {
@@ -1704,22 +1712,22 @@ func gatherHAProxyMetrics() error {
 func gatherGaneshaMetrics() error {
 	log := zap.L().Sugar()
 
-	hostname, err := os.Hostname()
+	hostname, err := config.GetLabel("hostname")
 	if err != nil {
 		return err
 	}
 
-	subid, err := config.GetSubID()
+	subid, err := config.GetLabel("subid")
 	if err != nil {
 		return err
 	}
 
-	vpsid, err := config.GetVPSID()
+	vpsid, err := config.GetLabel("vpsid")
 	if err != nil {
 		return err
 	}
 
-	product, err := config.GetProduct()
+	product, err := config.GetLabel("product")
 	if err != nil {
 		return err
 	}
@@ -1727,12 +1735,20 @@ func gatherGaneshaMetrics() error {
 	if err := DoGaneshaHealthCheck(); err != nil {
 		log.Error(err)
 
-		ganeshaHealthy.WithLabelValues(*product, hostname, *subid, *vpsid).Set(float64(1))
+		ganeshaHealthy.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(1))
 	} else {
-		ganeshaHealthy.WithLabelValues(*product, hostname, *subid, *vpsid).Set(float64(0))
+		ganeshaHealthy.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(0))
 	}
 
 	if err := ScrapeGaneshaMetrics(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func gatherCephMetrics() error {
+	if err := ScrapeCephMetrics(); err != nil {
 		return err
 	}
 
@@ -1767,30 +1783,7 @@ func parseMetrics(data []byte) ([]*dto.MetricFamily, error) {
 //
 // very important for scraped metrics, otherwise they'll be sent without essential labels (subid, etc)
 func AddLabels(metrics []*dto.MetricFamily) ([]*dto.MetricFamily, error) {
-	hostname, err := os.Hostname()
-	if err != nil {
-		return nil, err
-	}
-
-	subid, err := config.GetSubID()
-	if err != nil {
-		return nil, err
-	}
-
-	vpsid, err := config.GetVPSID()
-	if err != nil {
-		return nil, err
-	}
-
-	product, err := config.GetProduct()
-	if err != nil {
-		return nil, err
-	}
-
-	hostnameLabel := "hostname"
-	subidLabel := "subid"
-	vpsidLabel := "vpsid"
-	productLabel := "product"
+	arbitraryLabels := config.GetLabels()
 
 	for _, v := range metrics {
 		metricType := v.GetType()
@@ -1804,60 +1797,33 @@ func AddLabels(metrics []*dto.MetricFamily) ([]*dto.MetricFamily, error) {
 
 				labels := vv.GetLabel()
 
-				hasHostname := false
-				hasSubid := false
-				hasVpsid := false
-				hasProduct := false
+				chxLabels := make(map[string]bool)
 
-				for i := range labels {
-					switch *labels[i].Name {
-					case "hostname":
-						hasHostname = true
-					case "subid":
-						hasSubid = true
-					case "vpsid":
-						hasVpsid = true
-					case "product":
-						hasProduct = true
+				for i := range arbitraryLabels {
+					for j := range labels {
+						// true if label exists
+						chxLabels[i] = false
+
+						if *labels[j].Name == i {
+							chxLabels[i] = true
+							break
+						}
 					}
 				}
 
-				if !hasHostname {
-					vv.Label = append(vv.Label,
-						&dto.LabelPair{
-							Name:  &hostnameLabel,
-							Value: &hostname,
-						},
-					)
+				// add missing labels
+				for i := range chxLabels {
+					if !chxLabels[i] {
+						k := i
+						v := arbitraryLabels[i]
+						vv.Label = append(vv.Label,
+							&dto.LabelPair{
+								Name:  &k,
+								Value: &v,
+							},
+						)
+					}
 				}
-
-				if !hasSubid {
-					vv.Label = append(vv.Label,
-						&dto.LabelPair{
-							Name:  &subidLabel,
-							Value: subid,
-						},
-					)
-				}
-
-				if !hasVpsid {
-					vv.Label = append(vv.Label,
-						&dto.LabelPair{
-							Name:  &vpsidLabel,
-							Value: vpsid,
-						},
-					)
-				}
-
-				if !hasProduct {
-					vv.Label = append(vv.Label,
-						&dto.LabelPair{
-							Name:  &productLabel,
-							Value: product,
-						},
-					)
-				}
-
 			case dto.MetricType_GAUGE:
 				if vv.Gauge == nil {
 					continue
@@ -1865,58 +1831,32 @@ func AddLabels(metrics []*dto.MetricFamily) ([]*dto.MetricFamily, error) {
 
 				labels := vv.GetLabel()
 
-				hasHostname := false
-				hasSubid := false
-				hasVpsid := false
-				hasProduct := false
+				chxLabels := make(map[string]bool)
 
-				for i := range labels {
-					switch *labels[i].Name {
-					case "hostname":
-						hasHostname = true
-					case "subid":
-						hasSubid = true
-					case "vpsid":
-						hasVpsid = true
-					case "product":
-						hasProduct = true
+				for i := range arbitraryLabels {
+					for j := range labels {
+						// true if label exists
+						chxLabels[i] = false
+
+						if *labels[j].Name == i {
+							chxLabels[i] = true
+							break
+						}
 					}
 				}
 
-				if !hasHostname {
-					vv.Label = append(vv.Label,
-						&dto.LabelPair{
-							Name:  &hostnameLabel,
-							Value: &hostname,
-						},
-					)
-				}
-
-				if !hasSubid {
-					vv.Label = append(vv.Label,
-						&dto.LabelPair{
-							Name:  &subidLabel,
-							Value: subid,
-						},
-					)
-				}
-
-				if !hasVpsid {
-					vv.Label = append(vv.Label,
-						&dto.LabelPair{
-							Name:  &vpsidLabel,
-							Value: vpsid,
-						},
-					)
-				}
-
-				if !hasProduct {
-					vv.Label = append(vv.Label,
-						&dto.LabelPair{
-							Name:  &productLabel,
-							Value: product,
-						},
-					)
+				// add missing labels
+				for i := range chxLabels {
+					if !chxLabels[i] {
+						k := i
+						v := arbitraryLabels[i]
+						vv.Label = append(vv.Label,
+							&dto.LabelPair{
+								Name:  &k,
+								Value: &v,
+							},
+						)
+					}
 				}
 			case dto.MetricType_UNTYPED:
 				if vv.Untyped == nil {
@@ -1925,58 +1865,32 @@ func AddLabels(metrics []*dto.MetricFamily) ([]*dto.MetricFamily, error) {
 
 				labels := vv.GetLabel()
 
-				hasHostname := false
-				hasSubid := false
-				hasVpsid := false
-				hasProduct := false
+				chxLabels := make(map[string]bool)
 
-				for i := range labels {
-					switch *labels[i].Name {
-					case "hostname":
-						hasHostname = true
-					case "subid":
-						hasSubid = true
-					case "vpsid":
-						hasVpsid = true
-					case "product":
-						hasProduct = true
+				for i := range arbitraryLabels {
+					for j := range labels {
+						// true if label exists
+						chxLabels[i] = false
+
+						if *labels[j].Name == i {
+							chxLabels[i] = true
+							break
+						}
 					}
 				}
 
-				if !hasHostname {
-					vv.Label = append(vv.Label,
-						&dto.LabelPair{
-							Name:  &hostnameLabel,
-							Value: &hostname,
-						},
-					)
-				}
-
-				if !hasSubid {
-					vv.Label = append(vv.Label,
-						&dto.LabelPair{
-							Name:  &subidLabel,
-							Value: subid,
-						},
-					)
-				}
-
-				if !hasVpsid {
-					vv.Label = append(vv.Label,
-						&dto.LabelPair{
-							Name:  &vpsidLabel,
-							Value: vpsid,
-						},
-					)
-				}
-
-				if !hasProduct {
-					vv.Label = append(vv.Label,
-						&dto.LabelPair{
-							Name:  &productLabel,
-							Value: product,
-						},
-					)
+				// add missing labels
+				for i := range chxLabels {
+					if !chxLabels[i] {
+						k := i
+						v := arbitraryLabels[i]
+						vv.Label = append(vv.Label,
+							&dto.LabelPair{
+								Name:  &k,
+								Value: &v,
+							},
+						)
+					}
 				}
 			case dto.MetricType_SUMMARY:
 				if vv.Summary == nil {
@@ -1985,58 +1899,32 @@ func AddLabels(metrics []*dto.MetricFamily) ([]*dto.MetricFamily, error) {
 
 				labels := vv.GetLabel()
 
-				hasHostname := false
-				hasSubid := false
-				hasVpsid := false
-				hasProduct := false
+				chxLabels := make(map[string]bool)
 
-				for i := range labels {
-					switch *labels[i].Name {
-					case "hostname":
-						hasHostname = true
-					case "subid":
-						hasSubid = true
-					case "vpsid":
-						hasVpsid = true
-					case "product":
-						hasProduct = true
+				for i := range arbitraryLabels {
+					for j := range labels {
+						// true if label exists
+						chxLabels[i] = false
+
+						if *labels[j].Name == i {
+							chxLabels[i] = true
+							break
+						}
 					}
 				}
 
-				if !hasHostname {
-					vv.Label = append(vv.Label,
-						&dto.LabelPair{
-							Name:  &hostnameLabel,
-							Value: &hostname,
-						},
-					)
-				}
-
-				if !hasSubid {
-					vv.Label = append(vv.Label,
-						&dto.LabelPair{
-							Name:  &subidLabel,
-							Value: subid,
-						},
-					)
-				}
-
-				if !hasVpsid {
-					vv.Label = append(vv.Label,
-						&dto.LabelPair{
-							Name:  &vpsidLabel,
-							Value: vpsid,
-						},
-					)
-				}
-
-				if !hasProduct {
-					vv.Label = append(vv.Label,
-						&dto.LabelPair{
-							Name:  &productLabel,
-							Value: product,
-						},
-					)
+				// add missing labels
+				for i := range chxLabels {
+					if !chxLabels[i] {
+						k := i
+						v := arbitraryLabels[i]
+						vv.Label = append(vv.Label,
+							&dto.LabelPair{
+								Name:  &k,
+								Value: &v,
+							},
+						)
+					}
 				}
 			case dto.MetricType_HISTOGRAM:
 				if vv.Histogram == nil {
@@ -2045,58 +1933,32 @@ func AddLabels(metrics []*dto.MetricFamily) ([]*dto.MetricFamily, error) {
 
 				labels := vv.GetLabel()
 
-				hasHostname := false
-				hasSubid := false
-				hasVpsid := false
-				hasProduct := false
+				chxLabels := make(map[string]bool)
 
-				for i := range labels {
-					switch *labels[i].Name {
-					case "hostname":
-						hasHostname = true
-					case "subid":
-						hasSubid = true
-					case "vpsid":
-						hasVpsid = true
-					case "product":
-						hasProduct = true
+				for i := range arbitraryLabels {
+					for j := range labels {
+						// true if label exists
+						chxLabels[i] = false
+
+						if *labels[j].Name == i {
+							chxLabels[i] = true
+							break
+						}
 					}
 				}
 
-				if !hasHostname {
-					vv.Label = append(vv.Label,
-						&dto.LabelPair{
-							Name:  &hostnameLabel,
-							Value: &hostname,
-						},
-					)
-				}
-
-				if !hasSubid {
-					vv.Label = append(vv.Label,
-						&dto.LabelPair{
-							Name:  &subidLabel,
-							Value: subid,
-						},
-					)
-				}
-
-				if !hasVpsid {
-					vv.Label = append(vv.Label,
-						&dto.LabelPair{
-							Name:  &vpsidLabel,
-							Value: vpsid,
-						},
-					)
-				}
-
-				if !hasProduct {
-					vv.Label = append(vv.Label,
-						&dto.LabelPair{
-							Name:  &productLabel,
-							Value: product,
-						},
-					)
+				// add missing labels
+				for i := range chxLabels {
+					if !chxLabels[i] {
+						k := i
+						v := arbitraryLabels[i]
+						vv.Label = append(vv.Label,
+							&dto.LabelPair{
+								Name:  &k,
+								Value: &v,
+							},
+						)
+					}
 				}
 			}
 		}

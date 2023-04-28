@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"regexp"
 	"strconv"
 	"strings"
 
@@ -23,6 +22,7 @@ var (
 )
 
 var config *Config
+var labels map[string]string
 
 // Config is the CLI options wrapped in a struct
 type Config struct {
@@ -30,17 +30,16 @@ type Config struct {
 
 	Version string
 
-	Debug         bool          `yaml:"debug"`
-	Listen        string        `yaml:"listen"`
-	Port          uint          `yaml:"port"`
-	Interval      uint          `yaml:"interval"`
-	SubID         string        `yaml:"subid"`
-	VPSID         string        `yaml:"vpsid"`
-	Product       string        `yaml:"product"`
-	Endpoint      string        `yaml:"endpoint"`
-	BasicAuthUser string        `yaml:"basic_auth_user"`
-	BasicAuthPass string        `yaml:"basic_auth_pass"`
-	MetricsConfig MetricsConfig `yaml:"metrics_config"`
+	Debug         bool              `yaml:"debug"`
+	Listen        string            `yaml:"listen"`
+	Port          uint              `yaml:"port"`
+	Interval      uint              `yaml:"interval"`
+	Endpoint      string            `yaml:"endpoint"`
+	BasicAuthUser string            `yaml:"basic_auth_user"`
+	BasicAuthPass string            `yaml:"basic_auth_pass"`
+	CheckVendor   bool              `yaml:"check_vendor"`
+	LabelsConfig  map[string]string `yaml:"labels_config"`
+	MetricsConfig MetricsConfig     `yaml:"metrics_config"`
 
 	zapConfig *zap.Config
 	zapLogger *zap.Logger
@@ -60,6 +59,7 @@ type MetricsConfig struct {
 	Etcd         Etcd         `yaml:"etcd"`
 	HAProxy      HAProxy      `yaml:"haproxy"`
 	Ganesha      Ganesha      `yaml:"ganesha"`
+	Ceph         Ceph         `yaml:"ceph"`
 }
 
 // LoadAvg configuration
@@ -128,6 +128,12 @@ type Ganesha struct {
 	Endpoint string `yaml:"endpoint"`
 }
 
+// Ceph config
+type Ceph struct {
+	Enabled  bool   `yaml:"enabled"`
+	Endpoint string `yaml:"endpoint"`
+}
+
 // NewConfig returns a Config struct that can be used to reference configuration
 // NewConfig does the following:
 //   - Runs initCLI (sets and read CLI switches)
@@ -152,7 +158,12 @@ func NewConfig(name, version string) (*Config, error) {
 			return nil, err
 		}
 
-		// Stage 5: Check configuration
+		// Stage 5: Initialize labels
+		if err := initLabels(config); err != nil {
+			return nil, err
+		}
+
+		// Stage 6: Check configuration
 		if err := checkConfig(config); err != nil {
 			return nil, err
 		}
@@ -170,8 +181,6 @@ func initCLI(config *Config) {
 	flag.UintVar(&config.Port, "port", 7091, "Listen port") //nolint
 	flag.StringVar(&config.ConfigFile, "config", "./config.yaml", "Path for the config.yaml configuration file")
 	flag.UintVar(&config.Interval, "interval", 60, "Metrics gather interval") //nolint
-	flag.StringVar(&config.SubID, "subid", "", "Subid")
-	flag.StringVar(&config.Product, "product", "", "Product")
 	flag.StringVar(&config.Endpoint, "endpoint", "http://localhost:8080", "Endpoint to remotely write metrics to")
 	flag.StringVar(&config.BasicAuthUser, "basic-auth-user", "", "Basic auth user")
 	flag.StringVar(&config.BasicAuthPass, "basic-auth-pass", "", "Basic auth password")
@@ -224,12 +233,79 @@ func initLogging(config *Config) {
 	zap.ReplaceGlobals(config.zapLogger)
 }
 
+// initLabels initializes labels to minimize metadata traffic (if any)
+func initLabels(config *Config) error {
+	log := zap.L().Sugar()
+
+	product := make(map[string]string)
+	for k, v := range config.LabelsConfig {
+		if k == "product" {
+			product[k] = v
+		}
+	}
+
+	if labels == nil {
+		labels = make(map[string]string)
+	}
+
+	for k, v := range config.LabelsConfig {
+		switch k {
+		case "hostname":
+			if v == "" {
+				hostname, err := os.Hostname()
+				if err != nil {
+					return err
+				}
+
+				labels[k] = hostname
+			} else {
+				labels[k] = v
+			}
+
+		case "subid":
+			if v == "" {
+				if product["product"] == "" {
+					log.Warn("product label unset, unable to determine subid")
+					continue
+				}
+
+				subid, err := util.GetSubID(product["product"])
+				if err != nil {
+					return err
+				}
+
+				labels[k] = *subid
+			} else {
+				labels[k] = v
+			}
+		case "vpsid":
+			if v == "" {
+				vpsid, err := util.GetVPSID()
+				if err != nil {
+					return err
+				}
+
+				labels[k] = *vpsid
+			} else {
+				labels[k] = v
+			}
+		default:
+			if v == "" {
+				log.Warnf("label %q is empty, will be omitted", k)
+				continue
+			}
+
+			labels[k] = v
+		}
+	}
+
+	return nil
+}
+
 func initEnv(config *Config) error {
 	listen := os.Getenv("LISTEN")
 	port := os.Getenv("PORT")
 	interval := os.Getenv("INTERVAL")
-	subid := os.Getenv("SUBID")
-	product := os.Getenv("PRODUCT")
 	endpoint := os.Getenv("ENDPOINT")
 	basicAuthUser := os.Getenv("BASIC_AUTH_USER")
 	basicAuthPass := os.Getenv("BASIC_AUTH_PASS")
@@ -257,14 +333,6 @@ func initEnv(config *Config) error {
 		config.Interval = uint(p)
 	}
 
-	if subid != "" {
-		config.SubID = subid
-	}
-
-	if product != "" {
-		config.Product = product
-	}
-
 	if endpoint != "" {
 		config.Endpoint = endpoint
 	}
@@ -285,15 +353,15 @@ func initEnv(config *Config) error {
 }
 
 func checkConfig(config *Config) error {
-	log := zap.L().Sugar()
+	if config.CheckVendor {
+		vendor, err := util.GetBIOSVendor()
+		if err != nil {
+			return err
+		}
 
-	vendor, err := util.GetBIOSVendor()
-	if err != nil {
-		return err
-	}
-
-	if *vendor != "Vultr" {
-		return ErrNotVultrVendor
+		if *vendor != "Vultr" {
+			return ErrNotVultrVendor
+		}
 	}
 
 	if config.Port > 65535 { //nolint
@@ -302,35 +370,6 @@ func checkConfig(config *Config) error {
 
 	if config.Interval < 1 {
 		return fmt.Errorf("interval: %d is not valid", config.Interval)
-	}
-
-	re := regexp.MustCompile(`(vke|vfs|vlb)`)
-	if !re.MatchString(config.Product) {
-		return fmt.Errorf("product %q is not valid", config.Product)
-	}
-
-	if config.SubID == "" {
-		log.Info("subid is not set, pulling from metadata server")
-
-		subid, err := util.GetSubID(config.Product)
-		if err != nil {
-			return err
-		}
-
-		log.Infof("setting subid to %s", *subid)
-		config.SubID = *subid
-	}
-
-	if config.VPSID == "" {
-		log.Info("vpsid is not set, pulling from metadata server")
-
-		vpsid, err := util.GetVPSID()
-		if err != nil {
-			return err
-		}
-
-		log.Infof("setting vpsid to %s", *vpsid)
-		config.VPSID = *vpsid
 	}
 
 	if !strings.HasPrefix(config.Endpoint, "http") {

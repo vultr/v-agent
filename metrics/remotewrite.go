@@ -12,6 +12,7 @@ import (
 
 	"github.com/golang/snappy"
 	prompb "go.buf.build/grpc/go/prometheus/prometheus"
+	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -68,6 +69,8 @@ func NewWriteClient(endpoint string, cfg *HTTPConfig) (*WriteClient, error) {
 // Store sends a batch of samples to the HTTP endpoint,
 // the request is the proto marshaled and encoded.
 func (c *WriteClient) Store(ctx context.Context, series []*prompb.TimeSeries) error {
+	log := zap.L().Sugar()
+
 	b, err := newWriteRequestBody(series)
 	if err != nil {
 		return err
@@ -96,19 +99,25 @@ func (c *WriteClient) Store(ctx context.Context, series []*prompb.TimeSeries) er
 	if err != nil {
 		return fmt.Errorf("HTTP POST request failed: %w", err)
 	}
-	defer func() {
-		err = resp.Body.Close()
-		if err != nil {
-			panic(err)
+	defer resp.Body.Close() //nolint
+
+	if resp.StatusCode < http.StatusOK || resp.StatusCode > 300 {
+		body, err1 := io.ReadAll(resp.Body)
+		if err1 != nil {
+			return err1
 		}
-	}()
+
+		log.Warn(string(body))
+
+		return fmt.Errorf("status code: %d expect 2xx", resp.StatusCode)
+	}
 
 	_, err = io.Copy(io.Discard, resp.Body)
 	if err != nil {
 		return err
 	}
 
-	return validateResponseStatus(resp.StatusCode)
+	return nil
 }
 
 func newWriteRequestBody(series []*prompb.TimeSeries) ([]byte, error) {
@@ -123,12 +132,4 @@ func newWriteRequestBody(series []*prompb.TimeSeries) ([]byte, error) {
 			"size: %d, limit: %d", len(b), 0xffffffff) //nolint
 	}
 	return snappy.Encode(nil, b), nil
-}
-
-func validateResponseStatus(code int) error {
-	if code >= http.StatusOK && code < 300 {
-		return nil
-	}
-
-	return fmt.Errorf("got status code: %d instead expected a 2xx successful status code", code)
 }
