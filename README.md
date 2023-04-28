@@ -61,6 +61,10 @@ Ganesha:
 - `v_ganesha_healthy` that is `0` (if healthy) or `1` if not healthy based on response from `/metrics` endpoint.
 - Every metric from `/metrics`
 
+Ceph:
+- `v_ceph_healthy`: Not implemented yet.
+- Every metric from `/metrics`
+
 ## Configuration
 Both have a `config.yaml` file. Both have CLI switches. Both configurations can be overridden with envionment variables.
 
