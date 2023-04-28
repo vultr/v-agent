@@ -265,7 +265,7 @@ func HAProxyMetricCollectionEnabled() bool {
 	return cfg.MetricsConfig.HAProxy.Enabled
 }
 
-// GetHAProxyMetricsEndpoint returns ceph endpoint
+// GetHAProxyMetricsEndpoint returns haproxy endpoint
 func GetHAProxyMetricsEndpoint() (*string, error) {
 	cfg, err := GetConfig()
 	if err != nil {
