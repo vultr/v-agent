@@ -7,7 +7,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.44.0
 	github.com/golang/snappy v0.0.4
 	github.com/levigross/grequests v0.0.0-20221222020224-9eee758d18d5
-	github.com/prometheus/client_golang v1.15.0
+	github.com/prometheus/client_golang v1.15.1
 	github.com/prometheus/client_model v0.3.0
 	github.com/prometheus/common v0.42.0
 	github.com/tidwall/gjson v1.14.4
