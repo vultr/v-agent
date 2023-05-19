@@ -1233,15 +1233,15 @@ func GetMetricsAsTimeSeries(in []*dto.MetricFamily) []*prompb.TimeSeries {
 			// Extract metric value
 			switch metricType {
 			case dto.MetricType_COUNTER:
-				metricValue = in[i].Metric[0].Counter.GetValue()
+				metricValue = in[i].Metric[j].Counter.GetValue()
 			case dto.MetricType_GAUGE:
-				metricValue = in[i].Metric[0].Gauge.GetValue()
+				metricValue = in[i].Metric[j].Gauge.GetValue()
 			case dto.MetricType_HISTOGRAM:
-				metricValue = in[i].Metric[0].Histogram.GetSampleSum()
+				metricValue = in[i].Metric[j].Histogram.GetSampleSum()
 			case dto.MetricType_SUMMARY:
-				metricValue = in[i].Metric[0].Summary.GetSampleSum()
+				metricValue = in[i].Metric[j].Summary.GetSampleSum()
 			case dto.MetricType_UNTYPED:
-				metricValue = in[i].Metric[0].Untyped.GetValue()
+				metricValue = in[i].Metric[j].Untyped.GetValue()
 			}
 
 			sample := &prompb.Sample{
