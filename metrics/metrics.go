@@ -2,7 +2,9 @@
 package metrics
 
 import (
+	"bufio"
 	"bytes"
+	"strings"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -1755,6 +1757,29 @@ func gatherCephMetrics() error {
 	return nil
 }
 
+// removeMetadata removes the "comment" lines (#) from scraped output
+//
+// required for some metrics (ceph) as they output duplicate HELP sections which break the parser
+func removeMetadata(data []byte) []byte {
+	var retBytes bytes.Buffer
+
+	b := bytes.NewBuffer(data)
+
+	sc := bufio.NewScanner(b)
+	for sc.Scan() {
+		l := sc.Text()
+
+		if strings.HasPrefix(l, "#") {
+			continue
+		} else {
+			retBytes.WriteString(l)
+			retBytes.WriteString("\n")
+		}
+	}
+
+	return retBytes.Bytes()
+}
+
 func parseMetrics(data []byte) ([]*dto.MetricFamily, error) {
 	var parser expfmt.TextParser
 	var mf2 []*dto.MetricFamily
@@ -1800,10 +1825,10 @@ func AddLabels(metrics []*dto.MetricFamily) ([]*dto.MetricFamily, error) {
 				chxLabels := make(map[string]bool)
 
 				for i := range arbitraryLabels {
-					for j := range labels {
-						// true if label exists
-						chxLabels[i] = false
+					// true if label exists
+					chxLabels[i] = false
 
+					for j := range labels {
 						if *labels[j].Name == i {
 							chxLabels[i] = true
 							break
@@ -1834,10 +1859,10 @@ func AddLabels(metrics []*dto.MetricFamily) ([]*dto.MetricFamily, error) {
 				chxLabels := make(map[string]bool)
 
 				for i := range arbitraryLabels {
-					for j := range labels {
-						// true if label exists
-						chxLabels[i] = false
+					// true if label exists
+					chxLabels[i] = false
 
+					for j := range labels {
 						if *labels[j].Name == i {
 							chxLabels[i] = true
 							break
@@ -1868,10 +1893,10 @@ func AddLabels(metrics []*dto.MetricFamily) ([]*dto.MetricFamily, error) {
 				chxLabels := make(map[string]bool)
 
 				for i := range arbitraryLabels {
-					for j := range labels {
-						// true if label exists
-						chxLabels[i] = false
+					// true if label exists
+					chxLabels[i] = false
 
+					for j := range labels {
 						if *labels[j].Name == i {
 							chxLabels[i] = true
 							break
@@ -1902,10 +1927,10 @@ func AddLabels(metrics []*dto.MetricFamily) ([]*dto.MetricFamily, error) {
 				chxLabels := make(map[string]bool)
 
 				for i := range arbitraryLabels {
-					for j := range labels {
-						// true if label exists
-						chxLabels[i] = false
+					// true if label exists
+					chxLabels[i] = false
 
+					for j := range labels {
 						if *labels[j].Name == i {
 							chxLabels[i] = true
 							break
@@ -1936,10 +1961,10 @@ func AddLabels(metrics []*dto.MetricFamily) ([]*dto.MetricFamily, error) {
 				chxLabels := make(map[string]bool)
 
 				for i := range arbitraryLabels {
-					for j := range labels {
-						// true if label exists
-						chxLabels[i] = false
+					// true if label exists
+					chxLabels[i] = false
 
+					for j := range labels {
 						if *labels[j].Name == i {
 							chxLabels[i] = true
 							break

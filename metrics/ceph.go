@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/vultr/v-agent/cmd/v-agent/config"
+	"go.uber.org/zap"
 )
 
 var (
@@ -51,12 +52,22 @@ func ProbeCephMetrics() ([]byte, error) {
 
 // ScrapeCephMetrics scrapes ceph /metrics endpoint and remote writes the metrics
 func ScrapeCephMetrics() error {
+	log := zap.L().Sugar()
+
 	cephResp, err := ProbeCephMetrics()
 	if err != nil {
+		if errors.Is(err, ErrCephMgrNotActive) {
+			log.Warn(err)
+			return nil
+		}
+
 		return err
 	}
 
-	cephMetrics, err := parseMetrics(cephResp)
+	// only necessary for broken /metrics implementations
+	data := removeMetadata(cephResp)
+
+	cephMetrics, err := parseMetrics(data)
 	if err != nil {
 		return err
 	}
