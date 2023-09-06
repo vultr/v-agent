@@ -20,6 +20,9 @@ require (
 )
 
 require (
+	buf.build/gen/go/gogo/protobuf/protocolbuffers/go v1.31.0-20210810001428-4df00b267f94.1 // indirect
+	buf.build/gen/go/prometheus/prometheus/grpc/go v1.3.0-20230726221845-41588ce133c8.1 // indirect
+	buf.build/gen/go/prometheus/prometheus/protocolbuffers/go v1.31.0-20230726221845-41588ce133c8.1 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
