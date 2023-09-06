@@ -10,8 +10,8 @@ import (
 	"net/url"
 	"time"
 
+	prompb "buf.build/gen/go/prometheus/prometheus/protocolbuffers/go"
 	"github.com/golang/snappy"
-	prompb "go.buf.build/grpc/go/prometheus/prometheus"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )

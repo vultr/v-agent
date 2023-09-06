@@ -8,12 +8,12 @@ builds:
     main: ./cmd/v-agent/main.go
     binary: v-agent
     env:
-    - CGO_ENABLED=0
-    mod_timestamp: '{{ .CommitTimestamp }}'
+      - CGO_ENABLED=0
+    mod_timestamp: "{{ .CommitTimestamp }}"
     flags:
       - -trimpath #removes all file system paths from the compiled executable
       - -ldflags
-      - '-s -w'
+      - "-s -w"
     goos:
       - linux
     goarch:
@@ -28,19 +28,19 @@ archives:
       - README.md
       - src: cmd/v-agent/config.yaml
         strip_parent: true
-    name_template: 'v-agent_v{{ .Version }}_{{ .Os }}_{{ .Arch }}'
+    name_template: "v-agent_v{{ .Version }}_{{ .Os }}_{{ .Arch }}"
 
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
   algorithm: sha256
   ids:
     - v-agent
 
 blobs:
   - provider: s3
-    endpoint: https://ewr1.vultrobjects.com
-    region: us-east-1
-    bucket: vke-bins # testasdfasdf
+    endpoint: https://tartarus.vultr.dev
+    region: us-midwest-1
+    bucket: vke-bins
     ids:
       - v-agent
     folder: "v-agent/v{{.Version}}/"
