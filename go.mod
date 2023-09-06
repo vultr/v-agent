@@ -3,6 +3,7 @@ module github.com/vultr/v-agent
 go 1.21.0
 
 require (
+	buf.build/gen/go/prometheus/prometheus/protocolbuffers/go v1.31.0-20230726221845-41588ce133c8.1
 	github.com/ansrivas/fiberprometheus/v2 v2.6.1
 	github.com/gofiber/fiber/v2 v2.49.1
 	github.com/golang/snappy v0.0.4
@@ -11,7 +12,6 @@ require (
 	github.com/prometheus/client_model v0.4.0
 	github.com/prometheus/common v0.44.0
 	github.com/tidwall/gjson v1.16.0
-	go.buf.build/grpc/go/prometheus/prometheus v1.4.8
 	go.uber.org/zap v1.25.0
 	golang.org/x/sync v0.3.0
 	google.golang.org/protobuf v1.31.0
@@ -21,8 +21,6 @@ require (
 
 require (
 	buf.build/gen/go/gogo/protobuf/protocolbuffers/go v1.31.0-20210810001428-4df00b267f94.1 // indirect
-	buf.build/gen/go/prometheus/prometheus/grpc/go v1.3.0-20230726221845-41588ce133c8.1 // indirect
-	buf.build/gen/go/prometheus/prometheus/protocolbuffers/go v1.31.0-20230726221845-41588ce133c8.1 // indirect
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
@@ -62,7 +60,6 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.49.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	go.buf.build/grpc/go/gogo/protobuf v1.4.10 // indirect
 	go.uber.org/goleak v1.2.1 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/net v0.15.0 // indirect

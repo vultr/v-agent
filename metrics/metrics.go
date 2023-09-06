@@ -7,12 +7,12 @@ import (
 	"strings"
 	"time"
 
+	prompb "buf.build/gen/go/prometheus/prometheus/protocolbuffers/go"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	dto "github.com/prometheus/client_model/go"
 	"github.com/prometheus/common/expfmt"
 	"github.com/vultr/v-agent/cmd/v-agent/config"
-	prompb "go.buf.build/grpc/go/prometheus/prometheus"
 	"go.uber.org/zap"
 )
 
