@@ -5,7 +5,7 @@ go 1.21.0
 require (
 	buf.build/gen/go/prometheus/prometheus/protocolbuffers/go v1.31.0-20230726221845-41588ce133c8.1
 	github.com/ansrivas/fiberprometheus/v2 v2.6.1
-	github.com/gofiber/fiber/v2 v2.49.1
+	github.com/gofiber/fiber/v2 v2.49.2
 	github.com/golang/snappy v0.0.4
 	github.com/levigross/grequests v0.0.0-20221222020224-9eee758d18d5
 	github.com/prometheus/client_golang v1.16.0
