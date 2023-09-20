@@ -26,6 +26,7 @@ var labels map[string]string
 
 // Config is the CLI options wrapped in a struct
 type Config struct {
+	Name       string
 	ConfigFile string
 
 	Version string
@@ -176,6 +177,7 @@ func NewConfig(name, version string) (*Config, error) {
 		}
 	}
 
+	config.Name = name
 	config.Version = version
 
 	return config, nil

@@ -17,6 +17,7 @@ var config *Config
 
 // Config is the CLI options wrapped in a struct
 type Config struct {
+	Name       string
 	ConfigFile string
 
 	Debug         bool   `yaml:"debug"`
@@ -58,6 +59,8 @@ func NewConfig(name string) (*Config, error) {
 			return nil, err
 		}
 	}
+
+	config.Name = name
 
 	return config, nil
 }
