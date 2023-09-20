@@ -105,6 +105,9 @@ var (
 	// etcd
 	etcdServerHealth *prometheus.GaugeVec
 
+	// nginx-vts
+	nginxVtsHealthy *prometheus.GaugeVec
+
 	// haproxy
 	haproxyHealthy *prometheus.GaugeVec
 
@@ -1051,6 +1054,18 @@ func NewMetrics() {
 		},
 	)
 
+	// nginx-vts
+	nginxVtsHealthy = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "nginx_vts_healthy",
+			Help: "nginx-vts /metrics, 0 = healthy, 1 = not healthy",
+		},
+		[]string{
+			"product",
+			"hostname",
+		},
+	)
+
 	// haproxy
 	haproxyHealthy = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
@@ -1169,6 +1184,15 @@ func Gather() error {
 		log.Info("Not gathering etcd metrics")
 	}
 
+	if config.NginxVTSMetricsCollectionEnabled() {
+		log.Info("Gathering nginx-vts metrics")
+		if err := gatherNginxVTSMetrics(); err != nil {
+			return err
+		}
+	} else {
+		log.Info("Not gathering nginx-vts metrics")
+	}
+
 	if config.HAProxyMetricCollectionEnabled() {
 		log.Info("Gathering haproxy metrics")
 		if err := gatherHAProxyMetrics(); err != nil {
@@ -1196,11 +1220,6 @@ func Gather() error {
 		log.Info("Not gathering ceph metrics")
 	}
 
-	return nil
-}
-
-// RemoteWrite performs a remote write to the specified endpoint
-func RemoteWrite(endpoint string) error {
 	return nil
 }
 
@@ -1667,6 +1686,34 @@ func gatherEtcdMetrics() error {
 	}
 
 	if err := ScrapeEtcdMetrics(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func gatherNginxVTSMetrics() error {
+	log := zap.L().Sugar()
+
+	hostname, err := config.GetLabel("hostname")
+	if err != nil {
+		return err
+	}
+
+	product, err := config.GetLabel("product")
+	if err != nil {
+		return err
+	}
+
+	if err := DoNginxVTSHealthCheck(); err != nil {
+		log.Error(err)
+
+		nginxVtsHealthy.WithLabelValues(product["product"], hostname["hostname"]).Set(float64(1))
+	} else {
+		nginxVtsHealthy.WithLabelValues(product["product"], hostname["hostname"]).Set(float64(0))
+	}
+
+	if err := ScrapeNginxVTSMetrics(); err != nil {
 		return err
 	}
 

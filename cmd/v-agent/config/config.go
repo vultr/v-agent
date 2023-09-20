@@ -26,6 +26,7 @@ var labels map[string]string
 
 // Config is the CLI options wrapped in a struct
 type Config struct {
+	Name       string
 	ConfigFile string
 
 	Version string
@@ -57,6 +58,7 @@ type MetricsConfig struct {
 	Kubernetes   Kubernetes   `yaml:"kubernetes"`
 	Konnectivity Konnectivity `yaml:"konnectivity"`
 	Etcd         Etcd         `yaml:"etcd"`
+	NginxVTS     NginxVTS     `yaml:"nginx_vts"`
 	HAProxy      HAProxy      `yaml:"haproxy"`
 	Ganesha      Ganesha      `yaml:"ganesha"`
 	Ceph         Ceph         `yaml:"ceph"`
@@ -116,6 +118,12 @@ type Etcd struct {
 	Key      string `yaml:"key"`
 }
 
+// NginxVTS config
+type NginxVTS struct {
+	Enabled  bool   `yaml:"enabled"`
+	Endpoint string `yaml:"endpoint"`
+}
+
 // HAProxy config
 type HAProxy struct {
 	Enabled  bool   `yaml:"enabled"`
@@ -169,6 +177,7 @@ func NewConfig(name, version string) (*Config, error) {
 		}
 	}
 
+	config.Name = name
 	config.Version = version
 
 	return config, nil

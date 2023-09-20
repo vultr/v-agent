@@ -69,43 +69,43 @@ func getProcStat() (*ProcStatCPU, error) {
 	var cpuStats ProcStatCPU
 	var errAtoi error
 
-	if cpuStats.User, errAtoi = strconv.Atoi(splitted[1]); err != nil {
+	if cpuStats.User, errAtoi = strconv.Atoi(splitted[1]); errAtoi != nil {
 		return nil, errAtoi
 	}
 
-	if cpuStats.Nice, errAtoi = strconv.Atoi(splitted[2]); err != nil {
+	if cpuStats.Nice, errAtoi = strconv.Atoi(splitted[2]); errAtoi != nil {
 		return nil, errAtoi
 	}
 
-	if cpuStats.System, errAtoi = strconv.Atoi(splitted[3]); err != nil {
+	if cpuStats.System, errAtoi = strconv.Atoi(splitted[3]); errAtoi != nil {
 		return nil, errAtoi
 	}
 
-	if cpuStats.Idle, errAtoi = strconv.Atoi(splitted[4]); err != nil {
+	if cpuStats.Idle, errAtoi = strconv.Atoi(splitted[4]); errAtoi != nil {
 		return nil, errAtoi
 	}
 
-	if cpuStats.IOWait, errAtoi = strconv.Atoi(splitted[5]); err != nil {
+	if cpuStats.IOWait, errAtoi = strconv.Atoi(splitted[5]); errAtoi != nil {
 		return nil, errAtoi
 	}
 
-	if cpuStats.IRQ, errAtoi = strconv.Atoi(splitted[6]); err != nil {
+	if cpuStats.IRQ, errAtoi = strconv.Atoi(splitted[6]); errAtoi != nil {
 		return nil, errAtoi
 	}
 
-	if cpuStats.SoftIRQ, errAtoi = strconv.Atoi(splitted[7]); err != nil {
+	if cpuStats.SoftIRQ, errAtoi = strconv.Atoi(splitted[7]); errAtoi != nil {
 		return nil, errAtoi
 	}
 
-	if cpuStats.Steal, errAtoi = strconv.Atoi(splitted[8]); err != nil {
+	if cpuStats.Steal, errAtoi = strconv.Atoi(splitted[8]); errAtoi != nil {
 		return nil, errAtoi
 	}
 
-	if cpuStats.Guest, errAtoi = strconv.Atoi(splitted[9]); err != nil {
+	if cpuStats.Guest, errAtoi = strconv.Atoi(splitted[9]); errAtoi != nil {
 		return nil, errAtoi
 	}
 
-	if cpuStats.GuestNice, errAtoi = strconv.Atoi(splitted[10]); err != nil {
+	if cpuStats.GuestNice, errAtoi = strconv.Atoi(splitted[10]); errAtoi != nil {
 		return nil, errAtoi
 	}
 

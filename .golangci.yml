@@ -19,7 +19,7 @@ linters-settings:
   golint:
     min-confidence: 0
   gomnd:
-    checks: 
+    checks:
       - argument
       - case
       - condition
@@ -59,7 +59,6 @@ linters:
     - ineffassign
     - misspell
     - nakedret
-    - revive
     - staticcheck
     - stylecheck
     - typecheck
