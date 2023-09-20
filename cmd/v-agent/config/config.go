@@ -57,6 +57,7 @@ type MetricsConfig struct {
 	Kubernetes   Kubernetes   `yaml:"kubernetes"`
 	Konnectivity Konnectivity `yaml:"konnectivity"`
 	Etcd         Etcd         `yaml:"etcd"`
+	NginxVTS     NginxVTS     `yaml:"nginx_vts"`
 	HAProxy      HAProxy      `yaml:"haproxy"`
 	Ganesha      Ganesha      `yaml:"ganesha"`
 	Ceph         Ceph         `yaml:"ceph"`
@@ -114,6 +115,12 @@ type Etcd struct {
 	CACert   string `yaml:"cacert"`
 	Cert     string `yaml:"cert"`
 	Key      string `yaml:"key"`
+}
+
+// NginxVTS config
+type NginxVTS struct {
+	Enabled  bool   `yaml:"enabled"`
+	Endpoint string `yaml:"endpoint"`
 }
 
 // HAProxy config

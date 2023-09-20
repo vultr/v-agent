@@ -21,7 +21,11 @@ func NewExporterAPI(listen string, port uint) (*ExportAPI, error) {
 	var p ExportAPI
 
 	// Initialize engine
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		DisableKeepalive:      true,
+		DisableStartupMessage: true,
+		EnablePrintRoutes:     false,
+	})
 
 	prometheus := fiberprometheus.New("v-agent")
 	prometheus.RegisterAt(app, "/metrics")

@@ -94,7 +94,20 @@ func GetSubID(product string) (*string, error) {
 			return nil, err
 		}
 
-		// TODO needs implementation
+		subid := gjson.Get(string(body), "data.vfs_subid")
+
+		return &subid.Str, nil
+	case "vcdn":
+		resp, err := http.Get("http://169.254.169.254/latest/user-data")
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close() //nolint
+
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
 
 		subid := gjson.Get(string(body), "data.vfs_subid")
 

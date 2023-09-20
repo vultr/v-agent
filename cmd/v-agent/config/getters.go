@@ -252,6 +252,29 @@ func EtcdMetricCollectionEnabled() bool {
 	return cfg.MetricsConfig.Etcd.Enabled
 }
 
+// NginxVTSMetricsCollectionEnabled returns true if nginx vts metric collection enabled
+func NginxVTSMetricsCollectionEnabled() bool {
+	log := zap.L().Sugar()
+
+	cfg, err := GetConfig()
+	if err != nil {
+		log.Error(err)
+		return true
+	}
+
+	return cfg.MetricsConfig.NginxVTS.Enabled
+}
+
+// GetNginxVTSMetricsEndpoint returns nginx vts endpoint
+func GetNginxVTSMetricsEndpoint() (*string, error) {
+	cfg, err := GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return &cfg.MetricsConfig.NginxVTS.Endpoint, nil
+}
+
 // HAProxyMetricCollectionEnabled returns true/false if haproxy collection enabled
 func HAProxyMetricCollectionEnabled() bool {
 	log := zap.L().Sugar()
