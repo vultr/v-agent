@@ -18,8 +18,13 @@ import (
 )
 
 const (
-	name    string = "v-agent"
-	version string = "v1.0.5"
+	name string = "v-agent"
+)
+
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
 )
 
 func main() {
@@ -41,7 +46,12 @@ func main() {
 
 	log := zap.L().Sugar()
 
-	log.Infof("version: %s", version)
+	log.With(
+		"context", name,
+		"version", version,
+		"commit", commit,
+		"date", date,
+	).Info()
 
 	// output labels
 	labels := config.GetLabels()
