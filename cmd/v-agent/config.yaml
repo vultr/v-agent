@@ -44,6 +44,9 @@ metrics_config:
   nginx_vts:
     enabled: false
     endpoint: http://localhost:9001 # /metrics
+  v_cdn_agent:
+    enabled: false
+    endpoint: http://localhost:9093 # /metrics
   haproxy:
     enabled: false
     endpoint: http://localhost:8404 # /metrics

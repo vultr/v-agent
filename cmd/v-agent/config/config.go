@@ -59,6 +59,7 @@ type MetricsConfig struct {
 	Konnectivity Konnectivity `yaml:"konnectivity"`
 	Etcd         Etcd         `yaml:"etcd"`
 	NginxVTS     NginxVTS     `yaml:"nginx_vts"`
+	VCDNAgent    VCDNAgent    `yaml:"v_cdn_agent"`
 	HAProxy      HAProxy      `yaml:"haproxy"`
 	Ganesha      Ganesha      `yaml:"ganesha"`
 	Ceph         Ceph         `yaml:"ceph"`
@@ -120,6 +121,12 @@ type Etcd struct {
 
 // NginxVTS config
 type NginxVTS struct {
+	Enabled  bool   `yaml:"enabled"`
+	Endpoint string `yaml:"endpoint"`
+}
+
+// VCDNAgent config
+type VCDNAgent struct {
 	Enabled  bool   `yaml:"enabled"`
 	Endpoint string `yaml:"endpoint"`
 }
