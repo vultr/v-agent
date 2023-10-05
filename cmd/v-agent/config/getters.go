@@ -275,6 +275,29 @@ func GetNginxVTSMetricsEndpoint() (*string, error) {
 	return &cfg.MetricsConfig.NginxVTS.Endpoint, nil
 }
 
+// VCDNAgentMetricsCollectionEnabled returns true if v-cdn-agent metric collection enabled
+func VCDNAgentMetricsCollectionEnabled() bool {
+	log := zap.L().Sugar()
+
+	cfg, err := GetConfig()
+	if err != nil {
+		log.Error(err)
+		return true
+	}
+
+	return cfg.MetricsConfig.VCDNAgent.Enabled
+}
+
+// GetVCDNAgentMetricsEndpoint returns v-cdn-agent endpoint
+func GetVCDNAgentMetricsEndpoint() (*string, error) {
+	cfg, err := GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return &cfg.MetricsConfig.VCDNAgent.Endpoint, nil
+}
+
 // HAProxyMetricCollectionEnabled returns true/false if haproxy collection enabled
 func HAProxyMetricCollectionEnabled() bool {
 	log := zap.L().Sugar()

@@ -108,6 +108,9 @@ var (
 	// nginx-vts
 	nginxVtsHealthy *prometheus.GaugeVec
 
+	// v-cdn-agent
+	vcdnAgentHealth *prometheus.GaugeVec
+
 	// haproxy
 	haproxyHealthy *prometheus.GaugeVec
 
@@ -1066,6 +1069,18 @@ func NewMetrics() {
 		},
 	)
 
+	// v-cdn-agent
+	vcdnAgentHealth = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_cdn_agent_healthy",
+			Help: "v-cdn-agent /metrics, 0 = healthy, 1 = not healthy",
+		},
+		[]string{
+			"product",
+			"hostname",
+		},
+	)
+
 	// haproxy
 	haproxyHealthy = promauto.NewGaugeVec(
 		prometheus.GaugeOpts{
@@ -1191,6 +1206,15 @@ func Gather() error {
 		}
 	} else {
 		log.Info("Not gathering nginx-vts metrics")
+	}
+
+	if config.VCDNAgentMetricsCollectionEnabled() {
+		log.Info("Gathering v-cdn-agent metrics")
+		if err := gatherVCDNAgentMetrics(); err != nil {
+			return err
+		}
+	} else {
+		log.Info("Not gathering v-cdn-agent metrics")
 	}
 
 	if config.HAProxyMetricCollectionEnabled() {
@@ -1714,6 +1738,34 @@ func gatherNginxVTSMetrics() error {
 	}
 
 	if err := ScrapeNginxVTSMetrics(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func gatherVCDNAgentMetrics() error {
+	log := zap.L().Sugar()
+
+	hostname, err := config.GetLabel("hostname")
+	if err != nil {
+		return err
+	}
+
+	product, err := config.GetLabel("product")
+	if err != nil {
+		return err
+	}
+
+	if err := DoVCDNAgentHealthCheck(); err != nil {
+		log.Error(err)
+
+		vcdnAgentHealth.WithLabelValues(product["product"], hostname["hostname"]).Set(float64(1))
+	} else {
+		vcdnAgentHealth.WithLabelValues(product["product"], hostname["hostname"]).Set(float64(0))
+	}
+
+	if err := ScrapeVCDNAgentMetrics(); err != nil {
 		return err
 	}
 
