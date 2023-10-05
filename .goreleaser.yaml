@@ -12,8 +12,6 @@ builds:
     mod_timestamp: "{{ .CommitTimestamp }}"
     flags:
       - -trimpath #removes all file system paths from the compiled executable
-      - -ldflags
-      - "-s -w"
     goos:
       - linux
     goarch:
