@@ -102,7 +102,7 @@ func createTagMap(cfg *Config) map[string]LogFunc {
 		TagReqHeaders: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
 			reqHeaders := make([]string, 0)
 			for k, v := range c.GetReqHeaders() {
-				reqHeaders = append(reqHeaders, k+"="+v)
+				reqHeaders = append(reqHeaders, k+"="+strings.Join(v, ","))
 			}
 			return output.Write([]byte(strings.Join(reqHeaders, "&")))
 		},
@@ -139,6 +139,10 @@ func createTagMap(cfg *Config) map[string]LogFunc {
 		},
 		TagError: func(output Buffer, c *fiber.Ctx, data *Data, extraParam string) (int, error) {
 			if data.ChainErr != nil {
+				if cfg.enableColors {
+					colors := c.App().Config().ColorScheme
+					return output.WriteString(fmt.Sprintf("%s%s%s", colors.Red, data.ChainErr.Error(), colors.Reset))
+				}
 				return output.WriteString(data.ChainErr.Error())
 			}
 			return output.WriteString("-")
