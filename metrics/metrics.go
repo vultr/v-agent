@@ -116,6 +116,9 @@ var (
 
 	// ganesha
 	ganeshaHealthy *prometheus.GaugeVec
+
+	// v-dns
+	vdnsHealthy *prometheus.GaugeVec
 )
 
 // NewMetrics initializes metrics
@@ -1108,6 +1111,18 @@ func NewMetrics() {
 			"vpsid",
 		},
 	)
+
+	// v-dns
+	vdnsHealthy = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_dns_healthy",
+			Help: "v-dns /metrics, 0 = healthy, 1 = not healthy",
+		},
+		[]string{
+			"product",
+			"hostname",
+		},
+	)
 }
 
 // Gather gathers updates metrics
@@ -1242,6 +1257,15 @@ func Gather() error {
 		}
 	} else {
 		log.Info("Not gathering ceph metrics")
+	}
+
+	if config.VDNSMetricsCollectionEnabled() {
+		log.Info("Gathering v-dns metrics")
+		if err := gatherVDNSMetrics(); err != nil {
+			return err
+		}
+	} else {
+		log.Info("Not gathering v-dns metrics")
 	}
 
 	return nil
@@ -1850,6 +1874,34 @@ func gatherGaneshaMetrics() error {
 
 func gatherCephMetrics() error {
 	if err := ScrapeCephMetrics(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func gatherVDNSMetrics() error {
+	log := zap.L().Sugar()
+
+	hostname, err := config.GetLabel("hostname")
+	if err != nil {
+		return err
+	}
+
+	product, err := config.GetLabel("product")
+	if err != nil {
+		return err
+	}
+
+	if err := DoVDNSHealthCheck(); err != nil {
+		log.Error(err)
+
+		vdnsHealthy.WithLabelValues(product["product"], hostname["hostname"]).Set(float64(1))
+	} else {
+		vdnsHealthy.WithLabelValues(product["product"], hostname["hostname"]).Set(float64(0))
+	}
+
+	if err := ScrapeVDNSMetrics(); err != nil {
 		return err
 	}
 

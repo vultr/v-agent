@@ -3,6 +3,7 @@ package metrics
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -11,9 +12,14 @@ import (
 	"github.com/vultr/v-agent/cmd/v-agent/config"
 )
 
-// DoGaneshaHealthCheck probes /metrics and returns nil or ErrGaneshaServerUnhealthy, or some other error
-func DoGaneshaHealthCheck() error {
-	endpoint, err := config.GetGaneshaMetricsEndpoint()
+var (
+	// ErrVDNSUnhealthy returned if response is not status code 200 from /metrics
+	ErrVDNSUnhealthy = errors.New("v-dns unhealthy")
+)
+
+// DoVDNSHealthCheck probes /metrics and returns nil or ErrVDNSUnhealthy, or some other error
+func DoVDNSHealthCheck() error {
+	endpoint, err := config.GetVDNSMetricsEndpoint()
 	if err != nil {
 		return err
 	}
@@ -36,15 +42,15 @@ func DoGaneshaHealthCheck() error {
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return ErrGaneshaServerUnhealthy
+		return ErrNginxVTSServerUnhealthy
 	}
 
 	return nil
 }
 
-// ProbeGaneshaMetrics probes /metrics from ganesha
-func ProbeGaneshaMetrics() ([]byte, error) {
-	endpoint, err := config.GetGaneshaMetricsEndpoint()
+// ProbeVDNSMetrics probes /metrics from v-dns
+func ProbeVDNSMetrics() ([]byte, error) {
+	endpoint, err := config.GetVDNSMetricsEndpoint()
 	if err != nil {
 		return nil, err
 	}
@@ -70,19 +76,19 @@ func ProbeGaneshaMetrics() ([]byte, error) {
 	return data, nil
 }
 
-// ScrapeGaneshaMetrics scrapes ganesha /metrics endpoint and remote writes the metrics
-func ScrapeGaneshaMetrics() error {
-	haproxyResp, err := ProbeGaneshaMetrics()
+// ScrapeVDNSMetrics scrapes v-dns /metrics endpoint and remote writes the metrics
+func ScrapeVDNSMetrics() error {
+	vdnsResp, err := ProbeVDNSMetrics()
 	if err != nil {
 		return err
 	}
 
-	haproxyMetrics, err := parseMetrics(haproxyResp)
+	vdnsMetrics, err := parseMetrics(vdnsResp)
 	if err != nil {
 		return err
 	}
 
-	tsList := GetMetricsAsTimeSeries(haproxyMetrics)
+	tsList := GetMetricsAsTimeSeries(vdnsMetrics)
 
 	cfg, err := config.GetConfig()
 	if err != nil {

@@ -3,18 +3,12 @@ package metrics
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"time"
 
 	"github.com/vultr/v-agent/cmd/v-agent/config"
-)
-
-var (
-	// ErrKonnectivityServerUnhealthy returned if response is not "ok" from /healthz
-	ErrKonnectivityServerUnhealthy = errors.New("konnectivity unhealthy")
 )
 
 // DoKonnectivityHealthCheck probes /healthz and returns nil or ErrKonnectivityServerUnhealthy, or some other error

@@ -3,7 +3,6 @@ package metrics
 
 import (
 	"bufio"
-	"errors"
 	"io"
 	"os"
 	"regexp"
@@ -13,11 +12,6 @@ import (
 	"github.com/vultr/v-agent/cmd/v-agent/config"
 
 	"go.uber.org/zap"
-)
-
-var (
-	// ErrInconsistentDisksReturned thrown if a read between /proc/diskstats results in less devices
-	ErrInconsistentDisksReturned = errors.New("inconsistent amount of disks returned")
 )
 
 // DiskStats from /proc/diskstats

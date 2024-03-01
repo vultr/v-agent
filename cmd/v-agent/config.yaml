@@ -56,3 +56,6 @@ metrics_config:
   ceph:
     enabled: false
     endpoint: http://localhost:9283 # /metrics
+  v_dns:
+    enabled: false
+    endpoint: http://localhost:9053 # /metrics

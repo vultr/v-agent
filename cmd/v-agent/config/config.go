@@ -63,6 +63,7 @@ type MetricsConfig struct {
 	HAProxy      HAProxy      `yaml:"haproxy"`
 	Ganesha      Ganesha      `yaml:"ganesha"`
 	Ceph         Ceph         `yaml:"ceph"`
+	VDNS         VDNS         `yaml:"v_dns"`
 }
 
 // LoadAvg configuration
@@ -145,6 +146,12 @@ type Ganesha struct {
 
 // Ceph config
 type Ceph struct {
+	Enabled  bool   `yaml:"enabled"`
+	Endpoint string `yaml:"endpoint"`
+}
+
+// VDNS config
+type VDNS struct {
 	Enabled  bool   `yaml:"enabled"`
 	Endpoint string `yaml:"endpoint"`
 }
