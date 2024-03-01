@@ -30,4 +30,7 @@ var (
 
 	// ErrVCDNAgentServerUnhealthy returned if response is not status code 200 from /metrics
 	ErrVCDNAgentServerUnhealthy = errors.New("v-cdn-agent unhealthy")
+
+	// ErrVDNSUnhealthy returned if response is not status code 200 from /metrics
+	ErrVDNSUnhealthy = errors.New("v-dns unhealthy")
 )

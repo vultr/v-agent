@@ -3,18 +3,12 @@ package metrics
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"time"
 
 	"github.com/vultr/v-agent/cmd/v-agent/config"
-)
-
-var (
-	// ErrVDNSUnhealthy returned if response is not status code 200 from /metrics
-	ErrVDNSUnhealthy = errors.New("v-dns unhealthy")
 )
 
 // DoVDNSHealthCheck probes /metrics and returns nil or ErrVDNSUnhealthy, or some other error
