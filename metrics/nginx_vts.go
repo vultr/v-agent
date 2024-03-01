@@ -3,18 +3,12 @@ package metrics
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"time"
 
 	"github.com/vultr/v-agent/cmd/v-agent/config"
-)
-
-var (
-	// ErrNginxVTSServerUnhealthy returned if response is not status code 200 from /metrics
-	ErrNginxVTSServerUnhealthy = errors.New("nginx-vts unhealthy")
 )
 
 // DoNginxVTSHealthCheck probes /metrics and returns nil or ErrNginxVTSServerUnhealthy, or some other error

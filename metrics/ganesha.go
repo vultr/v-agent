@@ -3,18 +3,12 @@ package metrics
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"time"
 
 	"github.com/vultr/v-agent/cmd/v-agent/config"
-)
-
-var (
-	// ErrGaneshaServerUnhealthy returned if response is not status code 200 from /metrics
-	ErrGaneshaServerUnhealthy = errors.New("ganesha unhealthy")
 )
 
 // DoGaneshaHealthCheck probes /metrics and returns nil or ErrGaneshaServerUnhealthy, or some other error

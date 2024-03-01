@@ -3,18 +3,12 @@ package metrics
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"github.com/vultr/v-agent/cmd/v-agent/config"
 
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
-)
-
-var (
-	// ErrKubeAPIServerUnhealthy returned if response is not "ok" from /healthz
-	ErrKubeAPIServerUnhealthy = errors.New("kube-apiserver unhealthy")
 )
 
 // DoKubeAPIServerHealthCheck probes /healthz and returns nil or ErrKubeAPIServerUnhealthy, or some other error

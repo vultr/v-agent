@@ -3,18 +3,12 @@ package metrics
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"time"
 
 	"github.com/vultr/v-agent/cmd/v-agent/config"
-)
-
-var (
-	// ErrHAProxyServerUnhealthy returned if response is not status code 200 from /metrics
-	ErrHAProxyServerUnhealthy = errors.New("haproxy unhealthy")
 )
 
 // DoHAProxyHealthCheck probes /metrics and returns nil or ErrHAProxyServerUnhealthy, or some other error

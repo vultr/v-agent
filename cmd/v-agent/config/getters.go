@@ -366,3 +366,26 @@ func GetCephMetricsEndpoint() (*string, error) {
 
 	return &cfg.MetricsConfig.Ceph.Endpoint, nil
 }
+
+// VDNSMetricsCollectionEnabled returns true if v-dns metric collection enabled
+func VDNSMetricsCollectionEnabled() bool {
+	log := zap.L().Sugar()
+
+	cfg, err := GetConfig()
+	if err != nil {
+		log.Error(err)
+		return true
+	}
+
+	return cfg.MetricsConfig.VDNS.Enabled
+}
+
+// GetVDNSMetricsEndpoint returns v-dns endpoint
+func GetVDNSMetricsEndpoint() (*string, error) {
+	cfg, err := GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return &cfg.MetricsConfig.VDNS.Endpoint, nil
+}

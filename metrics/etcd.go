@@ -6,7 +6,6 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -14,11 +13,6 @@ import (
 	"time"
 
 	"github.com/vultr/v-agent/cmd/v-agent/config"
-)
-
-var (
-	// ErrEtcdUnhealthy returned if response is not "true" from /health
-	ErrEtcdUnhealthy = errors.New("etcd unhealthy")
 )
 
 // HealthResp response for /health is marshaled to this

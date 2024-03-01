@@ -13,11 +13,6 @@ import (
 	"go.uber.org/zap"
 )
 
-var (
-	// ErrCephMgrNotActive thrown if no data returned when attempting to read metrics
-	ErrCephMgrNotActive = errors.New("ceph-mgr not active")
-)
-
 // ProbeCephMetrics probes /metrics from ceph
 func ProbeCephMetrics() ([]byte, error) {
 	endpoint, err := config.GetCephMetricsEndpoint()
