@@ -42,7 +42,7 @@ func DoVDNSHealthCheck() error {
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return ErrNginxVTSServerUnhealthy
+		return ErrVDNSUnhealthy
 	}
 
 	return nil
