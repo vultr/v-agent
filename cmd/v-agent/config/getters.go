@@ -3,6 +3,7 @@ package config
 
 import (
 	"errors"
+	"fmt"
 
 	"go.uber.org/zap"
 )
@@ -52,7 +53,7 @@ func GetLabel(label string) (map[string]string, error) {
 		}
 	}
 
-	return nil, ErrLabelNotExist
+	return nil, fmt.Errorf("%s: %w", label, ErrLabelNotExist)
 }
 
 // GetDiskStatsFilter returns the regex for the disk stats filter

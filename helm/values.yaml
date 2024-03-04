@@ -6,9 +6,9 @@ replicas: 1
 
 resources:
   requests:
-    memory: "1Gi"
+    memory: "256Mi"
   limits:
-    memory: "2Gi"
+    memory: "512Mi"
 
 registryCreds: ewoJImF1dGhzIjogewoJCSJld3IudnVsdHJjci5jb20iOiB7CgkJCSJhdXRoIjogIll6QTBaVGhsTnpZdE0yRmtaaTAwTXpNMExUaGtaVFV0TVdSak16aGhOakl5WlRGbU9tZExPVTFXVTNSaFZGTkdSRmRGVVV0eE9WUm1aRnAxYldGV1RHNXZZVUptVEVOT05nPT0iCgkJfQoJfQp9
 
@@ -22,6 +22,7 @@ config:
   basic_auth_pass: ""
   check_vendor: false # when true, vendor must be "Vultr"; set to false on bare metal
   labels_config: # any labels below will be added to all metrics
+    hostname: ""
     product: "v-inf"
   metrics_config:
     load_avg:
