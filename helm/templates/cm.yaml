@@ -12,13 +12,13 @@ data:
     debug: true
     listen: 0.0.0.0
     port: 7091
-    interval: 5
-    endpoint: https://metrics.vultrlabs.com/api/v1/push
+    interval: {{ .Values.config.interval }}
+    endpoint: {{ .Values.config.endpoint }}
     basic_auth_user: "{{ .Values.config.basic_auth_user }}"
     basic_auth_pass: "{{ .Values.config.basic_auth_pass }}"
     check_vendor: false
     labels_config: |
-    {{ .Values.config.labels_config | indent 2}}
+    {{ toYaml .Values.config.labels_config | indent 2}}
     metrics_config:
       load_avg:
         enabled: {{ .Values.config.metrics_config.load_avg.enabled }}

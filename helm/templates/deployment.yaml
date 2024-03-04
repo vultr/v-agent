@@ -21,7 +21,7 @@ spec:
         checksum/config: {{ include (print $.Template.BasePath "/cm.yaml") . | sha256sum }}
         prometheus.io/scrape: 'true'
         prometheus.io/path: '/metrics'
-        prometheus.io/port: '{{ .Values.probes_api.port }}'
+        prometheus.io/port: '{{ .Values.config.port }}'
     spec:
       nodeSelector:
         kubernetes.io/arch: amd64

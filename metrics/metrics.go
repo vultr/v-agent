@@ -4,6 +4,7 @@ package metrics
 import (
 	"bufio"
 	"bytes"
+	"errors"
 	"strings"
 	"time"
 
@@ -1130,7 +1131,11 @@ func Gather() error {
 	log := zap.L().Sugar()
 
 	if err := gatherMetadataMetrics(); err != nil {
-		return err
+		if !errors.Is(err, config.ErrLabelNotExist) {
+			return err
+		} else {
+			log.Warn(err)
+		}
 	}
 
 	if config.LoadAvgMetricCollectionEnabled() {
