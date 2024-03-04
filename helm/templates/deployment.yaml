@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: v-agent
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+    meta.helm.sh/release-namespace: {{ .Release.Namespace }}
+  name: v-agent
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: v-agent
+  template:
+    metadata:
+      labels:
+        app: v-agent
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/cm.yaml") . | sha256sum }}
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: '/metrics'
+        prometheus.io/port: '{{ .Values.probes_api.port }}'
+    spec:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      serviceAccountName: v-agent
+      imagePullSecrets:
+      - name: vcr
+      containers:
+      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        name: v-agent
+        imagePullPolicy: "Always"
+        command: [/app/v-agent]
+        args: ["-config", "/app/etc/config.yaml"]
+        resources:
+          limits:
+            memory: {{ .Values.resources.limits.memory | quote }}
+          requests:
+            memory: {{ .Values.resources.requests.memory | quote }}
+        ports:
+          - containerPort: {{ .Values.config.port }}
+            name: http
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: probes
+          failureThreshold: 2
+          periodSeconds: 3
+          initialDelaySeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: probes
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        volumeMounts:
+        - name: v-agent
+          mountPath: /app/etc
+      volumes:
+      - name: v-agent
+        configMap:
+          name: v-agent

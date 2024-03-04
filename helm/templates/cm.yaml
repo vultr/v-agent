@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: v-agent
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  name: v-agent
+  namespace: {{ .Release.Namespace }}
+data:
+  config.yaml: |-
+    ---
+    debug: true
+    listen: 0.0.0.0
+    port: 7091
+    interval: 5
+    endpoint: https://metrics.vultrlabs.com/api/v1/push
+    basic_auth_user: "{{ .Values.config.basic_auth_user }}"
+    basic_auth_pass: "{{ .Values.config.basic_auth_pass }}"
+    check_vendor: false
+    labels_config: |
+    {{ .Values.config.labels_config | indent 2}}
+    metrics_config:
+      load_avg:
+        enabled: {{ .Values.config.metrics_config.load_avg.enabled }}
+      cpu:
+        enabled: {{ .Values.config.metrics_config.cpu.enabled }}
+      memory:
+        enabled: {{ .Values.config.metrics_config.memory.enabled }}
+      nic:
+        enabled: {{ .Values.config.metrics_config.nic.enabled }}
+      disk_stats:
+        enabled: {{ .Values.config.metrics_config.disk_stats.enabled }}
+        filter: "sr0" # regex
+      file_system:
+        enabled: {{ .Values.config.metrics_config.file_system.enabled }}
+      kubernetes:
+        enabled: {{ .Values.config.metrics_config.kubernetes.enabled }}
+        endpoint: {{ .Values.config.metrics_config.kubernetes.endpoint }}
+        kubeconfig: /var/lib/kubernetes/admin.kubeconfig
+      konnectivity:
+        enabled: {{ .Values.config.metrics_config.konnectivity.enabled }}
+        metrics_endpoint: {{ .Values.config.metrics_config.konnectivity.metrics_endpoint }}
+        health_endpoint: {{ .Values.config.metrics_config.konnectivity.health_endpoint }}
+      etcd:
+        enabled: {{ .Values.config.metrics_config.etcd.enabled }}
+        cacert: /var/lib/kubernetes/ca.pem
+        cert: /var/lib/kubernetes/kubernetes.pem
+        key: /var/lib/kubernetes/kubernetes-key.pem
+        endpoint: {{ .Values.config.metrics_config.etcd.endpoint }}
+      nginx_vts:
+        enabled: {{ .Values.config.metrics_config.nginx_vts.enabled }}
+        endpoint: {{ .Values.config.metrics_config.nginx_vts.endpoint }}
+      v_cdn_agent:
+        enabled: {{ .Values.config.metrics_config.v_cdn_agent.enabled }}
+        endpoint: {{ .Values.config.metrics_config.v_cdn_agent.endpoint }}
+      haproxy:
+        enabled: {{ .Values.config.metrics_config.haproxy.enabled }}
+        endpoint: {{ .Values.config.metrics_config.haproxy.endpoint }}
+      ganesha:
+        enabled: {{ .Values.config.metrics_config.ganesha.enabled }}
+        endpoint: {{ .Values.config.metrics_config.ganesha.endpoint }}
+      ceph:
+        enabled: {{ .Values.config.metrics_config.ceph.enabled }}
+        endpoint: {{ .Values.config.metrics_config.ceph.endpoint }}
+      v_dns:
+        enabled: {{ .Values.config.metrics_config.v_dns.enabled }}
+        endpoint: {{ .Values.config.metrics_config.v_dns.endpoint }}
