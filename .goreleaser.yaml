@@ -17,6 +17,39 @@ builds:
     goarch:
       - amd64
 
+dockers:
+  - dockerfile: cmd/v-agent/Dockerfile.goreleaser
+    use: buildx
+    build_flag_templates:
+    - "--pull"
+    - "--platform=linux/amd64"
+    image_templates:
+      - "ewr.vultrcr.com/vagent/v-agent:latest-amd64"
+      - "ewr.vultrcr.com/vagent/v-agent:{{ .Tag }}-amd64"
+    extra_files:
+      - "cmd/v-agent/config.yaml"
+  - dockerfile: cmd/v-agent/Dockerfile.goreleaser
+    use: buildx
+    goarch: arm64
+    build_flag_templates:
+    - "--pull"
+    - "--platform=linux/arm64/v8"
+    image_templates:
+      - "ewr.vultrcr.com/vagent/v-agent:latest-arm64"
+      - "ewr.vultrcr.com/vagent/v-agent:{{ .Tag }}-arm64"
+    extra_files:
+      - "cmd/v-agent/config.yaml"
+
+docker_manifests:
+- name_template: 'ewr.vultrcr.com/vagent/v-agent:latest'
+  image_templates:
+  - 'ewr.vultrcr.com/vagent/v-agent:latest-amd64'
+  - 'ewr.vultrcr.com/vagent/v-agent:latest-arm64'
+- name_template: 'ewr.vultrcr.com/vagent/v-agent:{{ .Tag }}'
+  image_templates:
+  - 'ewr.vultrcr.com/vagent/v-agent:{{ .Tag }}-amd64'
+  - 'ewr.vultrcr.com/vagent/v-agent:{{ .Tag }}-arm64'
+
 archives:
   - id: v-agent
     builds:
