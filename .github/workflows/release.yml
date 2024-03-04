@@ -71,6 +71,8 @@ jobs:
           distribution: goreleaser
           version: latest
           args: release --rm-dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.CR_PAT }}
 
   release:
     runs-on: ubuntu-latest
