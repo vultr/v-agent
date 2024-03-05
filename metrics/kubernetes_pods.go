@@ -71,7 +71,7 @@ func ScrapeKubernetesPods() error {
 				annoPath = "/metrics"
 			}
 
-			podIP := pods[i].Status.PodIP
+			podIP := pods[j].Status.PodIP
 
 			log.Infof("scraping pod %s (namespace=%s)", pods[j].ObjectMeta.Name, pods[j].ObjectMeta.Namespace)
 
