@@ -11,6 +11,7 @@ import (
 
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/vultr/v-agent/cmd/v-agent/util"
+	"github.com/vultr/v-agent/spec/connectors"
 	"k8s.io/apimachinery/pkg/util/validation"
 
 	"go.uber.org/zap"
@@ -409,6 +410,12 @@ func checkConfig(config *Config) error {
 	}
 
 	if config.MetricsConfig.KubernetesPods.Enabled {
+		// try to get k8s connection, if error return
+		_, err := connectors.GetKubernetesConn()
+		if err != nil {
+			return err
+		}
+
 		for i := range config.MetricsConfig.KubernetesPods.Namespaces {
 			errs := validation.IsValidLabelValue(config.MetricsConfig.KubernetesPods.Namespaces[i])
 			if len(errs) > 0 {
