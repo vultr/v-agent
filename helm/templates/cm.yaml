@@ -17,8 +17,8 @@ data:
     basic_auth_user: "{{ .Values.config.basic_auth_user }}"
     basic_auth_pass: "{{ .Values.config.basic_auth_pass }}"
     check_vendor: false
-    labels_config: |
-    {{ toYaml .Values.config.labels_config | indent 2}}
+    labels_config:
+{{ toYaml .Values.config.labels_config | indent 6 }}
     metrics_config:
       load_avg:
         enabled: {{ .Values.config.metrics_config.load_avg.enabled }}
@@ -65,3 +65,7 @@ data:
       v_dns:
         enabled: {{ .Values.config.metrics_config.v_dns.enabled }}
         endpoint: {{ .Values.config.metrics_config.v_dns.endpoint }}
+      kubernetes_pods:
+        enabled: {{ .Values.config.kubernetes_pods }}
+        namespaces:
+{{ toYaml .Values.config.kubernetes_pods.namespace | indent 8 }}

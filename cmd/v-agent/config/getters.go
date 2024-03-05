@@ -390,3 +390,26 @@ func GetVDNSMetricsEndpoint() (*string, error) {
 
 	return &cfg.MetricsConfig.VDNS.Endpoint, nil
 }
+
+// KubernetesPodsCollectionEnabled returns true if pod scrape collection is enabled
+func KubernetesPodsCollectionEnabled() bool {
+	log := zap.L().Sugar()
+
+	cfg, err := GetConfig()
+	if err != nil {
+		log.Error(err)
+		return true
+	}
+
+	return cfg.MetricsConfig.KubernetesPods.Enabled
+}
+
+// GetKubernetesPodsNamespaces returns namespaces to scrape pods from
+func GetKubernetesPodsNamespaces() []string {
+	cfg, err := GetConfig()
+	if err != nil {
+		return []string{"default"}
+	}
+
+	return cfg.MetricsConfig.KubernetesPods.Namespaces
+}
