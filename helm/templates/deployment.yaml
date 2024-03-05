@@ -42,19 +42,6 @@ spec:
         ports:
           - containerPort: {{ .Values.config.port }}
             name: http
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: probes
-          failureThreshold: 2
-          periodSeconds: 3
-          initialDelaySeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /ready
-            port: probes
-          initialDelaySeconds: 10
-          periodSeconds: 5
         volumeMounts:
         - name: v-agent
           mountPath: /app/etc

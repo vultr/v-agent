@@ -1273,6 +1273,15 @@ func Gather() error {
 		log.Info("Not gathering v-dns metrics")
 	}
 
+	if config.KubernetesPodsCollectionEnabled() {
+		log.Info("Gathering kubernetes_pods metrics")
+		if err := gatherScrapeablePodsMetrics(); err != nil {
+			return err
+		}
+	} else {
+		log.Info("Not gathering kubernetes_pods metrics")
+	}
+
 	return nil
 }
 
@@ -1907,6 +1916,14 @@ func gatherVDNSMetrics() error {
 	}
 
 	if err := ScrapeVDNSMetrics(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func gatherScrapeablePodsMetrics() error {
+	if err := ScrapeKubernetesPods(); err != nil {
 		return err
 	}
 

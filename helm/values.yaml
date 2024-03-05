@@ -70,3 +70,5 @@ config:
     v_dns:
       enabled: false
       endpoint: http://localhost:9053 # /metrics
+    kubernetes_pods:
+      enabled: false

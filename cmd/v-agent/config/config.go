@@ -9,7 +9,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/vultr/v-agent/cmd/v-agent/util"
+	"k8s.io/apimachinery/pkg/util/validation"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -49,21 +51,22 @@ type Config struct {
 
 // MetricsConfig contains metrics configuration
 type MetricsConfig struct {
-	LoadAvg      LoadAvg      `yaml:"load_avg"`
-	CPU          CPU          `yaml:"cpu"`
-	Memory       Memory       `yaml:"memory"`
-	NIC          NIC          `yaml:"nic"`
-	DiskStats    DiskStats    `yaml:"disk_stats"`
-	Filesystem   Filesystem   `yaml:"file_system"`
-	Kubernetes   Kubernetes   `yaml:"kubernetes"`
-	Konnectivity Konnectivity `yaml:"konnectivity"`
-	Etcd         Etcd         `yaml:"etcd"`
-	NginxVTS     NginxVTS     `yaml:"nginx_vts"`
-	VCDNAgent    VCDNAgent    `yaml:"v_cdn_agent"`
-	HAProxy      HAProxy      `yaml:"haproxy"`
-	Ganesha      Ganesha      `yaml:"ganesha"`
-	Ceph         Ceph         `yaml:"ceph"`
-	VDNS         VDNS         `yaml:"v_dns"`
+	LoadAvg        LoadAvg        `yaml:"load_avg"`
+	CPU            CPU            `yaml:"cpu"`
+	Memory         Memory         `yaml:"memory"`
+	NIC            NIC            `yaml:"nic"`
+	DiskStats      DiskStats      `yaml:"disk_stats"`
+	Filesystem     Filesystem     `yaml:"file_system"`
+	Kubernetes     Kubernetes     `yaml:"kubernetes"`
+	Konnectivity   Konnectivity   `yaml:"konnectivity"`
+	Etcd           Etcd           `yaml:"etcd"`
+	NginxVTS       NginxVTS       `yaml:"nginx_vts"`
+	VCDNAgent      VCDNAgent      `yaml:"v_cdn_agent"`
+	HAProxy        HAProxy        `yaml:"haproxy"`
+	Ganesha        Ganesha        `yaml:"ganesha"`
+	Ceph           Ceph           `yaml:"ceph"`
+	VDNS           VDNS           `yaml:"v_dns"`
+	KubernetesPods KubernetesPods `yaml:"kubernetes_pods"`
 }
 
 // LoadAvg configuration
@@ -154,6 +157,12 @@ type Ceph struct {
 type VDNS struct {
 	Enabled  bool   `yaml:"enabled"`
 	Endpoint string `yaml:"endpoint"`
+}
+
+// KubernetesPods config
+type KubernetesPods struct {
+	Enabled    bool     `yaml:"enabled"`
+	Namespaces []string `yaml:"namespaces"`
 }
 
 // NewConfig returns a Config struct that can be used to reference configuration
@@ -397,6 +406,17 @@ func checkConfig(config *Config) error {
 
 	if !strings.HasPrefix(config.Endpoint, "http") {
 		return fmt.Errorf("remote_write_endpoint: should start with http/https")
+	}
+
+	if config.MetricsConfig.KubernetesPods.Enabled {
+		for i := range config.MetricsConfig.KubernetesPods.Namespaces {
+			errs := validation.IsValidLabelValue(config.MetricsConfig.KubernetesPods.Namespaces[i])
+			if len(errs) > 0 {
+				log.Error(errs)
+
+				return fmt.Errorf("kubernetes_pods.namespaces invalid")
+			}
+		}
 	}
 
 	return nil
