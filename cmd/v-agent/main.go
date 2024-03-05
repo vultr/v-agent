@@ -10,7 +10,7 @@ import (
 
 	"github.com/vultr/v-agent/cmd/v-agent/api"
 	"github.com/vultr/v-agent/cmd/v-agent/config"
-	"github.com/vultr/v-agent/metrics"
+	"github.com/vultr/v-agent/spec/metrics"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"go.uber.org/zap"
