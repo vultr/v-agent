@@ -72,3 +72,5 @@ config:
       endpoint: http://localhost:9053 # /metrics
     kubernetes_pods:
       enabled: false
+      namespaces:
+      - default

@@ -66,6 +66,6 @@ data:
         enabled: {{ .Values.config.metrics_config.v_dns.enabled }}
         endpoint: {{ .Values.config.metrics_config.v_dns.endpoint }}
       kubernetes_pods:
-        enabled: {{ .Values.config.kubernetes_pods }}
+        enabled: {{ .Values.config.metrics_config.kubernetes_pods.enabled }}
         namespaces:
-{{ toYaml .Values.config.kubernetes_pods.namespace | indent 8 }}
+{{ toYaml .Values.config.metrics_config.kubernetes_pods.namespaces | indent 8 }}

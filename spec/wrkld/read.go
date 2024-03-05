@@ -12,7 +12,7 @@ import (
 )
 
 // GetScrapeablePods returns all pods in the namespce that have prometheus.io/scrape=true
-func GetScrapeablePods(client kubernetes.Interface, namespace string) (*v1.PodList, error) {
+func GetScrapeablePods(client kubernetes.Interface, namespace string) ([]v1.Pod, error) {
 	log := zap.L().Sugar()
 
 	pods, err := client.CoreV1().Pods(namespace).List(context.TODO(), metav1.ListOptions{})
@@ -63,8 +63,5 @@ func GetScrapeablePods(client kubernetes.Interface, namespace string) (*v1.PodLi
 		scrapeablePodsItems = append(scrapeablePodsItems, pods.Items[i])
 	}
 
-	var scrapeablePods *v1.PodList
-	scrapeablePods.Items = scrapeablePodsItems
-
-	return scrapeablePods, nil
+	return scrapeablePodsItems, nil
 }

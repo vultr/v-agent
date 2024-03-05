@@ -56,28 +56,28 @@ func ScrapeKubernetesPods() error {
 			continue
 		}
 
-		for j := range pods.Items {
-			annotations := pods.Items[j].GetAnnotations()
+		for j := range pods {
+			annotations := pods[j].GetAnnotations()
 
 			annoPort, ok := annotations["prometheus.io/port"]
 			if !ok {
-				log.Errorf("prometheus.io/port does not exist on pod %s", pods.Items[j].ObjectMeta.Name)
+				log.Errorf("prometheus.io/port does not exist on pod %s", pods[j].ObjectMeta.Name)
 			}
 
 			annoPath, ok := annotations["prometheus.io/path"]
 			if !ok {
-				log.Warnf("prometheus.io/path does not exist on pod %s, using /metrics", pods.Items[j].ObjectMeta.Name)
+				log.Warnf("prometheus.io/path does not exist on pod %s, using /metrics", pods[j].ObjectMeta.Name)
 
 				annoPath = "/metrics"
 			}
 
-			podIP := pods.Items[i].Status.PodIP
+			podIP := pods[i].Status.PodIP
 
-			log.Infof("scraping pod %s (namespace=%s)", pods.Items[j].ObjectMeta.Name, pods.Items[j].ObjectMeta.Namespace)
+			log.Infof("scraping pod %s (namespace=%s)", pods[j].ObjectMeta.Name, pods[j].ObjectMeta.Namespace)
 
 			data, err := ProbeKubernetesPod(podIP, annoPort, annoPath)
 			if err != nil {
-				log.Errorf("error scraping pod %s with error %s", pods.Items[j].ObjectMeta.Name, err.Error())
+				log.Errorf("error scraping pod %s with error %s", pods[j].ObjectMeta.Name, err.Error())
 			}
 
 			podMetrics, err := parseMetrics(data)
@@ -108,7 +108,7 @@ func ScrapeKubernetesPods() error {
 				return err
 			}
 
-			log.Infof("sending metrics for pod %s", pods.Items[j].ObjectMeta.Name)
+			log.Infof("sending metrics for pod %s", pods[j].ObjectMeta.Name)
 
 			if err := wc.Store(context.Background(), tsList); err != nil {
 				return err
