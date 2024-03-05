@@ -24,7 +24,7 @@ func ProbeKubernetesPod(endpoint, port, path string) ([]byte, error) {
 		Timeout: 5 * time.Second,
 	}
 
-	resp, err := client.Get(fmt.Sprintf("%s:%s%s", endpoint, port, path))
+	resp, err := client.Get(fmt.Sprintf("http://%s:%s%s", endpoint, port, path))
 	if err != nil {
 		return nil, err
 	}
