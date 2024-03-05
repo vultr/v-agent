@@ -61,12 +61,16 @@ func ScrapeKubernetesPods() error {
 
 			annoPort, ok := annotations["prometheus.io/port"]
 			if !ok {
-				log.Errorf("prometheus.io/port does not exist on pod %s", pods[j].ObjectMeta.Name)
+				log.With(
+					"pod", pods[j].ObjectMeta.Name,
+				).Error("prometheus.io/port does not exist on pod")
 			}
 
 			annoPath, ok := annotations["prometheus.io/path"]
 			if !ok {
-				log.Warnf("prometheus.io/path does not exist on pod %s, using /metrics", pods[j].ObjectMeta.Name)
+				log.With(
+					"pod", pods[j].ObjectMeta.Name,
+				).Warn("prometheus.io/path does not exist on pod using /metrics")
 
 				annoPath = "/metrics"
 			}
@@ -77,12 +81,20 @@ func ScrapeKubernetesPods() error {
 
 			data, err := ProbeKubernetesPod(podIP, annoPort, annoPath)
 			if err != nil {
-				log.Errorf("error scraping pod %s with error %s", pods[j].ObjectMeta.Name, err.Error())
+				log.With(
+					"pod", pods[j].ObjectMeta.Name,
+				).Warnf("error scraping pod metrics: %s", err.Error())
+
+				continue
 			}
 
 			podMetrics, err := parseMetrics(data)
 			if err != nil {
-				return err
+				log.With(
+					"pod", pods[j].ObjectMeta.Name,
+				).Warnf("error parsing pod metrics: %s", err.Error())
+
+				continue
 			}
 
 			tsList := GetMetricsAsTimeSeries(podMetrics)
