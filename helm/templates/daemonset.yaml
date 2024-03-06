@@ -33,6 +33,11 @@ spec:
         imagePullPolicy: "Always"
         command: [/app/v-agent]
         args: ["-config", "/app/etc/config.yaml"]
+        env:
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
         securityContext:
           allowPrivilegeEscalation: true
           privileged: true # must be true to scrape SMART data
