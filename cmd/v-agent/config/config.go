@@ -291,12 +291,15 @@ func initLabels(config *Config) error {
 		switch k {
 		case "hostname":
 			if v == "" {
-				hostname, err := os.Hostname()
-				if err != nil {
-					return err
-				}
+				labels[k] = os.Getenv("HOSTNAME")
+				if labels[k] == "" {
+					hostname, err := os.Hostname()
+					if err != nil {
+						return err
+					}
 
-				labels[k] = hostname
+					labels[k] = hostname
+				}
 			} else {
 				labels[k] = v
 			}
