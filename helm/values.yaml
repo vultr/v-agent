@@ -12,6 +12,8 @@ resources:
 
 registryCreds: ewoJImF1dGhzIjogewoJCSJld3IudnVsdHJjci5jb20iOiB7CgkJCSJhdXRoIjogIll6QTBaVGhsTnpZdE0yRmtaaTAwTXpNMExUaGtaVFV0TVdSak16aGhOakl5WlRGbU9tZExPVTFXVTNSaFZGTkdSRmRGVVV0eE9WUm1aRnAxYldGV1RHNXZZVUptVEVOT05nPT0iCgkJfQoJfQp9
 
+daemonset: false
+
 config:
   debug: true
   listen: 0.0.0.0
@@ -74,3 +76,5 @@ config:
       enabled: false
       namespaces:
       - default
+    smart:
+      enabled: true

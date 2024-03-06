@@ -82,6 +82,10 @@ type SMART struct {
 	ProgramFailCntTotal   uint64
 	CurrentPendingSector  uint64
 	EndofLife             uint64
+	HardwareECCRecovered  uint64
+	SoftReadErrorRate     uint64
+	MediaWearoutIndicator uint64
+	DataAddressMarkErrs   uint64
 }
 
 // ProbeSMARTBlockDevice returns a SMART struct with the device and the SMART attributes
@@ -201,6 +205,14 @@ func ProbeSMARTBlockDevice(procDev string) (*SMART, error) {
 				smartDev.CurrentPendingSector = ata.Attrs[i].ValueRaw
 			case "End_of_Life":
 				smartDev.EndofLife = ata.Attrs[i].ValueRaw
+			case "Hardware_ECC_Recovered":
+				smartDev.HardwareECCRecovered = ata.Attrs[i].ValueRaw
+			case "Soft_Read_Error_Rate":
+				smartDev.SoftReadErrorRate = ata.Attrs[i].ValueRaw
+			case "Media_Wearout_Indicator":
+				smartDev.MediaWearoutIndicator = ata.Attrs[i].ValueRaw
+			case "Data_Address_Mark_Errs":
+				smartDev.DataAddressMarkErrs = ata.Attrs[i].ValueRaw
 			default:
 				if ata.Attrs[i].Name != "" {
 					log.With(
@@ -679,6 +691,34 @@ func ScrapeSMARTMetrics() error {
 				smartData[i].Firmware,
 				smartData[i].Device,
 			).Set(float64(smartData[i].EndofLife))
+
+			smartSataHardwareECCRecovered.WithLabelValues(
+				smartData[i].Model,
+				smartData[i].Serial,
+				smartData[i].Firmware,
+				smartData[i].Device,
+			).Set(float64(smartData[i].HardwareECCRecovered))
+
+			smartSataSoftReadErrorRate.WithLabelValues(
+				smartData[i].Model,
+				smartData[i].Serial,
+				smartData[i].Firmware,
+				smartData[i].Device,
+			).Set(float64(smartData[i].SoftReadErrorRate))
+
+			smartSataMediaWearoutIndicator.WithLabelValues(
+				smartData[i].Model,
+				smartData[i].Serial,
+				smartData[i].Firmware,
+				smartData[i].Device,
+			).Set(float64(smartData[i].MediaWearoutIndicator))
+
+			smartSataDataAddressMarkErrs.WithLabelValues(
+				smartData[i].Model,
+				smartData[i].Serial,
+				smartData[i].Firmware,
+				smartData[i].Device,
+			).Set(float64(smartData[i].DataAddressMarkErrs))
 		} else if smartData[i].SCSI {
 			log.With(
 				"device", smartData[i].Device,
