@@ -278,6 +278,12 @@ func ScrapeSMARTMetrics() error {
 
 	blockDevices := config.GetSMARTBlockDevices()
 
+	log.Infof("block devices: %+v", blockDevices)
+
+	if len(blockDevices) == 0 {
+		return nil
+	}
+
 	// scrape SMART data for block devices
 	var smartData []*SMART
 	for i := range blockDevices {
@@ -296,8 +302,6 @@ func ScrapeSMARTMetrics() error {
 	if len(smartData) == 0 {
 		log.Warnf("no SMART data found from block devices: %+v", blockDevices)
 	}
-
-	log.Infof("block devices: %+v", blockDevices)
 
 	// set metrics
 	for i := range smartData {
