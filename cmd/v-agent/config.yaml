@@ -64,3 +64,7 @@ metrics_config:
     namespaces:
     - rook-ceph
     - default
+  smart:
+    enabled: false
+    block_devices: # must exist, if not set, block devices are used from /sys/block/ (except for dmX and loopX)
+    - /dev/sda

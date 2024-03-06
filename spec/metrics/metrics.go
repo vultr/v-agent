@@ -120,6 +120,68 @@ var (
 
 	// v-dns
 	vdnsHealthy *prometheus.GaugeVec
+
+	// smart: generic
+	smartPowerCycles  *prometheus.GaugeVec
+	smartPowerOnHours *prometheus.GaugeVec
+
+	// smart: nvme
+	smartNvmeCriticalWarning      *prometheus.GaugeVec
+	smartNvmeTemperature          *prometheus.GaugeVec
+	smartNvmeAvailSpare           *prometheus.GaugeVec
+	smartNvmePercentUsed          *prometheus.GaugeVec
+	smartNvmeEnduranceCritWarning *prometheus.GaugeVec
+	smartNvmeDataUnitsRead        *prometheus.GaugeVec
+	smartNvmeDataUnitsWritten     *prometheus.GaugeVec
+	smartNvmeHostReads            *prometheus.GaugeVec
+	smartNvmeHostWrites           *prometheus.GaugeVec
+	smartNvmeCtrlBusyTime         *prometheus.GaugeVec
+	smartNvmeUnsafeShutdowns      *prometheus.GaugeVec
+	smartNvmeMediaErrors          *prometheus.GaugeVec
+	smartNvmeNumErrLogEntries     *prometheus.GaugeVec
+	smartNvmeWarningTempTime      *prometheus.GaugeVec
+	smartNvmeCritCompTime         *prometheus.GaugeVec
+
+	// smart: sata
+	smartSataPercentLifetimeRemain *prometheus.GaugeVec
+	smartSataTotalLBAsWritten      *prometheus.GaugeVec
+	smartSataReallocateNANDBlkCnt  *prometheus.GaugeVec
+	smartSataOfflineUncorrectable  *prometheus.GaugeVec
+	smartSataRawReadErrorRate      *prometheus.GaugeVec
+	smartSataReportedUncorrect     *prometheus.GaugeVec
+	smartSataErrorCorrectionCount  *prometheus.GaugeVec
+	smartSataWriteErrorRate        *prometheus.GaugeVec
+	smartSataEraseFailCount        *prometheus.GaugeVec
+	smartSataProgramFailCount      *prometheus.GaugeVec
+	smartSataReallocatedEventCount *prometheus.GaugeVec
+	smartSataHostProgramPageCount  *prometheus.GaugeVec
+	smartSataUnusedReserveNANDBlk  *prometheus.GaugeVec
+	smartSataAveBlockEraseCount    *prometheus.GaugeVec
+	smartSataSATAInterfacDownshift *prometheus.GaugeVec
+	smartSataUnexpectPowerLossCt   *prometheus.GaugeVec
+	smartSataTemperatureCelsius    *prometheus.GaugeVec
+	smartSataCurrentPendingECCCnt  *prometheus.GaugeVec
+	smartSataUDMACRCErrorCount     *prometheus.GaugeVec
+	smartSataFTLProgramPageCount   *prometheus.GaugeVec
+	smartSataSuccessRAINRecovCnt   *prometheus.GaugeVec
+	smartSataPercentLifeRemaining  *prometheus.GaugeVec
+	smartSataReallocatedSectorCt   *prometheus.GaugeVec
+	smartSataAvailableReservdSpace *prometheus.GaugeVec
+	smartSataEraseFailCountTotal   *prometheus.GaugeVec
+	smartSataPowerLossCapTest      *prometheus.GaugeVec
+	smartSataTotalLBAsRead         *prometheus.GaugeVec
+	smartSataReadSoftErrorRate     *prometheus.GaugeVec
+	smartSataEndtoEndError         *prometheus.GaugeVec
+	smartSataUncorrectableErrorCnt *prometheus.GaugeVec
+	smartSataCRCErrorCount         *prometheus.GaugeVec
+	smartSataThermalThrottleStatus *prometheus.GaugeVec
+	smartSataUnsafeShutdownCount   *prometheus.GaugeVec
+	smartSataProgramFailCountChip  *prometheus.GaugeVec
+	smartSataUsedRsvdBlkCntTot     *prometheus.GaugeVec
+	smartSataUnusedRsvdBlkCntTot   *prometheus.GaugeVec
+	smartSataProgramFailCntTotal   *prometheus.GaugeVec
+	smartSataCurrentPendingSector  *prometheus.GaugeVec
+	smartSataEndofLife             *prometheus.GaugeVec
 )
 
 // NewMetrics initializes metrics
@@ -1124,6 +1186,735 @@ func NewMetrics() {
 			"hostname",
 		},
 	)
+
+	// smart
+	smartPowerCycles = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_power_cycles",
+			Help: "power cycles",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartPowerOnHours = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_power_on_hours",
+			Help: "power on hours",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartNvmeCriticalWarning = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_nvme_critical_warning",
+			Help: "nvme: critical warning",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartNvmeTemperature = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_nvme_temperate",
+			Help: "nvme: temperature",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartNvmeAvailSpare = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_nvme_avail_spare",
+			Help: "nvme: avail spare",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartNvmePercentUsed = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_nvme_percent_used",
+			Help: "nvme: percent used",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartNvmeEnduranceCritWarning = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_nvme_crit_warning",
+			Help: "nvme: crit warning",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartNvmeDataUnitsRead = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_nvme_data_units_read",
+			Help: "nvme: data units read",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartNvmeDataUnitsWritten = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_nvme_data_units_written",
+			Help: "nvme: data units written",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartNvmeHostReads = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_nvme_host_reads",
+			Help: "nvme: host reads",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartNvmeHostWrites = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_nvme_host_writes",
+			Help: "nvme: host writes",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartNvmeCtrlBusyTime = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_nvme_ctrl_busy_time",
+			Help: "nvme: controller busy time",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartNvmeUnsafeShutdowns = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_nvme_unsafe_shutdowns",
+			Help: "nvme: unsafe shutdowns",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartNvmeMediaErrors = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_nvme_media_errors",
+			Help: "nvme: media errors",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartNvmeNumErrLogEntries = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_nvme_err_log_entries",
+			Help: "nvme: error log entries",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartNvmeWarningTempTime = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_nvme_warning_temp_time",
+			Help: "nvme: warning temp time",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartNvmeCritCompTime = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_nvme_crit_comp_time",
+			Help: "nvme: crit comp time",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataPercentLifetimeRemain = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_percent_lifetime_remain",
+			Help: "sata: percent lifetime remain",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataTotalLBAsWritten = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_total_lbas_written",
+			Help: "sata: total LBAs written",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataReallocateNANDBlkCnt = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_reallocate_nand_block_count",
+			Help: "sata: reallocated NAND block count",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataOfflineUncorrectable = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_offline_uncorrectable",
+			Help: "sata: offline uncorrectable",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataRawReadErrorRate = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_raw_read_error_rate",
+			Help: "sata: raw read error rate",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataReportedUncorrect = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_reported_uncorrect",
+			Help: "sata: reported uncorrect",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataErrorCorrectionCount = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_error_correction_count",
+			Help: "sata: error correction count",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataWriteErrorRate = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_write_error_rate",
+			Help: "sata: write error rate",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataEraseFailCount = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_erase_fail_count",
+			Help: "sata: erase fail acount",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataProgramFailCount = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_program_fail_count",
+			Help: "sata: program fail acount",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataReallocatedEventCount = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_reallocated_event_count",
+			Help: "sata: reallocated event count",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataHostProgramPageCount = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_host_program_page_count",
+			Help: "sata: host program page count",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataUnusedReserveNANDBlk = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_unused_reserve_nand_block",
+			Help: "sata: unused reserve NAND block",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataAveBlockEraseCount = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_avg_block_erase_count",
+			Help: "sata: average block erase count",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataSATAInterfacDownshift = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_interface_downshift",
+			Help: "sata: interface downshift",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataUnexpectPowerLossCt = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_unexpected_powerloss_count",
+			Help: "sata: unexpected powerloss count",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataTemperatureCelsius = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_temperature_celsius",
+			Help: "sata: temperature in celsius",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataCurrentPendingECCCnt = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_current_pending_ecc_count",
+			Help: "sata: current pending ECC count",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataUDMACRCErrorCount = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_udma_crc_error_count",
+			Help: "sata: UDMA CRC error count",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataFTLProgramPageCount = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_ftl_program_page_count",
+			Help: "sata: FTL program page count",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataSuccessRAINRecovCnt = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_success_rain_recovery_count",
+			Help: "sata: success RAIN recovery count",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataPercentLifeRemaining = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_percent_life_remaining",
+			Help: "sata: percent life remaining",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataReallocatedSectorCt = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_reallocated_sector_count",
+			Help: "sata: reallocated sector count",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataAvailableReservdSpace = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_available_reserved_space",
+			Help: "sata: available reserved space",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataEraseFailCountTotal = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_erase_fail_count_total",
+			Help: "sata: erase fail count total",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataPowerLossCapTest = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_power_loss_cap_test",
+			Help: "sata: power loss cap test",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataTotalLBAsRead = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_total_lbas_read",
+			Help: "sata: total LBAs read",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataReadSoftErrorRate = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_read_soft_error_rate",
+			Help: "sata: read soft error rate",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataEndtoEndError = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_end_to_end_error",
+			Help: "sata: end-to-end error",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataUncorrectableErrorCnt = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_uncorrectable_error_count",
+			Help: "sata: uncorrectable error count",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataCRCErrorCount = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_crc_error_count",
+			Help: "sata: CRC error count",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataThermalThrottleStatus = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_thermal_throttle_status",
+			Help: "sata: thermal throttle status",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataUnsafeShutdownCount = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_unsafe_shutdown_count",
+			Help: "sata: unsafe shutdown count",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataProgramFailCountChip = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_program_fail_count_chip",
+			Help: "sata: program fail count chip",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataUsedRsvdBlkCntTot = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_used_reserved_block_count_total",
+			Help: "sata: used reserved block count total",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataUnusedRsvdBlkCntTot = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_unused_reserved_block_count_total",
+			Help: "sata: unused reserved block count total",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataProgramFailCntTotal = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_program_fail_count_total",
+			Help: "sata: program fail count total",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataCurrentPendingSector = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_current_pending_sector",
+			Help: "sata: current pending sector",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataEndofLife = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_end_of_life",
+			Help: "sata: end of life",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
 }
 
 // Gather gathers updates metrics
@@ -1282,6 +2073,15 @@ func Gather() error {
 		log.Info("Not gathering kubernetes_pods metrics")
 	}
 
+	if config.SMARTCollectionEnabled() {
+		log.Info("Gathering SMART metrics")
+		if err := gatherSMARTmetrics(); err != nil {
+			return err
+		}
+	} else {
+		log.Info("Not gathering SMART metrics")
+	}
+
 	return nil
 }
 
@@ -1342,8 +2142,66 @@ func GetMetricsAsTimeSeries(in []*dto.MetricFamily) []*prompb.TimeSeries {
 	return tsList
 }
 
-// Reset some metrics may need to be reset
-func Reset() {}
+// ResetSMARTMetrics resets SMART metrics incase drives were swapped
+func ResetSMARTMetrics() {
+	smartPowerCycles.Reset()
+	smartPowerOnHours.Reset()
+	smartNvmeCriticalWarning.Reset()
+	smartNvmeTemperature.Reset()
+	smartNvmeAvailSpare.Reset()
+	smartNvmePercentUsed.Reset()
+	smartNvmeEnduranceCritWarning.Reset()
+	smartNvmeDataUnitsRead.Reset()
+	smartNvmeDataUnitsWritten.Reset()
+	smartNvmeHostReads.Reset()
+	smartNvmeHostWrites.Reset()
+	smartNvmeCtrlBusyTime.Reset()
+	smartNvmeUnsafeShutdowns.Reset()
+	smartNvmeMediaErrors.Reset()
+	smartNvmeNumErrLogEntries.Reset()
+	smartNvmeWarningTempTime.Reset()
+	smartNvmeCritCompTime.Reset()
+
+	smartSataPercentLifetimeRemain.Reset()
+	smartSataTotalLBAsWritten.Reset()
+	smartSataReallocateNANDBlkCnt.Reset()
+	smartSataOfflineUncorrectable.Reset()
+	smartSataRawReadErrorRate.Reset()
+	smartSataReportedUncorrect.Reset()
+	smartSataErrorCorrectionCount.Reset()
+	smartSataWriteErrorRate.Reset()
+	smartSataEraseFailCount.Reset()
+	smartSataProgramFailCount.Reset()
+	smartSataReallocatedEventCount.Reset()
+	smartSataHostProgramPageCount.Reset()
+	smartSataUnusedReserveNANDBlk.Reset()
+	smartSataAveBlockEraseCount.Reset()
+	smartSataSATAInterfacDownshift.Reset()
+	smartSataUnexpectPowerLossCt.Reset()
+	smartSataTemperatureCelsius.Reset()
+	smartSataCurrentPendingECCCnt.Reset()
+	smartSataUDMACRCErrorCount.Reset()
+	smartSataFTLProgramPageCount.Reset()
+	smartSataSuccessRAINRecovCnt.Reset()
+	smartSataPercentLifeRemaining.Reset()
+	smartSataReallocatedSectorCt.Reset()
+	smartSataAvailableReservdSpace.Reset()
+	smartSataEraseFailCountTotal.Reset()
+	smartSataPowerLossCapTest.Reset()
+	smartSataTotalLBAsRead.Reset()
+	smartSataReadSoftErrorRate.Reset()
+	smartSataEndtoEndError.Reset()
+	smartSataUncorrectableErrorCnt.Reset()
+	smartSataCRCErrorCount.Reset()
+	smartSataThermalThrottleStatus.Reset()
+	smartSataUnsafeShutdownCount.Reset()
+	smartSataProgramFailCountChip.Reset()
+	smartSataUsedRsvdBlkCntTot.Reset()
+	smartSataUnusedRsvdBlkCntTot.Reset()
+	smartSataProgramFailCntTotal.Reset()
+	smartSataCurrentPendingSector.Reset()
+	smartSataEndofLife.Reset()
+}
 
 func gatherMetadataMetrics() error {
 	hostname, err := config.GetLabel("hostname")
@@ -1924,6 +2782,16 @@ func gatherVDNSMetrics() error {
 
 func gatherScrapeablePodsMetrics() error {
 	if err := ScrapeKubernetesPods(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func gatherSMARTmetrics() error {
+	ResetSMARTMetrics()
+
+	if err := ScrapeSMARTMetrics(); err != nil {
 		return err
 	}
 
