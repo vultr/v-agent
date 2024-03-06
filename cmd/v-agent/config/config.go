@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gofiber/fiber/v2/log"
 	"github.com/vultr/v-agent/cmd/v-agent/util"
 	"github.com/vultr/v-agent/spec/connectors"
 	"k8s.io/apimachinery/pkg/util/validation"
@@ -393,6 +392,8 @@ func initEnv(config *Config) error {
 }
 
 func checkConfig(config *Config) error {
+	log := zap.L().Sugar()
+
 	if config.CheckVendor {
 		vendor, err := util.GetBIOSVendor()
 		if err != nil {
