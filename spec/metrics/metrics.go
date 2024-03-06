@@ -182,6 +182,10 @@ var (
 	smartSataProgramFailCntTotal   *prometheus.GaugeVec
 	smartSataCurrentPendingSector  *prometheus.GaugeVec
 	smartSataEndofLife             *prometheus.GaugeVec
+	smartSataHardwareECCRecovered  *prometheus.GaugeVec
+	smartSataSoftReadErrorRate     *prometheus.GaugeVec
+	smartSataMediaWearoutIndicator *prometheus.GaugeVec
+	smartSataDataAddressMarkErrs   *prometheus.GaugeVec
 )
 
 // NewMetrics initializes metrics
@@ -1915,6 +1919,58 @@ func NewMetrics() {
 			"device",
 		},
 	)
+
+	smartSataHardwareECCRecovered = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_hardware_ecc_recovered",
+			Help: "sata: hardware ECC recovered",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataSoftReadErrorRate = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_soft_read_error_rate",
+			Help: "sata: soft read error rate",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataMediaWearoutIndicator = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_media_wearout_indicator",
+			Help: "sata: media wearout indicator",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
+
+	smartSataDataAddressMarkErrs = promauto.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "v_smart_sata_data_address_mark_errors",
+			Help: "sata: data address mark errors",
+		},
+		[]string{
+			"model",
+			"serial",
+			"firmware",
+			"device",
+		},
+	)
 }
 
 // Gather gathers updates metrics
@@ -2201,6 +2257,10 @@ func ResetSMARTMetrics() {
 	smartSataProgramFailCntTotal.Reset()
 	smartSataCurrentPendingSector.Reset()
 	smartSataEndofLife.Reset()
+	smartSataHardwareECCRecovered.Reset()
+	smartSataSoftReadErrorRate.Reset()
+	smartSataMediaWearoutIndicator.Reset()
+	smartSataDataAddressMarkErrs.Reset()
 }
 
 func gatherMetadataMetrics() error {
