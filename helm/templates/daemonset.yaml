@@ -1,25 +1,25 @@
-{{ if .Values.daemonset }}
+{{ if .Values.daemonset_config.enabled }}
 ---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
-    app: v-agent
+    app: v-agent-ds
     app.kubernetes.io/managed-by: {{ .Release.Service }}
   annotations:
     meta.helm.sh/release-namespace: {{ .Release.Namespace }}
-  name: v-agent
+  name: v-agent-ds
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
     matchLabels:
-      app: v-agent
+      app: v-agent-ds
   template:
     metadata:
       labels:
-        app: v-agent
+        app: v-agent-ds
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/cm.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/ds-cm.yaml") . | sha256sum }}
         prometheus.io/scrape: 'true'
         prometheus.io/path: '/metrics'
         prometheus.io/port: '{{ .Values.config.port }}'
@@ -29,7 +29,7 @@ spec:
       - name: vcr
       containers:
       - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        name: v-agent
+        name: v-agent-ds
         imagePullPolicy: "Always"
         command: [/app/v-agent]
         args: ["-config", "/app/etc/config.yaml"]
@@ -45,10 +45,10 @@ spec:
           - containerPort: {{ .Values.config.port }}
             name: http
         volumeMounts:
-        - name: v-agent
+        - name: v-agent-ds
           mountPath: /app/etc
       volumes:
-      - name: v-agent
+      - name: v-agent-ds
         configMap:
-          name: v-agent
+          name: v-agent-ds
 {{ end }}
