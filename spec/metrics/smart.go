@@ -297,6 +297,8 @@ func ScrapeSMARTMetrics() error {
 		log.Warnf("no SMART data found from block devices: %+v", blockDevices)
 	}
 
+	log.Infof("block devices: %+v", blockDevices)
+
 	// set metrics
 	for i := range smartData {
 		smartPowerCycles.WithLabelValues(
