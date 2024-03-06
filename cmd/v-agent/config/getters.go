@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/vultr/v-agent/cmd/v-agent/util"
 	"go.uber.org/zap"
 )
 
@@ -412,4 +413,42 @@ func GetKubernetesPodsNamespaces() []string {
 	}
 
 	return cfg.MetricsConfig.KubernetesPods.Namespaces
+}
+
+// SMARTCollectionEnabled returns true if SMART collection is enabled
+func SMARTCollectionEnabled() bool {
+	log := zap.L().Sugar()
+
+	cfg, err := GetConfig()
+	if err != nil {
+		log.Error(err)
+		return true
+	}
+
+	return cfg.MetricsConfig.SMART.Enabled
+}
+
+// GetSMARTBlockDevices returns SMART block devices to scan
+func GetSMARTBlockDevices() []string {
+	log := zap.L().Sugar()
+
+	cfg, err := GetConfig()
+	if err != nil {
+		return []string{"default"}
+	}
+
+	// block_devices provided, use those instead
+	if len(cfg.MetricsConfig.SMART.BlockDevices) > 0 {
+		return cfg.MetricsConfig.SMART.BlockDevices
+	}
+
+	// block_devices not provided, scan and build list
+	blockDevices, err := util.GenerateBlockDevices()
+	if err != nil {
+		log.Warn(err)
+
+		return []string{}
+	}
+
+	return blockDevices
 }

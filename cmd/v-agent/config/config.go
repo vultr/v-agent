@@ -68,6 +68,7 @@ type MetricsConfig struct {
 	Ceph           Ceph           `yaml:"ceph"`
 	VDNS           VDNS           `yaml:"v_dns"`
 	KubernetesPods KubernetesPods `yaml:"kubernetes_pods"`
+	SMART          SMART          `yaml:"smart"`
 }
 
 // LoadAvg configuration
@@ -164,6 +165,12 @@ type VDNS struct {
 type KubernetesPods struct {
 	Enabled    bool     `yaml:"enabled"`
 	Namespaces []string `yaml:"namespaces"`
+}
+
+// SMART config
+type SMART struct {
+	Enabled      bool     `yaml:"enabled"`
+	BlockDevices []string `yaml:"block_devices"`
 }
 
 // NewConfig returns a Config struct that can be used to reference configuration
@@ -422,6 +429,16 @@ func checkConfig(config *Config) error {
 				log.Error(errs)
 
 				return fmt.Errorf("kubernetes_pods.namespaces invalid")
+			}
+		}
+	}
+
+	if config.MetricsConfig.SMART.Enabled {
+		if len(config.MetricsConfig.SMART.BlockDevices) > 0 {
+			for i := range config.MetricsConfig.SMART.BlockDevices {
+				if _, err := os.Stat(config.MetricsConfig.SMART.BlockDevices[i]); errors.Is(err, os.ErrNotExist) {
+					return fmt.Errorf("smart.block_devices %s does not exist", config.MetricsConfig.SMART.BlockDevices[i])
+				}
 			}
 		}
 	}

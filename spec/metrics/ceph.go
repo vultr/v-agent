@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/vultr/v-agent/cmd/v-agent/config"
+
 	"go.uber.org/zap"
 )
 

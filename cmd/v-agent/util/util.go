@@ -4,11 +4,14 @@ package util
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/tidwall/gjson"
+	"go.uber.org/zap"
 )
 
 var (
@@ -131,4 +134,33 @@ func GetBIOSVendor() (*string, error) {
 	s := string(vendor)
 
 	return &s, nil
+}
+
+// GenerateBlockDevices generates block devices from /dev, not including any dm or loop devices
+func GenerateBlockDevices() ([]string, error) {
+	log := zap.L().Sugar()
+
+	files, err := os.ReadDir("/sys/block")
+	if err != nil {
+		return nil, err
+	}
+
+	var blockDevices []string
+	for i := range files {
+		if strings.HasPrefix(files[i].Name(), "dm") || strings.HasPrefix(files[i].Name(), "loop") || strings.HasPrefix(files[i].Name(), "nbd") {
+			continue
+		}
+
+		absPath := fmt.Sprintf("/dev/%s", files[i].Name())
+
+		if _, err := os.Stat(absPath); errors.Is(err, os.ErrNotExist) {
+			log.Warnf("block device %s does not exist", absPath)
+
+			continue
+		}
+
+		blockDevices = append(blockDevices, absPath)
+	}
+
+	return blockDevices, nil
 }
