@@ -136,7 +136,7 @@ func GetBIOSVendor() (*string, error) {
 	return &s, nil
 }
 
-// GenerateBlockDevices generates block devices from /dev, not including any dm or loop devices
+// GenerateBlockDevices generates block devices from /dev, not including any of the following: loop, dm, nbd, sr
 func GenerateBlockDevices() ([]string, error) {
 	log := zap.L().Sugar()
 
@@ -147,7 +147,7 @@ func GenerateBlockDevices() ([]string, error) {
 
 	var blockDevices []string
 	for i := range files {
-		if strings.HasPrefix(files[i].Name(), "dm") || strings.HasPrefix(files[i].Name(), "loop") || strings.HasPrefix(files[i].Name(), "nbd") {
+		if strings.HasPrefix(files[i].Name(), "dm") || strings.HasPrefix(files[i].Name(), "loop") || strings.HasPrefix(files[i].Name(), "nbd") || strings.HasPrefix(files[i].Name(), "sr") || strings.HasPrefix(files[i].Name(), "vd") {
 			continue
 		}
 
