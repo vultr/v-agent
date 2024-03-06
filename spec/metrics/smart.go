@@ -294,7 +294,7 @@ func ScrapeSMARTMetrics() error {
 	}
 
 	if len(smartData) == 0 {
-		log.Warn("no block SMART data from block devices: %+v", blockDevices)
+		log.Warnf("no SMART data found from block devices: %+v", blockDevices)
 	}
 
 	// set metrics
