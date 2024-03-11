@@ -68,3 +68,7 @@ metrics_config:
     enabled: false
     block_devices: # must exist, if not set, block devices are used from /sys/block/ (except for dmX and loopX)
     - /dev/sda
+  dcgm:
+    enabled: false
+    namespace: gpu-operator        # namespace
+    endpoint: nvidia-dcgm-exporter # name of the endpoint: k get endpoints

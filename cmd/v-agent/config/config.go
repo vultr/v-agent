@@ -68,6 +68,7 @@ type MetricsConfig struct {
 	VDNS           VDNS           `yaml:"v_dns"`
 	KubernetesPods KubernetesPods `yaml:"kubernetes_pods"`
 	SMART          SMART          `yaml:"smart"`
+	DCGM           DCGM           `yaml:"dcgm"`
 }
 
 // LoadAvg configuration
@@ -170,6 +171,13 @@ type KubernetesPods struct {
 type SMART struct {
 	Enabled      bool     `yaml:"enabled"`
 	BlockDevices []string `yaml:"block_devices"`
+}
+
+// DCGM config
+type DCGM struct {
+	Enabled   bool   `yaml:"enabled"`
+	Namespace string `yaml:"namespace"`
+	Endpoint  string `yaml:"endpoint"`
 }
 
 // NewConfig returns a Config struct that can be used to reference configuration
@@ -444,6 +452,16 @@ func checkConfig(config *Config) error {
 					return fmt.Errorf("smart.block_devices %s does not exist", config.MetricsConfig.SMART.BlockDevices[i])
 				}
 			}
+		}
+	}
+
+	if config.MetricsConfig.DCGM.Enabled {
+		if config.MetricsConfig.DCGM.Namespace == "" {
+			return fmt.Errorf("dcgm.namespace not set")
+		}
+
+		if config.MetricsConfig.DCGM.Endpoint == "" {
+			return fmt.Errorf("dcgm.endpoint not set")
 		}
 	}
 
