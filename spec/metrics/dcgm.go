@@ -66,7 +66,6 @@ func ScrapeDCGMMetrics() error {
 
 	for i := range dcgmEndpoints.Subsets {
 		var port v1.EndpointPort
-		var addr v1.EndpointAddress
 
 		for j := range dcgmEndpoints.Subsets[i].Ports {
 			if dcgmEndpoints.Subsets[i].Ports[j].Name == "gpu-metrics" { // extract port
@@ -74,55 +73,56 @@ func ScrapeDCGMMetrics() error {
 			}
 		}
 
+		// loop each address
 		for j := range dcgmEndpoints.Subsets[i].Addresses {
-			addr = dcgmEndpoints.Subsets[i].Addresses[j]
-		}
+			addr := dcgmEndpoints.Subsets[i].Addresses[j]
 
-		log.Info("scraping dcgm metrics from %s:%d", addr.IP, port.Port)
+			log.Infof("scraping dcgm metrics from %s:%d", addr.IP, port.Port)
 
-		dcgmResp, err := ProbeDCGMMetrics(addr.IP, port.Port)
-		if err != nil {
-			if errors.Is(err, syscall.ECONNREFUSED) {
-				log.Warn(err)
-			} else {
+			dcgmResp, err := ProbeDCGMMetrics(addr.IP, port.Port)
+			if err != nil {
+				if errors.Is(err, syscall.ECONNREFUSED) {
+					log.Warn(err)
+				} else {
+					log.Error(err)
+				}
+
+				continue
+			}
+
+			dcgmMetrics, err := parseMetrics(dcgmResp)
+			if err != nil {
 				log.Error(err)
+
+				continue
 			}
 
-			continue
-		}
+			tsList := GetMetricsAsTimeSeries(dcgmMetrics)
 
-		dcgmMetrics, err := parseMetrics(dcgmResp)
-		if err != nil {
-			log.Error(err)
-
-			continue
-		}
-
-		tsList := GetMetricsAsTimeSeries(dcgmMetrics)
-
-		cfg, err := config.GetConfig()
-		if err != nil {
-			return err
-		}
-
-		var ba *BasicAuth
-		if cfg.BasicAuthUser != "" && cfg.BasicAuthPass != "" {
-			ba = &BasicAuth{
-				Username: cfg.BasicAuthUser,
-				Password: cfg.BasicAuthPass,
+			cfg, err := config.GetConfig()
+			if err != nil {
+				return err
 			}
-		}
 
-		wc, err := NewWriteClient(cfg.Endpoint, &HTTPConfig{
-			Timeout:   5 * time.Second,
-			BasicAuth: ba,
-		})
-		if err != nil {
-			return err
-		}
+			var ba *BasicAuth
+			if cfg.BasicAuthUser != "" && cfg.BasicAuthPass != "" {
+				ba = &BasicAuth{
+					Username: cfg.BasicAuthUser,
+					Password: cfg.BasicAuthPass,
+				}
+			}
 
-		if err := wc.Store(context.Background(), tsList); err != nil {
-			return err
+			wc, err := NewWriteClient(cfg.Endpoint, &HTTPConfig{
+				Timeout:   5 * time.Second,
+				BasicAuth: ba,
+			})
+			if err != nil {
+				return err
+			}
+
+			if err := wc.Store(context.Background(), tsList); err != nil {
+				return err
+			}
 		}
 	}
 
