@@ -71,3 +71,7 @@ data:
 {{ toYaml .Values.config.metrics_config.kubernetes_pods.namespaces | indent 8 }}
       smart:
         enabled: {{ .Values.config.metrics_config.smart.enabled }}
+      dcgm:
+        enabled: {{ .Values.config.metrics_config.dcgm.enabled }}
+        namespace: {{ .Values.config.metrics_config.dcgm.namespace }}
+        endpoint: {{ .Values.config.metrics_config.dcgm.endpoint }}

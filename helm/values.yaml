@@ -142,3 +142,7 @@ config:
       - default
     smart:
       enabled: true
+    dcgm:
+      enabled: false
+      namespace: gpu-operator
+      endpoint: nvidia-dcgm-exporter

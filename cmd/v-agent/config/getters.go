@@ -441,3 +441,36 @@ func GetSMARTBlockDevices() []string {
 
 	return blockDevices
 }
+
+// DCGMCollectionEnabled returns true if DCGM collection is enabled
+func DCGMCollectionEnabled() bool {
+	log := zap.L().Sugar()
+
+	cfg, err := GetConfig()
+	if err != nil {
+		log.Error(err)
+		return true
+	}
+
+	return cfg.MetricsConfig.DCGM.Enabled
+}
+
+// GetDCGMNamespace returns the DCGM namespace
+func GetDCGMNamespace() (*string, error) {
+	cfg, err := GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return &cfg.MetricsConfig.DCGM.Namespace, nil
+}
+
+// GetDCGMEndpoint returns the DCGM endpoint
+func GetDCGMEndpoint() (*string, error) {
+	cfg, err := GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return &cfg.MetricsConfig.DCGM.Endpoint, nil
+}

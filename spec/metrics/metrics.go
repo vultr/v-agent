@@ -2138,6 +2138,15 @@ func Gather() error {
 		log.Info("Not gathering SMART metrics")
 	}
 
+	if config.DCGMCollectionEnabled() {
+		log.Info("Gathering DCGM metrics")
+		if err := gatherDCGMmetrics(); err != nil {
+			return err
+		}
+	} else {
+		log.Info("Not gathering DCGM metrics")
+	}
+
 	return nil
 }
 
@@ -2852,6 +2861,14 @@ func gatherSMARTmetrics() error {
 	ResetSMARTMetrics()
 
 	if err := ScrapeSMARTMetrics(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func gatherDCGMmetrics() error {
+	if err := ScrapeDCGMMetrics(); err != nil {
 		return err
 	}
 

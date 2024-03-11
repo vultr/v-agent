@@ -65,3 +65,13 @@ func GetScrapeablePods(client kubernetes.Interface, namespace string) ([]v1.Pod,
 
 	return scrapeablePodsItems, nil
 }
+
+// GetEndpoint returns specified endpoint
+func GetEndpoint(client kubernetes.Interface, namespace, name string) (*v1.Endpoints, error) {
+	eps, err := client.CoreV1().Endpoints(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	return eps, nil
+}
