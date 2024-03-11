@@ -3,9 +3,11 @@ package metrics
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
+	"syscall"
 	"time"
 
 	"github.com/vultr/v-agent/cmd/v-agent/config"
@@ -76,14 +78,15 @@ func ScrapeDCGMMetrics() error {
 			addr = dcgmEndpoints.Subsets[i].Addresses[j]
 		}
 
-		log.With(
-			"ip", addr.IP,
-			"port", port.Port,
-		).Info("attempting to scrape dcgm metrics")
+		log.Info("scraping dcgm metrics from %s:%d", addr.IP, port.Port)
 
 		dcgmResp, err := ProbeDCGMMetrics(addr.IP, port.Port)
 		if err != nil {
-			log.Error(err)
+			if errors.Is(err, syscall.ECONNREFUSED) {
+				log.Warn(err)
+			} else {
+				log.Error(err)
+			}
 
 			continue
 		}
