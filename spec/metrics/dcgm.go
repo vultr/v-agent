@@ -64,6 +64,27 @@ func ScrapeDCGMMetrics() error {
 		return err
 	}
 
+	cfg, err := config.GetConfig()
+	if err != nil {
+		return err
+	}
+
+	var ba *BasicAuth
+	if cfg.BasicAuthUser != "" && cfg.BasicAuthPass != "" {
+		ba = &BasicAuth{
+			Username: cfg.BasicAuthUser,
+			Password: cfg.BasicAuthPass,
+		}
+	}
+
+	wc, err := NewWriteClient(cfg.Endpoint, &HTTPConfig{
+		Timeout:   5 * time.Second,
+		BasicAuth: ba,
+	})
+	if err != nil {
+		return err
+	}
+
 	for i := range dcgmEndpoints.Subsets {
 		var port v1.EndpointPort
 
@@ -99,29 +120,10 @@ func ScrapeDCGMMetrics() error {
 
 			tsList := GetMetricsAsTimeSeries(dcgmMetrics)
 
-			cfg, err := config.GetConfig()
-			if err != nil {
-				return err
-			}
-
-			var ba *BasicAuth
-			if cfg.BasicAuthUser != "" && cfg.BasicAuthPass != "" {
-				ba = &BasicAuth{
-					Username: cfg.BasicAuthUser,
-					Password: cfg.BasicAuthPass,
-				}
-			}
-
-			wc, err := NewWriteClient(cfg.Endpoint, &HTTPConfig{
-				Timeout:   5 * time.Second,
-				BasicAuth: ba,
-			})
-			if err != nil {
-				return err
-			}
-
 			if err := wc.Store(context.Background(), tsList); err != nil {
-				return err
+				log.Error(err)
+
+				continue
 			}
 		}
 	}
