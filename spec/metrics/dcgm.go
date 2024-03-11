@@ -24,7 +24,7 @@ func ProbeDCGMMetrics(target string, port int32) ([]byte, error) {
 		Timeout: 5 * time.Second,
 	}
 
-	resp, err := client.Get(fmt.Sprintf("http://%s/metrics", target))
+	resp, err := client.Get(fmt.Sprintf("http://%s:%d/metrics", target, port))
 	if err != nil {
 		return nil, err
 	}
