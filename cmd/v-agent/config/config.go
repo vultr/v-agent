@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/vultr/v-agent/cmd/v-agent/util"
-	"github.com/vultr/v-agent/spec/connectors"
 	"k8s.io/apimachinery/pkg/util/validation"
 
 	"go.uber.org/zap"
@@ -430,9 +429,8 @@ func checkConfig(config *Config) error {
 
 	if config.MetricsConfig.KubernetesPods.Enabled {
 		// try to get k8s connection, if error return
-		_, err := connectors.GetKubernetesConn()
-		if err != nil {
-			return err
+		if !inK8s() {
+			return fmt.Errorf("kubernetes_pods is enabled, but not running in kubernetes")
 		}
 
 		for i := range config.MetricsConfig.KubernetesPods.Namespaces {
@@ -456,6 +454,10 @@ func checkConfig(config *Config) error {
 	}
 
 	if config.MetricsConfig.DCGM.Enabled {
+		if !inK8s() {
+			return fmt.Errorf("dcgm is enabled, but not running in kubernetes")
+		}
+
 		if config.MetricsConfig.DCGM.Namespace == "" {
 			return fmt.Errorf("dcgm.namespace not set")
 		}
@@ -466,4 +468,10 @@ func checkConfig(config *Config) error {
 	}
 
 	return nil
+}
+
+func inK8s() bool {
+	v := os.Getenv("KUBERNETES_SERVICE_HOST")
+
+	return v != ""
 }
