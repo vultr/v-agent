@@ -7,6 +7,7 @@ import (
 
 	"go.uber.org/zap"
 	v1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 )
@@ -68,10 +69,24 @@ func GetScrapeablePods(client kubernetes.Interface, namespace string) ([]v1.Pod,
 
 // GetEndpoint returns specified endpoint
 func GetEndpoint(client kubernetes.Interface, namespace, name string) (*v1.Endpoints, error) {
-	eps, err := client.CoreV1().Endpoints(namespace).Get(context.TODO(), name, metav1.GetOptions{})
-	if err != nil {
-		return nil, err
-	}
+	return client.CoreV1().Endpoints(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+}
 
-	return eps, nil
+// GetNamespace returns specified namespace
+func GetNamespace(client kubernetes.Interface, namespace string) (*v1.Namespace, error) {
+	return client.CoreV1().Namespaces().Get(context.TODO(), namespace, metav1.GetOptions{})
+}
+
+// NamespaceExists returns true if the namespace exists
+func NamespaceExists(client kubernetes.Interface, namespace string) bool {
+	_, err := GetNamespace(client, namespace)
+
+	return !errors.IsNotFound(err)
+}
+
+// EndpointExists returns true if the endpoint exists
+func EndpointExists(client kubernetes.Interface, namespace, endpoint string) bool {
+	_, err := GetEndpoint(client, namespace, endpoint)
+
+	return !errors.IsNotFound(err)
 }

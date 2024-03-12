@@ -10,6 +10,8 @@ import (
 	"strings"
 
 	"github.com/vultr/v-agent/cmd/v-agent/util"
+	"github.com/vultr/v-agent/spec/connectors"
+	"github.com/vultr/v-agent/spec/wrkld"
 	"k8s.io/apimachinery/pkg/util/validation"
 
 	"go.uber.org/zap"
@@ -430,7 +432,7 @@ func checkConfig(config *Config) error {
 	if config.MetricsConfig.KubernetesPods.Enabled {
 		// try to get k8s connection, if error return
 		if !inK8s() {
-			return fmt.Errorf("kubernetes_pods is enabled, but not running in kubernetes")
+			return fmt.Errorf("kubernetes_pods is enabled, but v-agent is not running in kubernetes")
 		}
 
 		for i := range config.MetricsConfig.KubernetesPods.Namespaces {
@@ -455,15 +457,28 @@ func checkConfig(config *Config) error {
 
 	if config.MetricsConfig.DCGM.Enabled {
 		if !inK8s() {
-			return fmt.Errorf("dcgm is enabled, but not running in kubernetes")
+			return fmt.Errorf("dcgm is enabled, but v-agent is not running in kubernetes")
 		}
 
 		if config.MetricsConfig.DCGM.Namespace == "" {
 			return fmt.Errorf("dcgm.namespace not set")
 		}
 
+		clientset, err := connectors.GetKubernetesConn()
+		if err != nil {
+			return err
+		}
+
+		if !wrkld.NamespaceExists(clientset, config.MetricsConfig.DCGM.Namespace) {
+			return fmt.Errorf("dcgm.namespace does not exist")
+		}
+
 		if config.MetricsConfig.DCGM.Endpoint == "" {
 			return fmt.Errorf("dcgm.endpoint not set")
+		}
+
+		if !wrkld.EndpointExists(clientset, config.MetricsConfig.DCGM.Namespace, config.MetricsConfig.DCGM.Endpoint) {
+			return fmt.Errorf("dcgm.endpoint does not exist")
 		}
 	}
 
