@@ -13,10 +13,7 @@ import (
 
 // DoKonnectivityHealthCheck probes /healthz and returns nil or ErrKonnectivityServerUnhealthy, or some other error
 func DoKonnectivityHealthCheck() error {
-	endpoint, err := config.GetKonnectivityHealthEndpoint()
-	if err != nil {
-		return err
-	}
+	endpoint := config.GetKonnectivityHealthEndpoint()
 
 	client := &http.Client{
 		Transport: &http.Transport{
@@ -25,7 +22,7 @@ func DoKonnectivityHealthCheck() error {
 		Timeout: 5 * time.Second,
 	}
 
-	resp, err := client.Get(fmt.Sprintf("%s/healthz", *endpoint))
+	resp, err := client.Get(fmt.Sprintf("%s/healthz", endpoint))
 	if err != nil {
 		return err
 	}
@@ -45,10 +42,7 @@ func DoKonnectivityHealthCheck() error {
 
 // ProbeKonnectivityMetrics probes /metrics from konnectivity
 func ProbeKonnectivityMetrics() ([]byte, error) {
-	endpoint, err := config.GetKonnectivityMetricsEndpoint()
-	if err != nil {
-		return nil, err
-	}
+	endpoint := config.GetKonnectivityMetricsEndpoint()
 
 	client := &http.Client{
 		Transport: &http.Transport{
@@ -57,7 +51,7 @@ func ProbeKonnectivityMetrics() ([]byte, error) {
 		Timeout: 5 * time.Second,
 	}
 
-	resp, err := client.Get(fmt.Sprintf("%s/metrics", *endpoint))
+	resp, err := client.Get(fmt.Sprintf("%s/metrics", endpoint))
 	if err != nil {
 		return nil, err
 	}
@@ -85,10 +79,7 @@ func ScrapeKonnectivityMetrics() error {
 
 	tsList := GetMetricsAsTimeSeries(konnectivityMetrics)
 
-	cfg, err := config.GetConfig()
-	if err != nil {
-		return err
-	}
+	cfg := config.GetConfig()
 
 	var ba *BasicAuth
 	if cfg.BasicAuthUser != "" && cfg.BasicAuthPass != "" {

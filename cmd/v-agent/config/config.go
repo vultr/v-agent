@@ -9,22 +9,17 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/vultr/v-agent/cmd/v-agent/util"
 	"github.com/vultr/v-agent/spec/connectors"
+	"github.com/vultr/v-agent/spec/util"
 	"github.com/vultr/v-agent/spec/wrkld"
-	"k8s.io/apimachinery/pkg/util/validation"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/yaml.v3"
+	"k8s.io/apimachinery/pkg/util/validation"
 )
 
-var (
-	// ErrNotVultrVendor returned if the bios manufacturer is not "Vultr"
-	ErrNotVultrVendor = errors.New("not vultr vendor")
-)
-
-var config *Config
+var cfg Config
 var labels map[string]string
 
 // Config is the CLI options wrapped in a struct
@@ -43,6 +38,7 @@ type Config struct {
 	BasicAuthPass string            `yaml:"basic_auth_pass"`
 	CheckVendor   bool              `yaml:"check_vendor"`
 	LabelsConfig  map[string]string `yaml:"labels_config"`
+	ProbesAPI     ProbesAPI         `yaml:"probes_api"`
 	MetricsConfig MetricsConfig     `yaml:"metrics_config"`
 
 	zapConfig *zap.Config
@@ -67,9 +63,15 @@ type MetricsConfig struct {
 	Ganesha        Ganesha        `yaml:"ganesha"`
 	Ceph           Ceph           `yaml:"ceph"`
 	VDNS           VDNS           `yaml:"v_dns"`
-	KubernetesPods KubernetesPods `yaml:"kubernetes_pods"`
 	SMART          SMART          `yaml:"smart"`
+	KubernetesPods KubernetesPods `yaml:"kubernetes_pods"`
 	DCGM           DCGM           `yaml:"dcgm"`
+}
+
+// ProbesAPI probes API definition
+type ProbesAPI struct {
+	Listen string `yaml:"listen"`
+	Port   uint16 `yaml:"port"`
 }
 
 // LoadAvg configuration
@@ -162,16 +164,16 @@ type VDNS struct {
 	Endpoint string `yaml:"endpoint"`
 }
 
-// KubernetesPods config
-type KubernetesPods struct {
-	Enabled    bool     `yaml:"enabled"`
-	Namespaces []string `yaml:"namespaces"`
-}
-
 // SMART config
 type SMART struct {
 	Enabled      bool     `yaml:"enabled"`
 	BlockDevices []string `yaml:"block_devices"`
+}
+
+// KubernetesPods config
+type KubernetesPods struct {
+	Enabled    bool     `yaml:"enabled"`
+	Namespaces []string `yaml:"namespaces"`
 }
 
 // DCGM config
@@ -186,40 +188,36 @@ type DCGM struct {
 //   - Runs initCLI (sets and read CLI switches)
 //   - Runs initConfig (reads config from files)
 func NewConfig(name, version string) (*Config, error) {
-	if config == nil {
-		config = &Config{}
+	// Stage 1: Setup CLI flags
+	initCLI(&cfg)
 
-		// Stage 1: Setup CLI flags
-		initCLI(config)
-
-		// Stage 2: Setup config file
-		if err := initConfig(config); err != nil {
-			return nil, err
-		}
-
-		// Stage 3: initialize logging
-		initLogging(config)
-
-		// Stage 4: Setup env vars
-		if err := initEnv(config); err != nil {
-			return nil, err
-		}
-
-		// Stage 5: Initialize labels
-		if err := initLabels(config); err != nil {
-			return nil, err
-		}
-
-		// Stage 6: Check configuration
-		if err := checkConfig(config); err != nil {
-			return nil, err
-		}
+	// Stage 2: Setup config file
+	if err := initConfig(&cfg); err != nil {
+		return nil, err
 	}
 
-	config.Name = name
-	config.Version = version
+	// Stage 3: initialize logging
+	initLogging(&cfg)
 
-	return config, nil
+	// Stage 4: Setup env vars
+	if err := initEnv(&cfg); err != nil {
+		return nil, err
+	}
+
+	// Stage 5: Initialize labels
+	if err := initLabels(&cfg); err != nil {
+		return nil, err
+	}
+
+	// Stage 6: Check configuration
+	if err := checkConfig(&cfg); err != nil {
+		return nil, err
+	}
+
+	cfg.Name = name
+	cfg.Version = version
+
+	return &cfg, nil
 }
 
 // initCLI initializes CLI switches
@@ -317,6 +315,7 @@ func initLabels(config *Config) error {
 			if v == "" {
 				if product["product"] == "" {
 					log.Warn("product label unset, unable to determine subid")
+
 					continue
 				}
 
@@ -343,6 +342,7 @@ func initLabels(config *Config) error {
 		default:
 			if v == "" {
 				log.Warnf("label %q is empty, will be omitted", k)
+
 				continue
 			}
 
@@ -418,21 +418,21 @@ func checkConfig(config *Config) error {
 	}
 
 	if config.Port > 65535 { //nolint
-		return fmt.Errorf("port: %d is not valid", config.Port)
+		return fmt.Errorf("%d: %w", config.Port, ErrPortInvalid)
 	}
 
 	if config.Interval < 1 {
-		return fmt.Errorf("interval: %d is not valid", config.Interval)
+		return fmt.Errorf("%d: %w", config.Port, ErrIntervalInvalid)
 	}
 
 	if !strings.HasPrefix(config.Endpoint, "http") {
-		return fmt.Errorf("remote_write_endpoint: should start with http/https")
+		return fmt.Errorf("remote_write_endpoint: %w", ErrMissingScheme)
 	}
 
 	if config.MetricsConfig.KubernetesPods.Enabled {
 		// try to get k8s connection, if error return
 		if !inK8s() {
-			return fmt.Errorf("kubernetes_pods is enabled, but v-agent is not running in kubernetes")
+			return ErrNotInK8s
 		}
 
 		for i := range config.MetricsConfig.KubernetesPods.Namespaces {
@@ -440,7 +440,7 @@ func checkConfig(config *Config) error {
 			if len(errs) > 0 {
 				log.Error(errs)
 
-				return fmt.Errorf("kubernetes_pods.namespaces invalid")
+				return fmt.Errorf("kubernetes_pods: %w", ErrKubernetesNamespaceInvalid)
 			}
 		}
 	}
@@ -449,7 +449,7 @@ func checkConfig(config *Config) error {
 		if len(config.MetricsConfig.SMART.BlockDevices) > 0 {
 			for i := range config.MetricsConfig.SMART.BlockDevices {
 				if _, err := os.Stat(config.MetricsConfig.SMART.BlockDevices[i]); errors.Is(err, os.ErrNotExist) {
-					return fmt.Errorf("smart.block_devices %s does not exist", config.MetricsConfig.SMART.BlockDevices[i])
+					return fmt.Errorf("%s: %w", config.MetricsConfig.SMART.BlockDevices[i], ErrSMARTDeviceNotExist)
 				}
 			}
 		}
@@ -457,11 +457,11 @@ func checkConfig(config *Config) error {
 
 	if config.MetricsConfig.DCGM.Enabled {
 		if !inK8s() {
-			return fmt.Errorf("dcgm is enabled, but v-agent is not running in kubernetes")
+			return ErrNotInK8s
 		}
 
 		if config.MetricsConfig.DCGM.Namespace == "" {
-			return fmt.Errorf("dcgm.namespace not set")
+			return fmt.Errorf("dcgm.namespace: %w", ErrKubernetesNamespaceNotSet)
 		}
 
 		clientset, err := connectors.GetKubernetesConn()
@@ -470,15 +470,15 @@ func checkConfig(config *Config) error {
 		}
 
 		if !wrkld.NamespaceExists(clientset, config.MetricsConfig.DCGM.Namespace) {
-			return fmt.Errorf("dcgm.namespace does not exist")
+			return fmt.Errorf("dcgm.namespace: %w", ErrKubernetesNamespaceNotExist)
 		}
 
 		if config.MetricsConfig.DCGM.Endpoint == "" {
-			return fmt.Errorf("dcgm.endpoint not set")
+			return ErrDCGMEndpointNotSet
 		}
 
 		if !wrkld.EndpointExists(clientset, config.MetricsConfig.DCGM.Namespace, config.MetricsConfig.DCGM.Endpoint) {
-			return fmt.Errorf("dcgm.endpoint does not exist")
+			return ErrDCGMEndpointNotExist
 		}
 	}
 

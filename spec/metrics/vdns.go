@@ -13,10 +13,7 @@ import (
 
 // DoVDNSHealthCheck probes /metrics and returns nil or ErrVDNSUnhealthy, or some other error
 func DoVDNSHealthCheck() error {
-	endpoint, err := config.GetVDNSMetricsEndpoint()
-	if err != nil {
-		return err
-	}
+	endpoint := config.GetVDNSMetricsEndpoint()
 
 	client := &http.Client{
 		Transport: &http.Transport{
@@ -25,7 +22,7 @@ func DoVDNSHealthCheck() error {
 		Timeout: 5 * time.Second,
 	}
 
-	resp, err := client.Get(fmt.Sprintf("%s/metrics", *endpoint))
+	resp, err := client.Get(fmt.Sprintf("%s/metrics", endpoint))
 	if err != nil {
 		return err
 	}
@@ -44,10 +41,7 @@ func DoVDNSHealthCheck() error {
 
 // ProbeVDNSMetrics probes /metrics from v-dns
 func ProbeVDNSMetrics() ([]byte, error) {
-	endpoint, err := config.GetVDNSMetricsEndpoint()
-	if err != nil {
-		return nil, err
-	}
+	endpoint := config.GetVDNSMetricsEndpoint()
 
 	client := &http.Client{
 		Transport: &http.Transport{
@@ -56,7 +50,7 @@ func ProbeVDNSMetrics() ([]byte, error) {
 		Timeout: 5 * time.Second,
 	}
 
-	resp, err := client.Get(fmt.Sprintf("%s/metrics", *endpoint))
+	resp, err := client.Get(fmt.Sprintf("%s/metrics", endpoint))
 	if err != nil {
 		return nil, err
 	}
@@ -84,10 +78,7 @@ func ScrapeVDNSMetrics() error {
 
 	tsList := GetMetricsAsTimeSeries(vdnsMetrics)
 
-	cfg, err := config.GetConfig()
-	if err != nil {
-		return err
-	}
+	cfg := config.GetConfig()
 
 	var ba *BasicAuth
 	if cfg.BasicAuthUser != "" && cfg.BasicAuthPass != "" {

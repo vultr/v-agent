@@ -13,10 +13,7 @@ import (
 
 // DoHAProxyHealthCheck probes /metrics and returns nil or ErrHAProxyServerUnhealthy, or some other error
 func DoHAProxyHealthCheck() error {
-	endpoint, err := config.GetHAProxyMetricsEndpoint()
-	if err != nil {
-		return err
-	}
+	endpoint := config.GetHAProxyMetricsEndpoint()
 
 	client := &http.Client{
 		Transport: &http.Transport{
@@ -25,7 +22,7 @@ func DoHAProxyHealthCheck() error {
 		Timeout: 5 * time.Second,
 	}
 
-	resp, err := client.Get(fmt.Sprintf("%s/metrics", *endpoint))
+	resp, err := client.Get(fmt.Sprintf("%s/metrics", endpoint))
 	if err != nil {
 		return err
 	}
@@ -44,10 +41,7 @@ func DoHAProxyHealthCheck() error {
 
 // ProbeHAProxyMetrics probes /metrics from haproxy
 func ProbeHAProxyMetrics() ([]byte, error) {
-	endpoint, err := config.GetHAProxyMetricsEndpoint()
-	if err != nil {
-		return nil, err
-	}
+	endpoint := config.GetHAProxyMetricsEndpoint()
 
 	client := &http.Client{
 		Transport: &http.Transport{
@@ -56,7 +50,7 @@ func ProbeHAProxyMetrics() ([]byte, error) {
 		Timeout: 5 * time.Second,
 	}
 
-	resp, err := client.Get(fmt.Sprintf("%s/metrics", *endpoint))
+	resp, err := client.Get(fmt.Sprintf("%s/metrics", endpoint))
 	if err != nil {
 		return nil, err
 	}
@@ -84,10 +78,7 @@ func ScrapeHAProxyMetrics() error {
 
 	tsList := GetMetricsAsTimeSeries(haproxyMetrics)
 
-	cfg, err := config.GetConfig()
-	if err != nil {
-		return err
-	}
+	cfg := config.GetConfig()
 
 	var ba *BasicAuth
 	if cfg.BasicAuthUser != "" && cfg.BasicAuthPass != "" {

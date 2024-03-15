@@ -71,12 +71,16 @@ daemonset_config:
     v_dns:
       enabled: false
       endpoint: http://localhost:9053 # /metrics
+    smart:
+      enabled: true
     kubernetes_pods:
       enabled: false
       namespaces:
       - default
-    smart:
-      enabled: true
+    dcgm:
+      enabled: false
+      namespace: gpu-operator
+      endpoint: nvidia-dcgm-exporter
 
 config:
   debug: true
@@ -136,12 +140,12 @@ config:
     v_dns:
       enabled: false
       endpoint: http://localhost:9053 # /metrics
+    smart:
+      enabled: true
     kubernetes_pods:
       enabled: false
       namespaces:
       - default
-    smart:
-      enabled: true
     dcgm:
       enabled: false
       namespace: gpu-operator

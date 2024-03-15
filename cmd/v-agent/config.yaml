@@ -13,6 +13,9 @@ labels_config: # any labels below will be added to all metrics
   vpsid: "" # empty string pulls from userdata, unset (nil) doesnt use, non-empty string uses specified label
   product: vke # unset (nil) doesnt use, non-empty string uses specified label. Note: This label is used to determine subid for vke/vlb/vfs
   any: any # any key/value label
+probes_api:
+  listen: 127.0.0.1
+  port: 9093
 metrics_config:
   load_avg:
     enabled: true
@@ -59,16 +62,16 @@ metrics_config:
   v_dns:
     enabled: false
     endpoint: http://localhost:9053 # /metrics
-  kubernetes_pods:
-    enabled: false
-    namespaces:
-    - rook-ceph
-    - default
   smart:
     enabled: false
     block_devices: # must exist, if not set, block devices are used from /sys/block/ (except for dmX and loopX)
     - /dev/sda
-  dcgm:
+  kubernetes_pods: # v-agent must be running inside k8s for this to work
+    enabled: false
+    namespaces:
+    - rook-ceph
+    - default
+  dcgm: # v-agent must be running inside k8s for this to work
     enabled: false
     namespace: gpu-operator        # namespace
     endpoint: nvidia-dcgm-exporter # name of the endpoint: k get endpoints

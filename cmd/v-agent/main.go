@@ -11,6 +11,7 @@ import (
 	"github.com/vultr/v-agent/cmd/v-agent/api"
 	"github.com/vultr/v-agent/cmd/v-agent/config"
 	"github.com/vultr/v-agent/spec/metrics"
+	"github.com/vultr/v-agent/spec/probes"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"go.uber.org/zap"
@@ -65,6 +66,37 @@ func main() {
 	}
 
 	g, gCtx := errgroup.WithContext(ctx)
+
+	log.With(
+		"context", "v-inf",
+	).Info("initializing probes api")
+
+	probe, err := probes.NewProbesAPI(name, config.GetProbesAPIListen(), config.GetProbesAPIPort())
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// run http probes api
+	g.Go(func() error {
+		for {
+			select {
+			case <-gCtx.Done():
+				log.With(
+					"context", "v-inf",
+				).Info("probes: exited")
+
+				return nil
+			default:
+				log.With(
+					"context", "v-inf",
+				).Info("probes: starting")
+
+				if err2 := probe.Start(); err2 != nil {
+					return err2
+				}
+			}
+		}
+	})
 
 	// /metrics endpoint
 	g.Go(func() error {

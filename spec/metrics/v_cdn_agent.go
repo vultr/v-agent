@@ -13,10 +13,7 @@ import (
 
 // DoVCDNAgentHealthCheck probes /metrics and returns nil or ErrVCDNAgentServerUnhealthy, or some other error
 func DoVCDNAgentHealthCheck() error {
-	endpoint, err := config.GetVCDNAgentMetricsEndpoint()
-	if err != nil {
-		return err
-	}
+	endpoint := config.GetVCDNAgentMetricsEndpoint()
 
 	client := &http.Client{
 		Transport: &http.Transport{
@@ -25,7 +22,7 @@ func DoVCDNAgentHealthCheck() error {
 		Timeout: 5 * time.Second,
 	}
 
-	resp, err := client.Get(fmt.Sprintf("%s/metrics", *endpoint))
+	resp, err := client.Get(fmt.Sprintf("%s/metrics", endpoint))
 	if err != nil {
 		return err
 	}
@@ -44,10 +41,7 @@ func DoVCDNAgentHealthCheck() error {
 
 // ProbeVCDNAgentMetrics probes /metrics from v-cdn-agent
 func ProbeVCDNAgentMetrics() ([]byte, error) {
-	endpoint, err := config.GetVCDNAgentMetricsEndpoint()
-	if err != nil {
-		return nil, err
-	}
+	endpoint := config.GetVCDNAgentMetricsEndpoint()
 
 	client := &http.Client{
 		Transport: &http.Transport{
@@ -56,7 +50,7 @@ func ProbeVCDNAgentMetrics() ([]byte, error) {
 		Timeout: 5 * time.Second,
 	}
 
-	resp, err := client.Get(fmt.Sprintf("%s/metrics", *endpoint))
+	resp, err := client.Get(fmt.Sprintf("%s/metrics", endpoint))
 	if err != nil {
 		return nil, err
 	}
@@ -84,10 +78,7 @@ func ScrapeVCDNAgentMetrics() error {
 
 	tsList := GetMetricsAsTimeSeries(vcdnAgentMetrics)
 
-	cfg, err := config.GetConfig()
-	if err != nil {
-		return err
-	}
+	cfg := config.GetConfig()
 
 	var ba *BasicAuth
 	if cfg.BasicAuthUser != "" && cfg.BasicAuthPass != "" {

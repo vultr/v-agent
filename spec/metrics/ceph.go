@@ -16,10 +16,7 @@ import (
 
 // ProbeCephMetrics probes /metrics from ceph
 func ProbeCephMetrics() ([]byte, error) {
-	endpoint, err := config.GetCephMetricsEndpoint()
-	if err != nil {
-		return nil, err
-	}
+	endpoint := config.GetCephMetricsEndpoint()
 
 	client := &http.Client{
 		Transport: &http.Transport{
@@ -28,7 +25,7 @@ func ProbeCephMetrics() ([]byte, error) {
 		Timeout: 5 * time.Second,
 	}
 
-	resp, err := client.Get(fmt.Sprintf("%s/metrics", *endpoint))
+	resp, err := client.Get(fmt.Sprintf("%s/metrics", endpoint))
 	if err != nil {
 		return nil, err
 	}
@@ -70,10 +67,7 @@ func ScrapeCephMetrics() error {
 
 	tsList := GetMetricsAsTimeSeries(cephMetrics)
 
-	cfg, err := config.GetConfig()
-	if err != nil {
-		return err
-	}
+	cfg := config.GetConfig()
 
 	var ba *BasicAuth
 	if cfg.BasicAuthUser != "" && cfg.BasicAuthPass != "" {

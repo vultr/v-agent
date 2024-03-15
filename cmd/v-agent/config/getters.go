@@ -4,28 +4,21 @@ package config
 import (
 	"fmt"
 
-	"github.com/vultr/v-agent/cmd/v-agent/util"
+	"github.com/vultr/v-agent/spec/util"
 
 	"go.uber.org/zap"
 )
 
 // GetConfig returns config
-func GetConfig() (*Config, error) {
-	if config != nil {
-		return config, nil
-	}
-
-	return nil, ErrConfigNotInitialized
+func GetConfig() *Config {
+	return &cfg
 }
 
 // GetVersion returns application version
-func GetVersion() (*string, error) {
-	cfg, err := GetConfig()
-	if err != nil {
-		return nil, err
-	}
+func GetVersion() string {
+	cfg := GetConfig()
 
-	return &cfg.Version, nil
+	return cfg.Version
 }
 
 // GetLabels returns all labels
@@ -46,373 +39,240 @@ func GetLabel(label string) (map[string]string, error) {
 	return nil, fmt.Errorf("%s: %w", label, ErrLabelNotExist)
 }
 
-// GetDiskStatsFilter returns the regex for the disk stats filter
-func GetDiskStatsFilter() (*string, error) {
-	cfg, err := GetConfig()
-	if err != nil {
-		return nil, err
-	}
+// GetProbesAPIListen returns probes api listen addr
+func GetProbesAPIListen() string {
+	cfg := GetConfig()
 
-	return &cfg.MetricsConfig.DiskStats.Filter, nil
+	return cfg.ProbesAPI.Listen
+}
+
+// GetProbesAPIPort returns probes api listen port
+func GetProbesAPIPort() uint16 {
+	cfg := GetConfig()
+
+	return cfg.ProbesAPI.Port
+}
+
+// GetDiskStatsFilter returns the regex for the disk stats filter
+func GetDiskStatsFilter() string {
+	cfg := GetConfig()
+
+	return cfg.MetricsConfig.DiskStats.Filter
 }
 
 // GetKubeconfig returns path to kubeconfig
-func GetKubeconfig() (*string, error) {
-	cfg, err := GetConfig()
-	if err != nil {
-		return nil, err
-	}
+func GetKubeconfig() string {
+	cfg := GetConfig()
 
-	return &cfg.MetricsConfig.Kubernetes.Kubeconfig, nil
+	return cfg.MetricsConfig.Kubernetes.Kubeconfig
 }
 
 // GetKonnectivityHealthEndpoint returns health endpoint
-func GetKonnectivityHealthEndpoint() (*string, error) {
-	cfg, err := GetConfig()
-	if err != nil {
-		return nil, err
-	}
+func GetKonnectivityHealthEndpoint() string {
+	cfg := GetConfig()
 
-	return &cfg.MetricsConfig.Konnectivity.HealthEndpoint, nil
+	return cfg.MetricsConfig.Konnectivity.HealthEndpoint
 }
 
 // GetKonnectivityMetricsEndpoint returns metrics endpoint
-func GetKonnectivityMetricsEndpoint() (*string, error) {
-	cfg, err := GetConfig()
-	if err != nil {
-		return nil, err
-	}
+func GetKonnectivityMetricsEndpoint() string {
+	cfg := GetConfig()
 
-	return &cfg.MetricsConfig.Konnectivity.MetricsEndpoint, nil
+	return cfg.MetricsConfig.Konnectivity.MetricsEndpoint
 }
 
 // GetEtcdEndpoint returns etcd endpoint
-func GetEtcdEndpoint() (*string, error) {
-	cfg, err := GetConfig()
-	if err != nil {
-		return nil, err
-	}
+func GetEtcdEndpoint() string {
+	cfg := GetConfig()
 
-	return &cfg.MetricsConfig.Etcd.Endpoint, nil
+	return cfg.MetricsConfig.Etcd.Endpoint
 }
 
 // GetEtcdCACert returns path to cacert
-func GetEtcdCACert() (*string, error) {
-	cfg, err := GetConfig()
-	if err != nil {
-		return nil, err
-	}
+func GetEtcdCACert() string {
+	cfg := GetConfig()
 
-	return &cfg.MetricsConfig.Etcd.CACert, nil
+	return cfg.MetricsConfig.Etcd.CACert
 }
 
 // GetEtcdClientCert returns path to client cert
-func GetEtcdClientCert() (*string, error) {
-	cfg, err := GetConfig()
-	if err != nil {
-		return nil, err
-	}
+func GetEtcdClientCert() string {
+	cfg := GetConfig()
 
-	return &cfg.MetricsConfig.Etcd.Cert, nil
+	return cfg.MetricsConfig.Etcd.Cert
 }
 
 // GetEtcdClientKey returns path to client key
-func GetEtcdClientKey() (*string, error) {
-	cfg, err := GetConfig()
-	if err != nil {
-		return nil, err
-	}
+func GetEtcdClientKey() string {
+	cfg := GetConfig()
 
-	return &cfg.MetricsConfig.Etcd.Key, nil
+	return cfg.MetricsConfig.Etcd.Key
 }
 
 // LoadAvgMetricCollectionEnabled returns true/false if load_avg metrics collection enabled
 func LoadAvgMetricCollectionEnabled() bool {
-	log := zap.L().Sugar()
-
-	cfg, err := GetConfig()
-	if err != nil {
-		log.Error(err)
-		return true
-	}
+	cfg := GetConfig()
 
 	return cfg.MetricsConfig.LoadAvg.Enabled
 }
 
 // CPUMetricCollectionEnabled returns true/false if cpu metrics collection enabled
 func CPUMetricCollectionEnabled() bool {
-	log := zap.L().Sugar()
-
-	cfg, err := GetConfig()
-	if err != nil {
-		log.Error(err)
-		return true
-	}
+	cfg := GetConfig()
 
 	return cfg.MetricsConfig.CPU.Enabled
 }
 
 // MemoryMetricCollectionEnabled returns true/false if memory metrics collection enabled
 func MemoryMetricCollectionEnabled() bool {
-	log := zap.L().Sugar()
-
-	cfg, err := GetConfig()
-	if err != nil {
-		log.Error(err)
-		return true
-	}
+	cfg := GetConfig()
 
 	return cfg.MetricsConfig.Memory.Enabled
 }
 
 // NICMetricCollectionEnabled returns true/false if nic collection enabled
 func NICMetricCollectionEnabled() bool {
-	log := zap.L().Sugar()
-
-	cfg, err := GetConfig()
-	if err != nil {
-		log.Error(err)
-		return true
-	}
+	cfg := GetConfig()
 
 	return cfg.MetricsConfig.NIC.Enabled
 }
 
 // DiskStatsMetricCollectionEnabled returns true/false if diskstats collection enabled
 func DiskStatsMetricCollectionEnabled() bool {
-	log := zap.L().Sugar()
-
-	cfg, err := GetConfig()
-	if err != nil {
-		log.Error(err)
-		return true
-	}
+	cfg := GetConfig()
 
 	return cfg.MetricsConfig.DiskStats.Enabled
 }
 
 // FileSystemMetricCollectionEnabled returns true/false if filesystem collection enabled
 func FileSystemMetricCollectionEnabled() bool {
-	log := zap.L().Sugar()
-
-	cfg, err := GetConfig()
-	if err != nil {
-		log.Error(err)
-		return true
-	}
+	cfg := GetConfig()
 
 	return cfg.MetricsConfig.Filesystem.Enabled
 }
 
 // KubernetesMetricCollectionEnabled returns true/false if Kubernetes collection enabled
 func KubernetesMetricCollectionEnabled() bool {
-	log := zap.L().Sugar()
-
-	cfg, err := GetConfig()
-	if err != nil {
-		log.Error(err)
-		return true
-	}
+	cfg := GetConfig()
 
 	return cfg.MetricsConfig.Kubernetes.Enabled
 }
 
 // KonnectivityMetricCollectionEnabled returns true/false if Konnectivity collection enabled
 func KonnectivityMetricCollectionEnabled() bool {
-	log := zap.L().Sugar()
-
-	cfg, err := GetConfig()
-	if err != nil {
-		log.Error(err)
-		return true
-	}
+	cfg := GetConfig()
 
 	return cfg.MetricsConfig.Konnectivity.Enabled
 }
 
 // EtcdMetricCollectionEnabled returns true/false if Etcd collection enabled
 func EtcdMetricCollectionEnabled() bool {
-	log := zap.L().Sugar()
-
-	cfg, err := GetConfig()
-	if err != nil {
-		log.Error(err)
-		return true
-	}
+	cfg := GetConfig()
 
 	return cfg.MetricsConfig.Etcd.Enabled
 }
 
 // NginxVTSMetricsCollectionEnabled returns true if nginx vts metric collection enabled
 func NginxVTSMetricsCollectionEnabled() bool {
-	log := zap.L().Sugar()
-
-	cfg, err := GetConfig()
-	if err != nil {
-		log.Error(err)
-		return true
-	}
+	cfg := GetConfig()
 
 	return cfg.MetricsConfig.NginxVTS.Enabled
 }
 
 // GetNginxVTSMetricsEndpoint returns nginx vts endpoint
-func GetNginxVTSMetricsEndpoint() (*string, error) {
-	cfg, err := GetConfig()
-	if err != nil {
-		return nil, err
-	}
+func GetNginxVTSMetricsEndpoint() string {
+	cfg := GetConfig()
 
-	return &cfg.MetricsConfig.NginxVTS.Endpoint, nil
+	return cfg.MetricsConfig.NginxVTS.Endpoint
 }
 
 // VCDNAgentMetricsCollectionEnabled returns true if v-cdn-agent metric collection enabled
 func VCDNAgentMetricsCollectionEnabled() bool {
-	log := zap.L().Sugar()
-
-	cfg, err := GetConfig()
-	if err != nil {
-		log.Error(err)
-		return true
-	}
+	cfg := GetConfig()
 
 	return cfg.MetricsConfig.VCDNAgent.Enabled
 }
 
 // GetVCDNAgentMetricsEndpoint returns v-cdn-agent endpoint
-func GetVCDNAgentMetricsEndpoint() (*string, error) {
-	cfg, err := GetConfig()
-	if err != nil {
-		return nil, err
-	}
+func GetVCDNAgentMetricsEndpoint() string {
+	cfg := GetConfig()
 
-	return &cfg.MetricsConfig.VCDNAgent.Endpoint, nil
+	return cfg.MetricsConfig.VCDNAgent.Endpoint
 }
 
 // HAProxyMetricCollectionEnabled returns true/false if haproxy collection enabled
 func HAProxyMetricCollectionEnabled() bool {
-	log := zap.L().Sugar()
-
-	cfg, err := GetConfig()
-	if err != nil {
-		log.Error(err)
-		return true
-	}
+	cfg := GetConfig()
 
 	return cfg.MetricsConfig.HAProxy.Enabled
 }
 
 // GetHAProxyMetricsEndpoint returns haproxy endpoint
-func GetHAProxyMetricsEndpoint() (*string, error) {
-	cfg, err := GetConfig()
-	if err != nil {
-		return nil, err
-	}
+func GetHAProxyMetricsEndpoint() string {
+	cfg := GetConfig()
 
-	return &cfg.MetricsConfig.HAProxy.Endpoint, nil
+	return cfg.MetricsConfig.HAProxy.Endpoint
 }
 
 // GaneshaMetricCollectionEnabled returns true/false if ganesha collection enabled
 func GaneshaMetricCollectionEnabled() bool {
-	log := zap.L().Sugar()
-
-	cfg, err := GetConfig()
-	if err != nil {
-		log.Error(err)
-		return true
-	}
+	cfg := GetConfig()
 
 	return cfg.MetricsConfig.Ganesha.Enabled
 }
 
 // GetGaneshaMetricsEndpoint returns metrics endpoint
-func GetGaneshaMetricsEndpoint() (*string, error) {
-	cfg, err := GetConfig()
-	if err != nil {
-		return nil, err
-	}
+func GetGaneshaMetricsEndpoint() string {
+	cfg := GetConfig()
 
-	return &cfg.MetricsConfig.Ganesha.Endpoint, nil
+	return cfg.MetricsConfig.Ganesha.Endpoint
 }
 
 // CephMetricCollectionEnabled returns true/false if ceph collection enabled
 func CephMetricCollectionEnabled() bool {
-	log := zap.L().Sugar()
-
-	cfg, err := GetConfig()
-	if err != nil {
-		log.Error(err)
-		return true
-	}
+	cfg := GetConfig()
 
 	return cfg.MetricsConfig.Ceph.Enabled
 }
 
 // GetCephMetricsEndpoint returns metrics endpoint
-func GetCephMetricsEndpoint() (*string, error) {
-	cfg, err := GetConfig()
-	if err != nil {
-		return nil, err
-	}
+func GetCephMetricsEndpoint() string {
+	cfg := GetConfig()
 
-	return &cfg.MetricsConfig.Ceph.Endpoint, nil
+	return cfg.MetricsConfig.Ceph.Endpoint
 }
 
 // VDNSMetricsCollectionEnabled returns true if v-dns metric collection enabled
 func VDNSMetricsCollectionEnabled() bool {
-	log := zap.L().Sugar()
-
-	cfg, err := GetConfig()
-	if err != nil {
-		log.Error(err)
-		return true
-	}
+	cfg := GetConfig()
 
 	return cfg.MetricsConfig.VDNS.Enabled
 }
 
 // GetVDNSMetricsEndpoint returns v-dns endpoint
-func GetVDNSMetricsEndpoint() (*string, error) {
-	cfg, err := GetConfig()
-	if err != nil {
-		return nil, err
-	}
+func GetVDNSMetricsEndpoint() string {
+	cfg := GetConfig()
 
-	return &cfg.MetricsConfig.VDNS.Endpoint, nil
+	return cfg.MetricsConfig.VDNS.Endpoint
 }
 
 // KubernetesPodsCollectionEnabled returns true if pod scrape collection is enabled
 func KubernetesPodsCollectionEnabled() bool {
-	log := zap.L().Sugar()
-
-	cfg, err := GetConfig()
-	if err != nil {
-		log.Error(err)
-		return true
-	}
+	cfg := GetConfig()
 
 	return cfg.MetricsConfig.KubernetesPods.Enabled
 }
 
 // GetKubernetesPodsNamespaces returns namespaces to scrape pods from
 func GetKubernetesPodsNamespaces() []string {
-	cfg, err := GetConfig()
-	if err != nil {
-		return []string{"default"}
-	}
+	cfg := GetConfig()
 
 	return cfg.MetricsConfig.KubernetesPods.Namespaces
 }
 
 // SMARTCollectionEnabled returns true if SMART collection is enabled
 func SMARTCollectionEnabled() bool {
-	log := zap.L().Sugar()
-
-	cfg, err := GetConfig()
-	if err != nil {
-		log.Error(err)
-		return true
-	}
+	cfg := GetConfig()
 
 	return cfg.MetricsConfig.SMART.Enabled
 }
@@ -421,10 +281,7 @@ func SMARTCollectionEnabled() bool {
 func GetSMARTBlockDevices() []string {
 	log := zap.L().Sugar()
 
-	cfg, err := GetConfig()
-	if err != nil {
-		return []string{"default"}
-	}
+	cfg := GetConfig()
 
 	// block_devices provided, use those instead
 	if len(cfg.MetricsConfig.SMART.BlockDevices) > 0 {
@@ -444,33 +301,21 @@ func GetSMARTBlockDevices() []string {
 
 // DCGMCollectionEnabled returns true if DCGM collection is enabled
 func DCGMCollectionEnabled() bool {
-	log := zap.L().Sugar()
-
-	cfg, err := GetConfig()
-	if err != nil {
-		log.Error(err)
-		return true
-	}
+	cfg := GetConfig()
 
 	return cfg.MetricsConfig.DCGM.Enabled
 }
 
 // GetDCGMNamespace returns the DCGM namespace
-func GetDCGMNamespace() (*string, error) {
-	cfg, err := GetConfig()
-	if err != nil {
-		return nil, err
-	}
+func GetDCGMNamespace() string {
+	cfg := GetConfig()
 
-	return &cfg.MetricsConfig.DCGM.Namespace, nil
+	return cfg.MetricsConfig.DCGM.Namespace
 }
 
 // GetDCGMEndpoint returns the DCGM endpoint
-func GetDCGMEndpoint() (*string, error) {
-	cfg, err := GetConfig()
-	if err != nil {
-		return nil, err
-	}
+func GetDCGMEndpoint() string {
+	cfg := GetConfig()
 
-	return &cfg.MetricsConfig.DCGM.Endpoint, nil
+	return cfg.MetricsConfig.DCGM.Endpoint
 }

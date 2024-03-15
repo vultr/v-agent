@@ -13,12 +13,9 @@ import (
 
 // DoKubeAPIServerHealthCheck probes /healthz and returns nil or ErrKubeAPIServerUnhealthy, or some other error
 func DoKubeAPIServerHealthCheck() error {
-	kubeconfig, err := config.GetKubeconfig()
-	if err != nil {
-		return err
-	}
+	kubeconfig := config.GetKubeconfig()
 
-	cfg, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	cfg, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -42,12 +39,9 @@ func DoKubeAPIServerHealthCheck() error {
 
 // ProbeKubeAPIServerMetrics probes /metrics from kube-apiserver
 func ProbeKubeAPIServerMetrics() ([]byte, error) {
-	kubeconfig, err := config.GetKubeconfig()
-	if err != nil {
-		return nil, err
-	}
+	kubeconfig := config.GetKubeconfig()
 
-	cfg, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	cfg, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
 	if err != nil {
 		return nil, err
 	}
@@ -79,10 +73,7 @@ func ScrapeKubeAPIServerMetrics() error {
 
 	tsList := GetMetricsAsTimeSeries(apiserverMetrics)
 
-	cfg, err := config.GetConfig()
-	if err != nil {
-		return err
-	}
+	cfg := config.GetConfig()
 
 	var ba *BasicAuth
 	if cfg.BasicAuthUser != "" && cfg.BasicAuthPass != "" {

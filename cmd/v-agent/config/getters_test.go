@@ -6,13 +6,8 @@ import (
 )
 
 func TestGetConfig(t *testing.T) {
-	c, _ := GetConfig()
-	if c != nil {
-		t.Error("expecting GetConfig to return nil")
-	}
-
 	NewConfig("test", "v0.0.0") //nolint
-	c1, _ := GetConfig()
+	c1 := GetConfig()
 	if c1 == nil {
 		t.Error("expecting GetConfig to not be nil")
 	}
