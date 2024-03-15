@@ -49,25 +49,15 @@ func ScrapeDCGMMetrics() error {
 		return err
 	}
 
-	ns, err := config.GetDCGMNamespace()
+	ns := config.GetDCGMNamespace()
+	ep := config.GetDCGMEndpoint()
+
+	dcgmEndpoints, err := wrkld.GetEndpoint(clientset, ns, ep)
 	if err != nil {
 		return err
 	}
 
-	ep, err := config.GetDCGMEndpoint()
-	if err != nil {
-		return err
-	}
-
-	dcgmEndpoints, err := wrkld.GetEndpoint(clientset, *ns, *ep)
-	if err != nil {
-		return err
-	}
-
-	cfg, err := config.GetConfig()
-	if err != nil {
-		return err
-	}
+	cfg := config.GetConfig()
 
 	var ba *BasicAuth
 	if cfg.BasicAuthUser != "" && cfg.BasicAuthPass != "" {

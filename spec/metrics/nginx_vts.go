@@ -13,10 +13,7 @@ import (
 
 // DoNginxVTSHealthCheck probes /metrics and returns nil or ErrNginxVTSServerUnhealthy, or some other error
 func DoNginxVTSHealthCheck() error {
-	endpoint, err := config.GetNginxVTSMetricsEndpoint()
-	if err != nil {
-		return err
-	}
+	endpoint := config.GetNginxVTSMetricsEndpoint()
 
 	client := &http.Client{
 		Transport: &http.Transport{
@@ -25,7 +22,7 @@ func DoNginxVTSHealthCheck() error {
 		Timeout: 5 * time.Second,
 	}
 
-	resp, err := client.Get(fmt.Sprintf("%s/metrics", *endpoint))
+	resp, err := client.Get(fmt.Sprintf("%s/metrics", endpoint))
 	if err != nil {
 		return err
 	}
@@ -44,10 +41,7 @@ func DoNginxVTSHealthCheck() error {
 
 // ProbeNginxVTSMetrics probes /metrics from nginx-vts
 func ProbeNginxVTSMetrics() ([]byte, error) {
-	endpoint, err := config.GetNginxVTSMetricsEndpoint()
-	if err != nil {
-		return nil, err
-	}
+	endpoint := config.GetNginxVTSMetricsEndpoint()
 
 	client := &http.Client{
 		Transport: &http.Transport{
@@ -56,7 +50,7 @@ func ProbeNginxVTSMetrics() ([]byte, error) {
 		Timeout: 5 * time.Second,
 	}
 
-	resp, err := client.Get(fmt.Sprintf("%s/metrics", *endpoint))
+	resp, err := client.Get(fmt.Sprintf("%s/metrics", endpoint))
 	if err != nil {
 		return nil, err
 	}
@@ -84,10 +78,7 @@ func ScrapeNginxVTSMetrics() error {
 
 	tsList := GetMetricsAsTimeSeries(nginxVtsMetrics)
 
-	cfg, err := config.GetConfig()
-	if err != nil {
-		return err
-	}
+	cfg := config.GetConfig()
 
 	var ba *BasicAuth
 	if cfg.BasicAuthUser != "" && cfg.BasicAuthPass != "" {

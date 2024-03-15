@@ -99,10 +99,7 @@ func ScrapeKubernetesPods() error {
 
 			tsList := GetMetricsAsTimeSeries(podMetrics)
 
-			cfg, err := config.GetConfig()
-			if err != nil {
-				return err
-			}
+			cfg := config.GetConfig()
 
 			var ba *BasicAuth
 			if cfg.BasicAuthUser != "" && cfg.BasicAuthPass != "" {

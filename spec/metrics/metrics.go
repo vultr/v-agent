@@ -2293,12 +2293,9 @@ func gatherMetadataMetrics() error {
 		return err
 	}
 
-	version, err := config.GetVersion()
-	if err != nil {
-		return err
-	}
+	version := config.GetVersion()
 
-	vAgentVersion.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], *version).Set(0)
+	vAgentVersion.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], version).Set(0)
 
 	return nil
 }

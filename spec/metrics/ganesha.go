@@ -13,10 +13,7 @@ import (
 
 // DoGaneshaHealthCheck probes /metrics and returns nil or ErrGaneshaServerUnhealthy, or some other error
 func DoGaneshaHealthCheck() error {
-	endpoint, err := config.GetGaneshaMetricsEndpoint()
-	if err != nil {
-		return err
-	}
+	endpoint := config.GetGaneshaMetricsEndpoint()
 
 	client := &http.Client{
 		Transport: &http.Transport{
@@ -25,7 +22,7 @@ func DoGaneshaHealthCheck() error {
 		Timeout: 5 * time.Second,
 	}
 
-	resp, err := client.Get(fmt.Sprintf("%s/metrics", *endpoint))
+	resp, err := client.Get(fmt.Sprintf("%s/metrics", endpoint))
 	if err != nil {
 		return err
 	}
@@ -44,10 +41,7 @@ func DoGaneshaHealthCheck() error {
 
 // ProbeGaneshaMetrics probes /metrics from ganesha
 func ProbeGaneshaMetrics() ([]byte, error) {
-	endpoint, err := config.GetGaneshaMetricsEndpoint()
-	if err != nil {
-		return nil, err
-	}
+	endpoint := config.GetGaneshaMetricsEndpoint()
 
 	client := &http.Client{
 		Transport: &http.Transport{
@@ -56,7 +50,7 @@ func ProbeGaneshaMetrics() ([]byte, error) {
 		Timeout: 5 * time.Second,
 	}
 
-	resp, err := client.Get(fmt.Sprintf("%s/metrics", *endpoint))
+	resp, err := client.Get(fmt.Sprintf("%s/metrics", endpoint))
 	if err != nil {
 		return nil, err
 	}
@@ -84,10 +78,7 @@ func ScrapeGaneshaMetrics() error {
 
 	tsList := GetMetricsAsTimeSeries(haproxyMetrics)
 
-	cfg, err := config.GetConfig()
-	if err != nil {
-		return err
-	}
+	cfg := config.GetConfig()
 
 	var ba *BasicAuth
 	if cfg.BasicAuthUser != "" && cfg.BasicAuthPass != "" {

@@ -25,24 +25,15 @@ type HealthResp struct {
 func DoEtcdHealthCheck() error {
 	var jsonResp HealthResp
 
-	caCert, err := config.GetEtcdCACert()
-	if err != nil {
-		return err
-	}
-	cert, err := config.GetEtcdClientCert()
-	if err != nil {
-		return err
-	}
-	key, err := config.GetEtcdClientKey()
-	if err != nil {
-		return err
-	}
+	caCert := config.GetEtcdCACert()
+	cert := config.GetEtcdClientCert()
+	key := config.GetEtcdClientKey()
 
-	caCertData, _ := os.ReadFile(*caCert)
+	caCertData, _ := os.ReadFile(caCert)
 	caCertPool := x509.NewCertPool()
 	caCertPool.AppendCertsFromPEM(caCertData)
 
-	certPair, _ := tls.LoadX509KeyPair(*cert, *key)
+	certPair, _ := tls.LoadX509KeyPair(cert, key)
 
 	client := &http.Client{
 		Transport: &http.Transport{
@@ -55,12 +46,9 @@ func DoEtcdHealthCheck() error {
 		Timeout: 5 * time.Second,
 	}
 
-	endpoint, err := config.GetEtcdEndpoint()
-	if err != nil {
-		return err
-	}
+	endpoint := config.GetEtcdEndpoint()
 
-	resp, err := client.Get(fmt.Sprintf("%s/health", *endpoint))
+	resp, err := client.Get(fmt.Sprintf("%s/health", endpoint))
 	if err != nil {
 		return err
 	}
@@ -84,24 +72,15 @@ func DoEtcdHealthCheck() error {
 
 // ProbeEtcdMetrics probes /metrics from etcd
 func ProbeEtcdMetrics() ([]byte, error) {
-	caCert, err := config.GetEtcdCACert()
-	if err != nil {
-		return nil, err
-	}
-	cert, err := config.GetEtcdClientCert()
-	if err != nil {
-		return nil, err
-	}
-	key, err := config.GetEtcdClientKey()
-	if err != nil {
-		return nil, err
-	}
+	caCert := config.GetEtcdCACert()
+	cert := config.GetEtcdClientCert()
+	key := config.GetEtcdClientKey()
 
-	caCertData, _ := os.ReadFile(*caCert)
+	caCertData, _ := os.ReadFile(caCert)
 	caCertPool := x509.NewCertPool()
 	caCertPool.AppendCertsFromPEM(caCertData)
 
-	certPair, _ := tls.LoadX509KeyPair(*cert, *key)
+	certPair, _ := tls.LoadX509KeyPair(cert, key)
 
 	client := &http.Client{
 		Transport: &http.Transport{
@@ -114,12 +93,9 @@ func ProbeEtcdMetrics() ([]byte, error) {
 		Timeout: 5 * time.Second,
 	}
 
-	endpoint, err := config.GetEtcdEndpoint()
-	if err != nil {
-		return nil, err
-	}
+	endpoint := config.GetEtcdEndpoint()
 
-	resp, err := client.Get(fmt.Sprintf("%s/metrics", *endpoint))
+	resp, err := client.Get(fmt.Sprintf("%s/metrics", endpoint))
 	if err != nil {
 		return nil, err
 	}
@@ -147,10 +123,7 @@ func ScrapeEtcdMetrics() error {
 
 	tsList := GetMetricsAsTimeSeries(etcdMetrics)
 
-	cfg, err := config.GetConfig()
-	if err != nil {
-		return err
-	}
+	cfg := config.GetConfig()
 
 	var ba *BasicAuth
 	if cfg.BasicAuthUser != "" && cfg.BasicAuthPass != "" {

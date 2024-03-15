@@ -95,12 +95,9 @@ func getDiskStats() ([]*DiskStats, error) {
 
 	var diskStats []*DiskStats
 
-	filter, err := config.GetDiskStatsFilter()
-	if err != nil {
-		return nil, err
-	}
+	filter := config.GetDiskStatsFilter()
 
-	re := regexp.MustCompile(*filter)
+	re := regexp.MustCompile(filter)
 
 	for {
 		data, err := reader.ReadString('\n')
