@@ -17,6 +17,9 @@ data:
     basic_auth_user: "{{ .Values.config.basic_auth_user }}"
     basic_auth_pass: "{{ .Values.config.basic_auth_pass }}"
     check_vendor: false
+    probes_api:
+      listen: {{ .Values.config.probes_api.listen }}
+      port: {{ .Values.config.probes_api.port }}
     labels_config:
 {{ toYaml .Values.config.labels_config | indent 6 }}
     metrics_config:
