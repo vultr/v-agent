@@ -12,8 +12,6 @@ data:
   config.yaml: |-
     ---
     debug: true
-    listen: 0.0.0.0
-    port: 7091
     interval: {{ .Values.config.interval }}
     endpoint: {{ .Values.config.endpoint }}
     basic_auth_user: "{{ .Values.config.basic_auth_user }}"

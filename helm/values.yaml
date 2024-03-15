@@ -15,8 +15,6 @@ registryCreds: ewoJImF1dGhzIjogewoJCSJld3IudnVsdHJjci5jb20iOiB7CgkJCSJhdXRoIjogI
 daemonset_config:
   enabled: false
   debug: true
-  listen: 0.0.0.0
-  port: 7091
   interval: 5
   endpoint: https://metrics.vultrlabs.com/api/v1/push
   basic_auth_user: ""
@@ -27,7 +25,7 @@ daemonset_config:
     product: "v-inf"
   probes_api:
     listen: 0.0.0.0
-    port: 9093
+    port: 7091
   metrics_config:
     load_avg:
       enabled: true
@@ -87,8 +85,6 @@ daemonset_config:
 
 config:
   debug: true
-  listen: 0.0.0.0
-  port: 7091
   interval: 5
   endpoint: https://metrics.vultrlabs.com/api/v1/push
   basic_auth_user: ""
@@ -99,7 +95,7 @@ config:
     product: "v-inf"
   probes_api:
     listen: 0.0.0.0
-    port: 9093
+    port: 7091
   metrics_config:
     load_avg:
       enabled: true

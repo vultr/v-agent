@@ -32,7 +32,7 @@ type ProbesAPI struct {
 }
 
 // NewProbesAPI creates a new probes server
-func NewProbesAPI(name, listen string, port uint16) (*ProbesAPI, error) {
+func NewProbesAPI(name, listen string, port uint) (*ProbesAPI, error) {
 	var p ProbesAPI
 
 	// Initialize engine
@@ -60,7 +60,7 @@ func NewProbesAPI(name, listen string, port uint16) (*ProbesAPI, error) {
 
 	p.app = app
 	p.Listen = listen
-	p.Port = port
+	p.Port = uint16(port)
 	p.state = STATE_UNKNOWN
 
 	return &p, nil

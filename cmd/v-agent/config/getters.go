@@ -47,7 +47,7 @@ func GetProbesAPIListen() string {
 }
 
 // GetProbesAPIPort returns probes api listen port
-func GetProbesAPIPort() uint16 {
+func GetProbesAPIPort() uint {
 	cfg := GetConfig()
 
 	return cfg.ProbesAPI.Port
