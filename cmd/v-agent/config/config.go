@@ -30,8 +30,6 @@ type Config struct {
 	Version string
 
 	Debug         bool              `yaml:"debug"`
-	Listen        string            `yaml:"listen"`
-	Port          uint              `yaml:"port"`
 	Interval      uint              `yaml:"interval"`
 	Endpoint      string            `yaml:"endpoint"`
 	BasicAuthUser string            `yaml:"basic_auth_user"`
@@ -71,7 +69,7 @@ type MetricsConfig struct {
 // ProbesAPI probes API definition
 type ProbesAPI struct {
 	Listen string `yaml:"listen"`
-	Port   uint16 `yaml:"port"`
+	Port   uint   `yaml:"port"`
 }
 
 // LoadAvg configuration
@@ -223,8 +221,8 @@ func NewConfig(name, version string) (*Config, error) {
 // initCLI initializes CLI switches
 func initCLI(config *Config) {
 	flag.BoolVar(&config.Debug, "debug", true, "Debug output")
-	flag.StringVar(&config.Listen, "listen", "127.0.0.1", "Listen address")
-	flag.UintVar(&config.Port, "port", 7091, "Listen port") //nolint
+	flag.StringVar(&config.ProbesAPI.Listen, "listen", "127.0.0.1", "Listen address")
+	flag.UintVar(&config.ProbesAPI.Port, "port", 7091, "Listen port") //nolint
 	flag.StringVar(&config.ConfigFile, "config", "./config.yaml", "Path for the config.yaml configuration file")
 	flag.UintVar(&config.Interval, "interval", 60, "Metrics gather interval") //nolint
 	flag.StringVar(&config.Endpoint, "endpoint", "http://localhost:8080", "Endpoint to remotely write metrics to")
@@ -363,7 +361,7 @@ func initEnv(config *Config) error {
 	kubeconfig := os.Getenv("KUBECONFIG")
 
 	if listen != "" {
-		config.Listen = listen
+		config.ProbesAPI.Listen = listen
 	}
 
 	if port != "" {
@@ -372,7 +370,7 @@ func initEnv(config *Config) error {
 			return err
 		}
 
-		config.Port = uint(p)
+		config.ProbesAPI.Port = uint(p)
 	}
 
 	if interval != "" {
@@ -417,12 +415,12 @@ func checkConfig(config *Config) error {
 		}
 	}
 
-	if config.Port > 65535 { //nolint
-		return fmt.Errorf("%d: %w", config.Port, ErrPortInvalid)
+	if config.ProbesAPI.Port > 65535 { //nolint
+		return fmt.Errorf("%d: %w", config.ProbesAPI.Port, ErrPortInvalid)
 	}
 
 	if config.Interval < 1 {
-		return fmt.Errorf("%d: %w", config.Port, ErrIntervalInvalid)
+		return fmt.Errorf("%d: %w", config.ProbesAPI.Port, ErrIntervalInvalid)
 	}
 
 	if !strings.HasPrefix(config.Endpoint, "http") {

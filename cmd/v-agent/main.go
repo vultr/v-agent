@@ -8,7 +8,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/vultr/v-agent/cmd/v-agent/api"
 	"github.com/vultr/v-agent/cmd/v-agent/config"
 	"github.com/vultr/v-agent/spec/metrics"
 	"github.com/vultr/v-agent/spec/probes"
@@ -60,11 +59,6 @@ func main() {
 		log.Infof("Label: %s = %s", k, v)
 	}
 
-	e, err := api.NewExporterAPI(cfg.Listen, cfg.Port)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	g, gCtx := errgroup.WithContext(ctx)
 
 	log.With(
@@ -95,25 +89,6 @@ func main() {
 					return err2
 				}
 			}
-		}
-	})
-
-	// /metrics endpoint
-	g.Go(func() error {
-		for {
-			select {
-			case <-gCtx.Done():
-				log.Info("Exited /metrics endpoint")
-
-				return nil
-			default:
-				if err := e.Start(); err != nil {
-					cancel()
-					log.Error(err)
-				}
-			}
-
-			time.Sleep(1 * time.Second)
 		}
 	})
 
@@ -200,7 +175,7 @@ func main() {
 		<-gCtx.Done()
 		start = time.Now()
 
-		if err := e.Shutdown(); err != nil {
+		if err := probe.Shutdown(); err != nil {
 			log.Error(err)
 		}
 
