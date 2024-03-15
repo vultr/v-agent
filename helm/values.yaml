@@ -25,6 +25,9 @@ daemonset_config:
   labels_config: # any labels below will be added to all metrics
     hostname: ""
     product: "v-inf"
+  probes_api:
+    listen: 0.0.0.0
+    port: 9093
   metrics_config:
     load_avg:
       enabled: true
@@ -94,6 +97,9 @@ config:
   labels_config: # any labels below will be added to all metrics
     hostname: ""
     product: "v-inf"
+  probes_api:
+    listen: 0.0.0.0
+    port: 9093
   metrics_config:
     load_avg:
       enabled: true
