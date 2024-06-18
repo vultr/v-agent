@@ -77,7 +77,7 @@ blobs:
     bucket: vke-bins
     ids:
       - v-agent
-    folder: "v-agent/v{{.Version}}/"
+    directory: "v-agent/v{{.Version}}/"
 
 release:
   draft: false
