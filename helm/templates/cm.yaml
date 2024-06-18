@@ -21,58 +21,57 @@ data:
     labels_config:
 {{ toYaml .Values.config.labels_config | indent 6 }}
     metrics_config:
-      load_avg:
-        enabled: {{ .Values.config.metrics_config.load_avg.enabled }}
-      cpu:
-        enabled: {{ .Values.config.metrics_config.cpu.enabled }}
-      memory:
-        enabled: {{ .Values.config.metrics_config.memory.enabled }}
-      nic:
-        enabled: {{ .Values.config.metrics_config.nic.enabled }}
-      disk_stats:
-        enabled: {{ .Values.config.metrics_config.disk_stats.enabled }}
-        filter: "sr0" # regex
-      file_system:
-        enabled: {{ .Values.config.metrics_config.file_system.enabled }}
+      agent:
+        load_avg:
+          enabled: {{ .Values.config.metrics_config.agent.load_avg.enabled }}
+        cpu:
+          enabled: {{ .Values.config.metrics_config.agent.cpu.enabled }}
+        memory:
+          enabled: {{ .Values.config.metrics_config.agent.memory.enabled }}
+        nic:
+          enabled: {{ .Values.config.metrics_config.agent.nic.enabled }}
+        disk_stats:
+          enabled: {{ .Values.config.metrics_config.agent.disk_stats.enabled }}
+          filter: "sr0" # regex
+        file_system:
+          enabled: {{ .Values.config.metrics_config.agent.file_system.enabled }}
+        kubernetes:
+          enabled: {{ .Values.config.metrics_config.agent.kubernetes.enabled }}
+          endpoint: {{ .Values.config.metrics_config.agent.kubernetes.endpoint }}
+          kubeconfig: /var/lib/kubernetes/admin.kubeconfig
+        konnectivity:
+          enabled: {{ .Values.config.metrics_config.agent.konnectivity.enabled }}
+          metrics_endpoint: {{ .Values.config.metrics_config.agent.konnectivity.metrics_endpoint }}
+          health_endpoint: {{ .Values.config.metrics_config.agent.konnectivity.health_endpoint }}
+        etcd:
+          enabled: {{ .Values.config.metrics_config.agent.etcd.enabled }}
+          cacert: /var/lib/kubernetes/ca.pem
+          cert: /var/lib/kubernetes/kubernetes.pem
+          key: /var/lib/kubernetes/kubernetes-key.pem
+          endpoint: {{ .Values.config.metrics_config.agent.etcd.endpoint }}
+        nginx_vts:
+          enabled: {{ .Values.config.metrics_config.agent.nginx_vts.enabled }}
+          endpoint: {{ .Values.config.metrics_config.agent.nginx_vts.endpoint }}
+        v_cdn_agent:
+          enabled: {{ .Values.config.metrics_config.agent.v_cdn_agent.enabled }}
+          endpoint: {{ .Values.config.metrics_config.agent.v_cdn_agent.endpoint }}
+        haproxy:
+          enabled: {{ .Values.config.metrics_config.agent.haproxy.enabled }}
+          endpoint: {{ .Values.config.metrics_config.agent.haproxy.endpoint }}
+        ceph:
+          enabled: {{ .Values.config.metrics_config.agent.ceph.enabled }}
+          endpoint: {{ .Values.config.metrics_config.agent.ceph.endpoint }}
+        v_dns:
+          enabled: {{ .Values.config.metrics_config.agent.v_dns.enabled }}
+          endpoint: {{ .Values.config.metrics_config.agent.v_dns.endpoint }}
+        smart:
+          enabled: {{ .Values.config.metrics_config.agent.smart.enabled }}
       kubernetes:
-        enabled: {{ .Values.config.metrics_config.kubernetes.enabled }}
-        endpoint: {{ .Values.config.metrics_config.kubernetes.endpoint }}
-        kubeconfig: /var/lib/kubernetes/admin.kubeconfig
-      konnectivity:
-        enabled: {{ .Values.config.metrics_config.konnectivity.enabled }}
-        metrics_endpoint: {{ .Values.config.metrics_config.konnectivity.metrics_endpoint }}
-        health_endpoint: {{ .Values.config.metrics_config.konnectivity.health_endpoint }}
-      etcd:
-        enabled: {{ .Values.config.metrics_config.etcd.enabled }}
-        cacert: /var/lib/kubernetes/ca.pem
-        cert: /var/lib/kubernetes/kubernetes.pem
-        key: /var/lib/kubernetes/kubernetes-key.pem
-        endpoint: {{ .Values.config.metrics_config.etcd.endpoint }}
-      nginx_vts:
-        enabled: {{ .Values.config.metrics_config.nginx_vts.enabled }}
-        endpoint: {{ .Values.config.metrics_config.nginx_vts.endpoint }}
-      v_cdn_agent:
-        enabled: {{ .Values.config.metrics_config.v_cdn_agent.enabled }}
-        endpoint: {{ .Values.config.metrics_config.v_cdn_agent.endpoint }}
-      haproxy:
-        enabled: {{ .Values.config.metrics_config.haproxy.enabled }}
-        endpoint: {{ .Values.config.metrics_config.haproxy.endpoint }}
-      ganesha:
-        enabled: {{ .Values.config.metrics_config.ganesha.enabled }}
-        endpoint: {{ .Values.config.metrics_config.ganesha.endpoint }}
-      ceph:
-        enabled: {{ .Values.config.metrics_config.ceph.enabled }}
-        endpoint: {{ .Values.config.metrics_config.ceph.endpoint }}
-      v_dns:
-        enabled: {{ .Values.config.metrics_config.v_dns.enabled }}
-        endpoint: {{ .Values.config.metrics_config.v_dns.endpoint }}
-      smart:
-        enabled: {{ .Values.config.metrics_config.smart.enabled }}
-      kubernetes_pods:
-        enabled: {{ .Values.config.metrics_config.kubernetes_pods.enabled }}
-        namespaces:
-{{ toYaml .Values.config.metrics_config.kubernetes_pods.namespaces | indent 8 }}
-      dcgm:
-        enabled: {{ .Values.config.metrics_config.dcgm.enabled }}
-        namespace: {{ .Values.config.metrics_config.dcgm.namespace }}
-        endpoint: {{ .Values.config.metrics_config.dcgm.endpoint }}
+        pods:
+          enabled: {{ .Values.config.metrics_config.kubernetes.pods.enabled }}
+          namespaces:
+{{ toYaml .Values.config.metrics_config.kubernetes.pods.namespaces | indent 10 }}
+        dcgm:
+          enabled: {{ .Values.config.metrics_config.kubernetes.dcgm.enabled }}
+          namespace: {{ .Values.config.metrics_config.kubernetes.dcgm.namespace }}
+          endpoint: {{ .Values.config.metrics_config.kubernetes.dcgm.endpoint }}

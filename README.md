@@ -1,28 +1,9 @@
 # v-agent
 
 ## Overview
-`v-agent` is a daemon that gathers metrics and writes them to a `v-proxy`.
+`v-agent` is a daemon that gathers metrics and writes them to a compatible [remote_write](https://prometheus.io/docs/specs/remote_write_spec/) endpoint.
 
-`v-proxy` takes a `v-agent` remote write and authenticates it, if it's valid it sends it off to mimir.
-
-### Architecture
-![](./docs/metrics-arch.drawio.png)
-
-`v-agent` must auth with `v-proxy`, this is done passively via headers:
-- `X-Vultr-SubID`: Pulled from userdata.
-- `X-Vultr-Key`: Pulled from userdata.
-
-`v-proxy` will verify both the headers; once they're verified will write metrics to mimir.
-
-Authentication is passive via headers; if the headers are missing or invalid then request is simply not forwarded.
-
-## Tools
-- `v-agent`: Gathers and sends metrics to `v-proxy`.
-- `v-proxy`: Receives metrics from `v-agent` and sends to mimir.
-
-### `v-agent`
-`v-agent` is a prometheus compatible remote write client.
-
+### Metrics
 All metrics that are specifically created with `v-agent` are prefixed with `v_`. Scraped metrics are not modified other than the addition of labels.
 
 Every metric will have the following labels added if they do not exist already:
@@ -57,16 +38,90 @@ HAProxy:
 - `v_haproxy_healthy` that is `0` (if healthy) or `1` if not healthy based on response from `/metrics` endpoint.
 - Every metric from `/metrics`
 
-Ganesha:
-- `v_ganesha_healthy` that is `0` (if healthy) or `1` if not healthy based on response from `/metrics` endpoint.
-- Every metric from `/metrics`
-
 Ceph:
 - `v_ceph_healthy`: Not implemented yet.
 - Every metric from `/metrics`
 
-## Configuration
-Both have a `config.yaml` file. Both have CLI switches. Both configurations can be overridden with envionment variables.
+## Usage
+Configuration is through `config.yaml`, sample:
+
+```yaml
+debug: true                      # debug output
+interval: 60                     # interval to scrape metrics
+endpoint: https://endpoint...    # remote endpoint
+basic_auth_user: ""              # basic auth user
+basic_auth_pass: ""              # basic auth pass
+check_vendor: false              # when true, vendor must be "Vultr"; set to false otherwise
+labels_config:                   # any labels below will be added to all metrics
+  hostname: ""                   # empty string uses local hostname, unset (nil) doesnt use, non-empty string uses specified label
+  subid: ""                      # empty string pulls from userdata, unset (nil) doesnt use, non-empty string uses specified label
+  vpsid: ""                      # empty string pulls from userdata, unset (nil) doesnt use, non-empty string uses specified label
+  product: vke                   # unset (nil) doesnt use, non-empty string uses specified label. Note: This label is used to determine subid for vke/vlb/vfs
+  any: any                       # any key/value label
+probes_api:
+  listen: 0.0.0.0
+  port: 7091
+metrics_config:
+  agent:
+    load_avg:
+      enabled: true
+    cpu:
+      enabled: true
+    memory:
+      enabled: true
+    nic:
+      enabled: true
+    disk_stats:
+      enabled: true
+      filter: "sr0" # regex
+    file_system:
+      enabled: true
+    kubernetes:
+      enabled: true
+      endpoint: https://localhost:6443
+      kubeconfig: /var/lib/kubernetes/admin.kubeconfig
+    konnectivity:
+      enabled: true
+      metrics_endpoint: http://localhost:8133 # /metrics
+      health_endpoint: http://localhost:8092 # /healthz
+    etcd:
+      enabled: true
+      cacert: /var/lib/kubernetes/ca.pem
+      cert: /var/lib/kubernetes/kubernetes.pem
+      key: /var/lib/kubernetes/kubernetes-key.pem
+      endpoint: https://10.1.96.3:2379 # /metrics
+    nginx_vts:
+      enabled: false
+      endpoint: http://localhost:9001 # /metrics
+    v_cdn_agent:
+      enabled: false
+      endpoint: http://localhost:9093 # /metrics
+    haproxy:
+      enabled: false
+      endpoint: http://localhost:8404 # /metrics
+    ceph:
+      enabled: false
+      endpoint: http://localhost:9283 # /metrics
+    v_dns:
+      enabled: false
+      endpoint: http://localhost:9053 # /metrics
+    smart:
+      enabled: false
+      block_devices: # must exist, if not set, block devices are used from /sys/block/ (except for dmX and loopX)
+      - /dev/sda
+  kubernetes:
+    pods: # v-agent must be running inside k8s for this to work
+      enabled: false
+      namespaces:
+      - rook-ceph
+      - default
+    dcgm: # v-agent must be running inside k8s for this to work
+      enabled: false
+      namespace: gpu-operator        # namespace
+      endpoint: nvidia-dcgm-exporter # name of the endpoint: k get endpoints
+```
+
+Currently, it's not 100% compatible with Kubernetes, that is to say running inside k8s and able to scrape k8s metrics. Right now it's largely an agent used to scrape metrics for services.
 
 ## Building
 Note: Agent must be built with cgo disabled, not doing so will result in GLIBC errors being thrown: `CGO_ENABLED=0 go build -o v-agent cmd/v-agent/main.go`

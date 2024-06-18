@@ -9,9 +9,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/vultr/v-agent/spec/connectors"
-	"github.com/vultr/v-agent/spec/util"
-	"github.com/vultr/v-agent/spec/wrkld"
+	"github.com/vultr/v-agent/pkg/connectors"
+	"github.com/vultr/v-agent/pkg/util"
+	"github.com/vultr/v-agent/pkg/wrkld"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -34,7 +34,6 @@ type Config struct {
 	Endpoint      string            `yaml:"endpoint"`
 	BasicAuthUser string            `yaml:"basic_auth_user"`
 	BasicAuthPass string            `yaml:"basic_auth_pass"`
-	CheckVendor   bool              `yaml:"check_vendor"`
 	LabelsConfig  map[string]string `yaml:"labels_config"`
 	ProbesAPI     ProbesAPI         `yaml:"probes_api"`
 	MetricsConfig MetricsConfig     `yaml:"metrics_config"`
@@ -46,24 +45,33 @@ type Config struct {
 
 // MetricsConfig contains metrics configuration
 type MetricsConfig struct {
-	LoadAvg        LoadAvg        `yaml:"load_avg"`
-	CPU            CPU            `yaml:"cpu"`
-	Memory         Memory         `yaml:"memory"`
-	NIC            NIC            `yaml:"nic"`
-	DiskStats      DiskStats      `yaml:"disk_stats"`
-	Filesystem     Filesystem     `yaml:"file_system"`
-	Kubernetes     Kubernetes     `yaml:"kubernetes"`
-	Konnectivity   Konnectivity   `yaml:"konnectivity"`
-	Etcd           Etcd           `yaml:"etcd"`
-	NginxVTS       NginxVTS       `yaml:"nginx_vts"`
-	VCDNAgent      VCDNAgent      `yaml:"v_cdn_agent"`
-	HAProxy        HAProxy        `yaml:"haproxy"`
-	Ganesha        Ganesha        `yaml:"ganesha"`
-	Ceph           Ceph           `yaml:"ceph"`
-	VDNS           VDNS           `yaml:"v_dns"`
-	SMART          SMART          `yaml:"smart"`
-	KubernetesPods KubernetesPods `yaml:"kubernetes_pods"`
-	DCGM           DCGM           `yaml:"dcgm"`
+	Agent      AgentMetrics      `yaml:"agent"`
+	Kubernetes KubernetesMetrics `yaml:"kubernetes"`
+}
+
+// AgentMetrics metrics that are collected when ran as an agent (daemon)
+type AgentMetrics struct {
+	LoadAvg      LoadAvg      `yaml:"load_avg"`
+	CPU          CPU          `yaml:"cpu"`
+	Memory       Memory       `yaml:"memory"`
+	NIC          NIC          `yaml:"nic"`
+	DiskStats    DiskStats    `yaml:"disk_stats"`
+	Filesystem   Filesystem   `yaml:"file_system"`
+	Kubernetes   Kubernetes   `yaml:"kubernetes"`
+	Konnectivity Konnectivity `yaml:"konnectivity"`
+	Etcd         Etcd         `yaml:"etcd"`
+	NginxVTS     NginxVTS     `yaml:"nginx_vts"`
+	VCDNAgent    VCDNAgent    `yaml:"v_cdn_agent"`
+	HAProxy      HAProxy      `yaml:"haproxy"`
+	Ceph         Ceph         `yaml:"ceph"`
+	VDNS         VDNS         `yaml:"v_dns"`
+	SMART        SMART        `yaml:"smart"`
+}
+
+// KubernetesMetrics metrics that are collected when ran as an operator (in k8s)
+type KubernetesMetrics struct {
+	Pods Pods `yaml:"pods"`
+	DCGM DCGM `yaml:"dcgm"`
 }
 
 // ProbesAPI probes API definition
@@ -168,8 +176,8 @@ type SMART struct {
 	BlockDevices []string `yaml:"block_devices"`
 }
 
-// KubernetesPods config
-type KubernetesPods struct {
+// Pods config
+type Pods struct {
 	Enabled    bool     `yaml:"enabled"`
 	Namespaces []string `yaml:"namespaces"`
 }
@@ -395,7 +403,7 @@ func initEnv(config *Config) error {
 	}
 
 	if kubeconfig != "" {
-		config.MetricsConfig.Kubernetes.Kubeconfig = kubeconfig
+		config.MetricsConfig.Agent.Kubernetes.Kubeconfig = kubeconfig
 	}
 
 	return nil
@@ -403,17 +411,6 @@ func initEnv(config *Config) error {
 
 func checkConfig(config *Config) error {
 	log := zap.L().Sugar()
-
-	if config.CheckVendor {
-		vendor, err := util.GetBIOSVendor()
-		if err != nil {
-			return err
-		}
-
-		if *vendor != "Vultr" {
-			return ErrNotVultrVendor
-		}
-	}
 
 	if config.ProbesAPI.Port > 65535 { //nolint
 		return fmt.Errorf("%d: %w", config.ProbesAPI.Port, ErrPortInvalid)
@@ -427,38 +424,38 @@ func checkConfig(config *Config) error {
 		return fmt.Errorf("remote_write_endpoint: %w", ErrMissingScheme)
 	}
 
-	if config.MetricsConfig.KubernetesPods.Enabled {
+	if config.MetricsConfig.Kubernetes.Pods.Enabled {
 		// try to get k8s connection, if error return
 		if !inK8s() {
 			return ErrNotInK8s
 		}
 
-		for i := range config.MetricsConfig.KubernetesPods.Namespaces {
-			errs := validation.IsValidLabelValue(config.MetricsConfig.KubernetesPods.Namespaces[i])
+		for i := range config.MetricsConfig.Kubernetes.Pods.Namespaces {
+			errs := validation.IsValidLabelValue(config.MetricsConfig.Kubernetes.Pods.Namespaces[i])
 			if len(errs) > 0 {
 				log.Error(errs)
 
-				return fmt.Errorf("kubernetes_pods: %w", ErrKubernetesNamespaceInvalid)
+				return fmt.Errorf("pods: %w", ErrKubernetesNamespaceInvalid)
 			}
 		}
 	}
 
-	if config.MetricsConfig.SMART.Enabled {
-		if len(config.MetricsConfig.SMART.BlockDevices) > 0 {
-			for i := range config.MetricsConfig.SMART.BlockDevices {
-				if _, err := os.Stat(config.MetricsConfig.SMART.BlockDevices[i]); errors.Is(err, os.ErrNotExist) {
-					return fmt.Errorf("%s: %w", config.MetricsConfig.SMART.BlockDevices[i], ErrSMARTDeviceNotExist)
+	if config.MetricsConfig.Agent.SMART.Enabled {
+		if len(config.MetricsConfig.Agent.SMART.BlockDevices) > 0 {
+			for i := range config.MetricsConfig.Agent.SMART.BlockDevices {
+				if _, err := os.Stat(config.MetricsConfig.Agent.SMART.BlockDevices[i]); errors.Is(err, os.ErrNotExist) {
+					return fmt.Errorf("%s: %w", config.MetricsConfig.Agent.SMART.BlockDevices[i], ErrSMARTDeviceNotExist)
 				}
 			}
 		}
 	}
 
-	if config.MetricsConfig.DCGM.Enabled {
+	if config.MetricsConfig.Kubernetes.DCGM.Enabled {
 		if !inK8s() {
 			return ErrNotInK8s
 		}
 
-		if config.MetricsConfig.DCGM.Namespace == "" {
+		if config.MetricsConfig.Kubernetes.DCGM.Namespace == "" {
 			return fmt.Errorf("dcgm.namespace: %w", ErrKubernetesNamespaceNotSet)
 		}
 
@@ -467,15 +464,15 @@ func checkConfig(config *Config) error {
 			return err
 		}
 
-		if !wrkld.NamespaceExists(clientset, config.MetricsConfig.DCGM.Namespace) {
+		if !wrkld.NamespaceExists(clientset, config.MetricsConfig.Kubernetes.DCGM.Namespace) {
 			return fmt.Errorf("dcgm.namespace: %w", ErrKubernetesNamespaceNotExist)
 		}
 
-		if config.MetricsConfig.DCGM.Endpoint == "" {
+		if config.MetricsConfig.Kubernetes.DCGM.Endpoint == "" {
 			return ErrDCGMEndpointNotSet
 		}
 
-		if !wrkld.EndpointExists(clientset, config.MetricsConfig.DCGM.Namespace, config.MetricsConfig.DCGM.Endpoint) {
+		if !wrkld.EndpointExists(clientset, config.MetricsConfig.Kubernetes.DCGM.Namespace, config.MetricsConfig.Kubernetes.DCGM.Endpoint) {
 			return ErrDCGMEndpointNotExist
 		}
 	}

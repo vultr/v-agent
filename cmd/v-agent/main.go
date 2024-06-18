@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/vultr/v-agent/cmd/v-agent/config"
-	"github.com/vultr/v-agent/spec/metrics"
-	"github.com/vultr/v-agent/spec/probes"
+	"github.com/vultr/v-agent/pkg/metrics"
+	"github.com/vultr/v-agent/pkg/probes"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"go.uber.org/zap"

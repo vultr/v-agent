@@ -27,61 +27,60 @@ daemonset_config:
     listen: 0.0.0.0
     port: 7091
   metrics_config:
-    load_avg:
-      enabled: true
-    cpu:
-      enabled: true
-    memory:
-      enabled: true
-    nic:
-      enabled: true
-    disk_stats:
-      enabled: true
-      filter: "sr0" # regex
-    file_system:
-      enabled: true
+    agent:
+      load_avg:
+        enabled: true
+      cpu:
+        enabled: true
+      memory:
+        enabled: true
+      nic:
+        enabled: true
+      disk_stats:
+        enabled: true
+        filter: "sr0" # regex
+      file_system:
+        enabled: true
+      kubernetes:
+        enabled: true
+        endpoint: https://localhost:6443
+        kubeconfig: /var/lib/kubernetes/admin.kubeconfig
+      konnectivity:
+        enabled: true
+        metrics_endpoint: http://localhost:8133 # /metrics
+        health_endpoint: http://localhost:8092 # /healthz
+      etcd:
+        enabled: true
+        cacert: /var/lib/kubernetes/ca.pem
+        cert: /var/lib/kubernetes/kubernetes.pem
+        key: /var/lib/kubernetes/kubernetes-key.pem
+        endpoint: https://10.1.96.3:2379 # /metrics
+      nginx_vts:
+        enabled: false
+        endpoint: http://localhost:9001 # /metrics
+      v_cdn_agent:
+        enabled: false
+        endpoint: http://localhost:9093 # /metrics
+      haproxy:
+        enabled: false
+        endpoint: http://localhost:8404 # /metrics
+      ceph:
+        enabled: false
+        endpoint: http://localhost:9283 # /metrics
+      v_dns:
+        enabled: false
+        endpoint: http://localhost:9053 # /metrics
+      smart:
+        enabled: true
     kubernetes:
-      enabled: true
-      endpoint: https://localhost:6443
-      kubeconfig: /var/lib/kubernetes/admin.kubeconfig
-    konnectivity:
-      enabled: true
-      metrics_endpoint: http://localhost:8133 # /metrics
-      health_endpoint: http://localhost:8092 # /healthz
-    etcd:
-      enabled: true
-      cacert: /var/lib/kubernetes/ca.pem
-      cert: /var/lib/kubernetes/kubernetes.pem
-      key: /var/lib/kubernetes/kubernetes-key.pem
-      endpoint: https://10.1.96.3:2379 # /metrics
-    nginx_vts:
-      enabled: false
-      endpoint: http://localhost:9001 # /metrics
-    v_cdn_agent:
-      enabled: false
-      endpoint: http://localhost:9093 # /metrics
-    haproxy:
-      enabled: false
-      endpoint: http://localhost:8404 # /metrics
-    ganesha:
-      enabled: false
-      endpoint: http://localhost:9587 # /metrics
-    ceph:
-      enabled: false
-      endpoint: http://localhost:9283 # /metrics
-    v_dns:
-      enabled: false
-      endpoint: http://localhost:9053 # /metrics
-    smart:
-      enabled: true
-    kubernetes_pods:
-      enabled: false
-      namespaces:
-      - default
-    dcgm:
-      enabled: false
-      namespace: gpu-operator
-      endpoint: nvidia-dcgm-exporter
+      pods:
+        enabled: false
+        namespaces:
+        - default
+      dcgm:
+        enabled: false
+        namespace: gpu-operator
+        endpoint: nvidia-dcgm-exporter
 
 config:
   debug: true
@@ -97,58 +96,57 @@ config:
     listen: 0.0.0.0
     port: 7091
   metrics_config:
-    load_avg:
-      enabled: true
-    cpu:
-      enabled: true
-    memory:
-      enabled: true
-    nic:
-      enabled: true
-    disk_stats:
-      enabled: true
-      filter: "sr0" # regex
-    file_system:
-      enabled: true
+    agent:
+      load_avg:
+        enabled: true
+      cpu:
+        enabled: true
+      memory:
+        enabled: true
+      nic:
+        enabled: true
+      disk_stats:
+        enabled: true
+        filter: "sr0" # regex
+      file_system:
+        enabled: true
+      kubernetes:
+        enabled: true
+        endpoint: https://localhost:6443
+        kubeconfig: /var/lib/kubernetes/admin.kubeconfig
+      konnectivity:
+        enabled: true
+        metrics_endpoint: http://localhost:8133 # /metrics
+        health_endpoint: http://localhost:8092 # /healthz
+      etcd:
+        enabled: true
+        cacert: /var/lib/kubernetes/ca.pem
+        cert: /var/lib/kubernetes/kubernetes.pem
+        key: /var/lib/kubernetes/kubernetes-key.pem
+        endpoint: https://10.1.96.3:2379 # /metrics
+      nginx_vts:
+        enabled: false
+        endpoint: http://localhost:9001 # /metrics
+      v_cdn_agent:
+        enabled: false
+        endpoint: http://localhost:9093 # /metrics
+      haproxy:
+        enabled: false
+        endpoint: http://localhost:8404 # /metrics
+      ceph:
+        enabled: false
+        endpoint: http://localhost:9283 # /metrics
+      v_dns:
+        enabled: false
+        endpoint: http://localhost:9053 # /metrics
+      smart:
+        enabled: true
     kubernetes:
-      enabled: true
-      endpoint: https://localhost:6443
-      kubeconfig: /var/lib/kubernetes/admin.kubeconfig
-    konnectivity:
-      enabled: true
-      metrics_endpoint: http://localhost:8133 # /metrics
-      health_endpoint: http://localhost:8092 # /healthz
-    etcd:
-      enabled: true
-      cacert: /var/lib/kubernetes/ca.pem
-      cert: /var/lib/kubernetes/kubernetes.pem
-      key: /var/lib/kubernetes/kubernetes-key.pem
-      endpoint: https://10.1.96.3:2379 # /metrics
-    nginx_vts:
-      enabled: false
-      endpoint: http://localhost:9001 # /metrics
-    v_cdn_agent:
-      enabled: false
-      endpoint: http://localhost:9093 # /metrics
-    haproxy:
-      enabled: false
-      endpoint: http://localhost:8404 # /metrics
-    ganesha:
-      enabled: false
-      endpoint: http://localhost:9587 # /metrics
-    ceph:
-      enabled: false
-      endpoint: http://localhost:9283 # /metrics
-    v_dns:
-      enabled: false
-      endpoint: http://localhost:9053 # /metrics
-    smart:
-      enabled: true
-    kubernetes_pods:
-      enabled: false
-      namespaces:
-      - default
-    dcgm:
-      enabled: false
-      namespace: gpu-operator
-      endpoint: nvidia-dcgm-exporter
+      pods:
+        enabled: false
+        namespaces:
+        - default
+      dcgm:
+        enabled: false
+        namespace: gpu-operator
+        endpoint: nvidia-dcgm-exporter
