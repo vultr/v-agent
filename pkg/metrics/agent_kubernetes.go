@@ -17,12 +17,12 @@ func DoKubeAPIServerHealthCheck() error {
 
 	cfg, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
 	if err != nil {
-		panic(err.Error())
+		return err
 	}
 
 	clientset, err := kubernetes.NewForConfig(cfg)
 	if err != nil {
-		panic(err.Error())
+		return err
 	}
 
 	content, err := clientset.Discovery().RESTClient().Get().AbsPath("/healthz").DoRaw(context.TODO())
