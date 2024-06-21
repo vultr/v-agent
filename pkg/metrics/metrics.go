@@ -2247,25 +2247,10 @@ func ResetSMARTMetrics() {
 }
 
 func gatherMetadataMetrics() error {
-	hostname, err := config.GetLabel("hostname")
-	if err != nil {
-		return err
-	}
-
-	subid, err := config.GetLabel("subid")
-	if err != nil {
-		return err
-	}
-
-	vpsid, err := config.GetLabel("vpsid")
-	if err != nil {
-		return err
-	}
-
-	product, err := config.GetLabel("product")
-	if err != nil {
-		return err
-	}
+	hostname := config.GetLabel("hostname")
+	subid := config.GetLabel("subid")
+	vpsid := config.GetLabel("vpsid")
+	product := config.GetLabel("product")
 
 	version := config.GetVersion()
 
@@ -2275,25 +2260,10 @@ func gatherMetadataMetrics() error {
 }
 
 func gatherLoadavgMetrics() error {
-	hostname, err := config.GetLabel("hostname")
-	if err != nil {
-		return err
-	}
-
-	subid, err := config.GetLabel("subid")
-	if err != nil {
-		return err
-	}
-
-	vpsid, err := config.GetLabel("vpsid")
-	if err != nil {
-		return err
-	}
-
-	product, err := config.GetLabel("product")
-	if err != nil {
-		return err
-	}
+	hostname := config.GetLabel("hostname")
+	subid := config.GetLabel("subid")
+	vpsid := config.GetLabel("vpsid")
+	product := config.GetLabel("product")
 
 	loadavg, err := getLoadavg()
 	if err != nil {
@@ -2310,25 +2280,10 @@ func gatherLoadavgMetrics() error {
 }
 
 func gatherCPUMetrics() error {
-	hostname, err := config.GetLabel("hostname")
-	if err != nil {
-		return err
-	}
-
-	subid, err := config.GetLabel("subid")
-	if err != nil {
-		return err
-	}
-
-	vpsid, err := config.GetLabel("vpsid")
-	if err != nil {
-		return err
-	}
-
-	product, err := config.GetLabel("product")
-	if err != nil {
-		return err
-	}
+	hostname := config.GetLabel("hostname")
+	subid := config.GetLabel("subid")
+	vpsid := config.GetLabel("vpsid")
+	product := config.GetLabel("product")
 
 	cpuUtil, err := getCPUUtil()
 	if err != nil {
@@ -2364,25 +2319,10 @@ func gatherCPUMetrics() error {
 }
 
 func gatherMemoryMetrics() error {
-	hostname, err := config.GetLabel("hostname")
-	if err != nil {
-		return err
-	}
-
-	subid, err := config.GetLabel("subid")
-	if err != nil {
-		return err
-	}
-
-	vpsid, err := config.GetLabel("vpsid")
-	if err != nil {
-		return err
-	}
-
-	product, err := config.GetLabel("product")
-	if err != nil {
-		return err
-	}
+	hostname := config.GetLabel("hostname")
+	subid := config.GetLabel("subid")
+	vpsid := config.GetLabel("vpsid")
+	product := config.GetLabel("product")
 
 	memory, err := getMeminfo()
 	if err != nil {
@@ -2400,25 +2340,10 @@ func gatherMemoryMetrics() error {
 }
 
 func gatherNICMetrics() error {
-	hostname, err := config.GetLabel("hostname")
-	if err != nil {
-		return err
-	}
-
-	subid, err := config.GetLabel("subid")
-	if err != nil {
-		return err
-	}
-
-	vpsid, err := config.GetLabel("vpsid")
-	if err != nil {
-		return err
-	}
-
-	product, err := config.GetLabel("product")
-	if err != nil {
-		return err
-	}
+	hostname := config.GetLabel("hostname")
+	subid := config.GetLabel("subid")
+	vpsid := config.GetLabel("vpsid")
+	product := config.GetLabel("product")
 
 	nicStats, err := getNICStats()
 	if err != nil {
@@ -2454,27 +2379,12 @@ func gatherNICMetrics() error {
 }
 
 func gatherDiskMetrics() error {
+	hostname := config.GetLabel("hostname")
+	subid := config.GetLabel("subid")
+	vpsid := config.GetLabel("vpsid")
+	product := config.GetLabel("product")
+
 	diskStats, err := getDiskStatsUtil()
-	if err != nil {
-		return err
-	}
-
-	hostname, err := config.GetLabel("hostname")
-	if err != nil {
-		return err
-	}
-
-	subid, err := config.GetLabel("subid")
-	if err != nil {
-		return err
-	}
-
-	vpsid, err := config.GetLabel("vpsid")
-	if err != nil {
-		return err
-	}
-
-	product, err := config.GetLabel("product")
 	if err != nil {
 		return err
 	}
@@ -2501,27 +2411,12 @@ func gatherDiskMetrics() error {
 }
 
 func gatherFilesystemMetrics() error {
+	hostname := config.GetLabel("hostname")
+	subid := config.GetLabel("subid")
+	vpsid := config.GetLabel("vpsid")
+	product := config.GetLabel("product")
+
 	fsStats, err := getFilesystemUtil()
-	if err != nil {
-		return err
-	}
-
-	hostname, err := config.GetLabel("hostname")
-	if err != nil {
-		return err
-	}
-
-	subid, err := config.GetLabel("subid")
-	if err != nil {
-		return err
-	}
-
-	vpsid, err := config.GetLabel("vpsid")
-	if err != nil {
-		return err
-	}
-
-	product, err := config.GetLabel("product")
 	if err != nil {
 		return err
 	}
@@ -2541,25 +2436,10 @@ func gatherFilesystemMetrics() error {
 func gatherKubernetesMetrics() error {
 	log := zap.L().Sugar()
 
-	hostname, err := config.GetLabel("hostname")
-	if err != nil {
-		return err
-	}
-
-	subid, err := config.GetLabel("subid")
-	if err != nil {
-		return err
-	}
-
-	vpsid, err := config.GetLabel("vpsid")
-	if err != nil {
-		return err
-	}
-
-	product, err := config.GetLabel("product")
-	if err != nil {
-		return err
-	}
+	hostname := config.GetLabel("hostname")
+	subid := config.GetLabel("subid")
+	vpsid := config.GetLabel("vpsid")
+	product := config.GetLabel("product")
 
 	if err := DoKubeAPIServerHealthCheck(); err != nil {
 		log.Error(err)
@@ -2579,25 +2459,10 @@ func gatherKubernetesMetrics() error {
 func gatherKonnectivityMetrics() error {
 	log := zap.L().Sugar()
 
-	hostname, err := config.GetLabel("hostname")
-	if err != nil {
-		return err
-	}
-
-	subid, err := config.GetLabel("subid")
-	if err != nil {
-		return err
-	}
-
-	vpsid, err := config.GetLabel("vpsid")
-	if err != nil {
-		return err
-	}
-
-	product, err := config.GetLabel("product")
-	if err != nil {
-		return err
-	}
+	hostname := config.GetLabel("hostname")
+	subid := config.GetLabel("subid")
+	vpsid := config.GetLabel("vpsid")
+	product := config.GetLabel("product")
 
 	if err := DoKonnectivityHealthCheck(); err != nil {
 		log.Error(err)
@@ -2617,25 +2482,10 @@ func gatherKonnectivityMetrics() error {
 func gatherEtcdMetrics() error {
 	log := zap.L().Sugar()
 
-	hostname, err := config.GetLabel("hostname")
-	if err != nil {
-		return err
-	}
-
-	subid, err := config.GetLabel("subid")
-	if err != nil {
-		return err
-	}
-
-	vpsid, err := config.GetLabel("vpsid")
-	if err != nil {
-		return err
-	}
-
-	product, err := config.GetLabel("product")
-	if err != nil {
-		return err
-	}
+	hostname := config.GetLabel("hostname")
+	subid := config.GetLabel("subid")
+	vpsid := config.GetLabel("vpsid")
+	product := config.GetLabel("product")
 
 	if err := DoEtcdHealthCheck(); err != nil {
 		log.Error(err)
@@ -2655,15 +2505,8 @@ func gatherEtcdMetrics() error {
 func gatherNginxVTSMetrics() error {
 	log := zap.L().Sugar()
 
-	hostname, err := config.GetLabel("hostname")
-	if err != nil {
-		return err
-	}
-
-	product, err := config.GetLabel("product")
-	if err != nil {
-		return err
-	}
+	hostname := config.GetLabel("hostname")
+	product := config.GetLabel("product")
 
 	if err := DoNginxVTSHealthCheck(); err != nil {
 		log.Error(err)
@@ -2683,15 +2526,8 @@ func gatherNginxVTSMetrics() error {
 func gatherVCDNAgentMetrics() error {
 	log := zap.L().Sugar()
 
-	hostname, err := config.GetLabel("hostname")
-	if err != nil {
-		return err
-	}
-
-	product, err := config.GetLabel("product")
-	if err != nil {
-		return err
-	}
+	hostname := config.GetLabel("hostname")
+	product := config.GetLabel("product")
 
 	if err := DoVCDNAgentHealthCheck(); err != nil {
 		log.Error(err)
@@ -2711,25 +2547,10 @@ func gatherVCDNAgentMetrics() error {
 func gatherHAProxyMetrics() error {
 	log := zap.L().Sugar()
 
-	hostname, err := config.GetLabel("hostname")
-	if err != nil {
-		return err
-	}
-
-	subid, err := config.GetLabel("subid")
-	if err != nil {
-		return err
-	}
-
-	vpsid, err := config.GetLabel("vpsid")
-	if err != nil {
-		return err
-	}
-
-	product, err := config.GetLabel("product")
-	if err != nil {
-		return err
-	}
+	hostname := config.GetLabel("hostname")
+	subid := config.GetLabel("subid")
+	vpsid := config.GetLabel("vpsid")
+	product := config.GetLabel("product")
 
 	if err := DoHAProxyHealthCheck(); err != nil {
 		log.Error(err)
@@ -2757,15 +2578,8 @@ func gatherCephMetrics() error {
 func gatherVDNSMetrics() error {
 	log := zap.L().Sugar()
 
-	hostname, err := config.GetLabel("hostname")
-	if err != nil {
-		return err
-	}
-
-	product, err := config.GetLabel("product")
-	if err != nil {
-		return err
-	}
+	hostname := config.GetLabel("hostname")
+	product := config.GetLabel("product")
 
 	if err := DoVDNSHealthCheck(); err != nil {
 		log.Error(err)

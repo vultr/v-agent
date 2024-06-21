@@ -2,8 +2,6 @@
 package config
 
 import (
-	"fmt"
-
 	"github.com/vultr/v-agent/pkg/util"
 
 	"go.uber.org/zap"
@@ -27,16 +25,22 @@ func GetLabels() map[string]string {
 }
 
 // GetLabel returns a map[string]string of the requested label or error
-func GetLabel(label string) (map[string]string, error) {
+func GetLabel(label string) map[string]string {
+	log := zap.L().Sugar()
+
 	l := make(map[string]string)
 	for k, v := range labels {
 		if k == label {
 			l[k] = v
-			return l, nil
+			return l
 		}
 	}
 
-	return nil, fmt.Errorf("%s: %w", label, ErrLabelNotExist)
+	log.Warn("label %s does not exist", label)
+
+	l[label] = "unknown"
+
+	return l
 }
 
 // GetProbesAPIListen returns probes api listen addr

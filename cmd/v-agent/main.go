@@ -115,7 +115,7 @@ func main() {
 					start := time.Now()
 
 					if err := metrics.Gather(); err != nil {
-						log.Error(err)
+						log.Warn(err)
 					}
 
 					log.Infof("metrics worker: Gathered metrics in %s", time.Since(start).Round(time.Millisecond))
