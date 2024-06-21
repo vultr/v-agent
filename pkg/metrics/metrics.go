@@ -192,13 +192,7 @@ func NewMetrics() {
 			Name: "v_agent_version",
 			Help: "the version of v-agent (metadata)",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-			"version",
-		},
+		[]string{},
 	)
 
 	// load avg metrics
@@ -207,12 +201,7 @@ func NewMetrics() {
 			Name: "v_loadavg_load1",
 			Help: "loadavg over 1 minute",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	loadavgLoad5 = promauto.NewGaugeVec(
@@ -220,12 +209,7 @@ func NewMetrics() {
 			Name: "v_loadavg_load5",
 			Help: "loadavg over 5 minutes",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	loadavgLoad15 = promauto.NewGaugeVec(
@@ -233,12 +217,7 @@ func NewMetrics() {
 			Name: "v_loadavg_load15",
 			Help: "loadavg over 15 minutes",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	loadavgTasksRunning = promauto.NewGaugeVec(
@@ -246,12 +225,7 @@ func NewMetrics() {
 			Name: "v_tasks_running",
 			Help: "current running tasks/processes",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	loadavgTasksTotal = promauto.NewGaugeVec(
@@ -259,12 +233,7 @@ func NewMetrics() {
 			Name: "v_tasks_total",
 			Help: "current total tasks/processes",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	// cpu metrics
@@ -273,12 +242,7 @@ func NewMetrics() {
 			Name: "v_cpu_cores",
 			Help: "total cpu cores",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	cpuUtilPct = promauto.NewGaugeVec(
@@ -286,12 +250,7 @@ func NewMetrics() {
 			Name: "v_cpu_util_pct",
 			Help: "utilization cpu percent",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	cpuIdlePct = promauto.NewGaugeVec(
@@ -299,12 +258,7 @@ func NewMetrics() {
 			Name: "v_cpu_idle_pct",
 			Help: "idle cpu percent",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	cpuUserPct = promauto.NewGaugeVec(
@@ -312,12 +266,7 @@ func NewMetrics() {
 			Name: "v_cpu_user_pct",
 			Help: "user utilization cpu percent",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	cpuSystemPct = promauto.NewGaugeVec(
@@ -325,12 +274,7 @@ func NewMetrics() {
 			Name: "v_cpu_system_pct",
 			Help: "system utilization cpu percent",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	cpuIOWaitPct = promauto.NewGaugeVec(
@@ -338,12 +282,7 @@ func NewMetrics() {
 			Name: "v_cpu_iowait_pct",
 			Help: "iowait utilization cpu percent",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	cpuIRQPct = promauto.NewGaugeVec(
@@ -351,12 +290,7 @@ func NewMetrics() {
 			Name: "v_cpu_irq_pct",
 			Help: "irq utilization cpu percent",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	cpuSoftIRQPct = promauto.NewGaugeVec(
@@ -364,12 +298,7 @@ func NewMetrics() {
 			Name: "v_cpu_soft_irq_pct",
 			Help: "soft irq utilization cpu percent",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	cpuStealPct = promauto.NewGaugeVec(
@@ -377,12 +306,7 @@ func NewMetrics() {
 			Name: "v_cpu_steal_pct",
 			Help: "steal utilization cpu percent",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	cpuGuestPct = promauto.NewGaugeVec(
@@ -390,12 +314,7 @@ func NewMetrics() {
 			Name: "v_cpu_guest_pct",
 			Help: "guest utilization cpu percent",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	cpuGuestNicePct = promauto.NewGaugeVec(
@@ -403,12 +322,7 @@ func NewMetrics() {
 			Name: "v_cpu_guest_nice_pct",
 			Help: "guest nice utilization cpu percent",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	// memory metrics
@@ -417,12 +331,7 @@ func NewMetrics() {
 			Name: "v_memory_total",
 			Help: "total memory",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	memoryFree = promauto.NewGaugeVec(
@@ -430,12 +339,7 @@ func NewMetrics() {
 			Name: "v_memory_free",
 			Help: "hosts free (non cached/buffered) memory",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	memoryCached = promauto.NewGaugeVec(
@@ -443,12 +347,7 @@ func NewMetrics() {
 			Name: "v_memory_cached",
 			Help: "cached memory",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	memoryBuffered = promauto.NewGaugeVec(
@@ -456,12 +355,7 @@ func NewMetrics() {
 			Name: "v_memory_buffered",
 			Help: "buffered memory",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	memorySwapTotal = promauto.NewGaugeVec(
@@ -469,12 +363,7 @@ func NewMetrics() {
 			Name: "v_memory_swap_total",
 			Help: "total swap",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	memorySwapFree = promauto.NewGaugeVec(
@@ -482,12 +371,7 @@ func NewMetrics() {
 			Name: "v_memory_swap_free",
 			Help: "free swap",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	// nic metrics
@@ -497,10 +381,6 @@ func NewMetrics() {
 			Help: "nic stats: total bytes",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -511,10 +391,6 @@ func NewMetrics() {
 			Help: "nic stats: total bytes tx",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -525,10 +401,6 @@ func NewMetrics() {
 			Help: "nic stats: total bytes rx",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -539,10 +411,6 @@ func NewMetrics() {
 			Help: "nic stats: total packets",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -553,10 +421,6 @@ func NewMetrics() {
 			Help: "nic stats: total packets tx",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -567,10 +431,6 @@ func NewMetrics() {
 			Help: "nic stats: total packets rx",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -581,10 +441,6 @@ func NewMetrics() {
 			Help: "nic stats: total errors",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -595,10 +451,6 @@ func NewMetrics() {
 			Help: "nic stats: total errors tx",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -609,10 +461,6 @@ func NewMetrics() {
 			Help: "nic stats: total errors rx",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -623,10 +471,6 @@ func NewMetrics() {
 			Help: "nic stats: total drop",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -637,10 +481,6 @@ func NewMetrics() {
 			Help: "nic stats: total drop tx",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -651,10 +491,6 @@ func NewMetrics() {
 			Help: "nic stats: total drop rx",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -665,10 +501,6 @@ func NewMetrics() {
 			Help: "nic stats: total fifo",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -679,10 +511,6 @@ func NewMetrics() {
 			Help: "nic stats: total fifo tx",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -693,10 +521,6 @@ func NewMetrics() {
 			Help: "nic stats: total fifo rx",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -707,10 +531,6 @@ func NewMetrics() {
 			Help: "nic stats: total frame rx",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -721,10 +541,6 @@ func NewMetrics() {
 			Help: "nic stats: total colls tx",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -735,10 +551,6 @@ func NewMetrics() {
 			Help: "nic stats: total compressed",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -749,10 +561,6 @@ func NewMetrics() {
 			Help: "nic stats: total compressed tx",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -763,10 +571,6 @@ func NewMetrics() {
 			Help: "nic stats: total compressed rx",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -777,10 +581,6 @@ func NewMetrics() {
 			Help: "nic stats: total carrier tx",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -791,10 +591,6 @@ func NewMetrics() {
 			Help: "nic stats: total multicast rx",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"nic",
 		},
 	)
@@ -806,10 +602,6 @@ func NewMetrics() {
 			Help: "disk stats: read",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"device",
 		},
 	)
@@ -819,10 +611,6 @@ func NewMetrics() {
 			Help: "disk stats: merged reads",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"device",
 		},
 	)
@@ -832,10 +620,6 @@ func NewMetrics() {
 			Help: "disk stats: sectors",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"device",
 		},
 	)
@@ -845,10 +629,6 @@ func NewMetrics() {
 			Help: "disk stats: milliseconds reading",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"device",
 		},
 	)
@@ -858,10 +638,6 @@ func NewMetrics() {
 			Help: "disk stats: writes completed",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"device",
 		},
 	)
@@ -871,10 +647,6 @@ func NewMetrics() {
 			Help: "disk stats: writes merged",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"device",
 		},
 	)
@@ -884,10 +656,6 @@ func NewMetrics() {
 			Help: "disk stats: sectors written",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"device",
 		},
 	)
@@ -897,10 +665,6 @@ func NewMetrics() {
 			Help: "disk stats: milliseconds writing",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"device",
 		},
 	)
@@ -910,10 +674,6 @@ func NewMetrics() {
 			Help: "disk stats: IO in progress",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"device",
 		},
 	)
@@ -923,10 +683,6 @@ func NewMetrics() {
 			Help: "disk stats: milliseconds in IO",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"device",
 		},
 	)
@@ -936,10 +692,6 @@ func NewMetrics() {
 			Help: "disk stats: weighted IOs in milliseconds",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"device",
 		},
 	)
@@ -949,10 +701,6 @@ func NewMetrics() {
 			Help: "disk stats: discards",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"device",
 		},
 	)
@@ -962,10 +710,6 @@ func NewMetrics() {
 			Help: "disk stats: merged discards",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"device",
 		},
 	)
@@ -975,10 +719,6 @@ func NewMetrics() {
 			Help: "disk stats: sectors discarded",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"device",
 		},
 	)
@@ -988,10 +728,6 @@ func NewMetrics() {
 			Help: "disk stats: milliseconds discarding",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"device",
 		},
 	)
@@ -1003,10 +739,6 @@ func NewMetrics() {
 			Help: "filesystem inodes total",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"device",
 			"mount",
 		},
@@ -1017,10 +749,6 @@ func NewMetrics() {
 			Help: "filesystem inodes used",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"device",
 			"mount",
 		},
@@ -1031,10 +759,6 @@ func NewMetrics() {
 			Help: "filesystem inodes used percentage",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"device",
 			"mount",
 		},
@@ -1045,10 +769,6 @@ func NewMetrics() {
 			Help: "filesystem bytes total",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"device",
 			"mount",
 		},
@@ -1059,10 +779,6 @@ func NewMetrics() {
 			Help: "filesystem bytes used",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"device",
 			"mount",
 		},
@@ -1073,10 +789,6 @@ func NewMetrics() {
 			Help: "filesystem bytes used percentage",
 		},
 		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
 			"device",
 			"mount",
 		},
@@ -1088,12 +800,7 @@ func NewMetrics() {
 			Name: "v_kube_apiserver_healthy",
 			Help: "kube-apiserver /healthz, 0 = healthy, 1 = not healthy",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	// konnectivity
@@ -1102,12 +809,7 @@ func NewMetrics() {
 			Name: "v_konnectivity_healthy",
 			Help: "konnectivity /healthz, 0 = healthy, 1 = not healthy",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	// etcd
@@ -1116,12 +818,7 @@ func NewMetrics() {
 			Name: "v_etcd_healthy",
 			Help: "etcd /health, 0 = healthy, 1 = not healthy",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	// nginx-vts
@@ -1130,10 +827,7 @@ func NewMetrics() {
 			Name: "nginx_vts_healthy",
 			Help: "nginx-vts /metrics, 0 = healthy, 1 = not healthy",
 		},
-		[]string{
-			"product",
-			"hostname",
-		},
+		[]string{},
 	)
 
 	// v-cdn-agent
@@ -1142,10 +836,7 @@ func NewMetrics() {
 			Name: "v_cdn_agent_healthy",
 			Help: "v-cdn-agent /metrics, 0 = healthy, 1 = not healthy",
 		},
-		[]string{
-			"product",
-			"hostname",
-		},
+		[]string{},
 	)
 
 	// haproxy
@@ -1154,12 +845,7 @@ func NewMetrics() {
 			Name: "v_haproxy_healthy",
 			Help: "haproxy /metrics, 0 = healthy, 1 = not healthy",
 		},
-		[]string{
-			"product",
-			"hostname",
-			"subid",
-			"vpsid",
-		},
+		[]string{},
 	)
 
 	// v-dns
@@ -1168,10 +854,7 @@ func NewMetrics() {
 			Name: "v_dns_healthy",
 			Help: "v-dns /metrics, 0 = healthy, 1 = not healthy",
 		},
-		[]string{
-			"product",
-			"hostname",
-		},
+		[]string{},
 	)
 
 	// smart
@@ -2247,44 +1930,29 @@ func ResetSMARTMetrics() {
 }
 
 func gatherMetadataMetrics() error {
-	hostname := config.GetLabel("hostname")
-	subid := config.GetLabel("subid")
-	vpsid := config.GetLabel("vpsid")
-	product := config.GetLabel("product")
-
 	version := config.GetVersion()
 
-	vAgentVersion.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], version).Set(0)
+	vAgentVersion.WithLabelValues(version).Set(0)
 
 	return nil
 }
 
 func gatherLoadavgMetrics() error {
-	hostname := config.GetLabel("hostname")
-	subid := config.GetLabel("subid")
-	vpsid := config.GetLabel("vpsid")
-	product := config.GetLabel("product")
-
 	loadavg, err := getLoadavg()
 	if err != nil {
 		return err
 	}
 
-	loadavgLoad1.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(loadavg.Load1)
-	loadavgLoad5.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(loadavg.Load5)
-	loadavgLoad15.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(loadavg.Load15)
-	loadavgTasksRunning.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(loadavg.TasksRunning))
-	loadavgTasksTotal.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(loadavg.TasksTotal))
+	loadavgLoad1.WithLabelValues().Set(loadavg.Load1)
+	loadavgLoad5.WithLabelValues().Set(loadavg.Load5)
+	loadavgLoad15.WithLabelValues().Set(loadavg.Load15)
+	loadavgTasksRunning.WithLabelValues().Set(float64(loadavg.TasksRunning))
+	loadavgTasksTotal.WithLabelValues().Set(float64(loadavg.TasksTotal))
 
 	return nil
 }
 
 func gatherCPUMetrics() error {
-	hostname := config.GetLabel("hostname")
-	subid := config.GetLabel("subid")
-	vpsid := config.GetLabel("vpsid")
-	product := config.GetLabel("product")
-
 	cpuUtil, err := getCPUUtil()
 	if err != nil {
 		return err
@@ -2303,131 +1971,111 @@ func gatherCPUMetrics() error {
 	guestTime := float64(cpuUtil.Guest) / cpuTotalTime
 	guestNiceTime := float64(cpuUtil.GuestNice) / cpuTotalTime
 
-	cpuCores.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(getHostCPUs()))
-	cpuUtilPct.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(inUseTime * float64(100))          //nolint
-	cpuIdlePct.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(idleTime * float64(100))           //nolint
-	cpuUserPct.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(userTime * float64(100))           //nolint
-	cpuSystemPct.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(systemTime * float64(100))       //nolint
-	cpuIOWaitPct.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(iowaitTime * float64(100))       //nolint
-	cpuIRQPct.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(irqTime * float64(100))             //nolint
-	cpuSoftIRQPct.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(sirqTime * float64(100))        //nolint
-	cpuStealPct.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(stealTime * float64(100))         //nolint
-	cpuGuestPct.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(guestTime * float64(100))         //nolint
-	cpuGuestNicePct.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(guestNiceTime * float64(100)) //nolint
+	cpuCores.WithLabelValues().Set(float64(getHostCPUs()))
+	cpuUtilPct.WithLabelValues().Set(inUseTime * float64(100))          //nolint
+	cpuIdlePct.WithLabelValues().Set(idleTime * float64(100))           //nolint
+	cpuUserPct.WithLabelValues().Set(userTime * float64(100))           //nolint
+	cpuSystemPct.WithLabelValues().Set(systemTime * float64(100))       //nolint
+	cpuIOWaitPct.WithLabelValues().Set(iowaitTime * float64(100))       //nolint
+	cpuIRQPct.WithLabelValues().Set(irqTime * float64(100))             //nolint
+	cpuSoftIRQPct.WithLabelValues().Set(sirqTime * float64(100))        //nolint
+	cpuStealPct.WithLabelValues().Set(stealTime * float64(100))         //nolint
+	cpuGuestPct.WithLabelValues().Set(guestTime * float64(100))         //nolint
+	cpuGuestNicePct.WithLabelValues().Set(guestNiceTime * float64(100)) //nolint
 
 	return nil
 }
 
 func gatherMemoryMetrics() error {
-	hostname := config.GetLabel("hostname")
-	subid := config.GetLabel("subid")
-	vpsid := config.GetLabel("vpsid")
-	product := config.GetLabel("product")
-
 	memory, err := getMeminfo()
 	if err != nil {
 		return err
 	}
 
-	memoryTotal.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(memory.MemTotal))
-	memoryFree.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(memory.MemFree))
-	memoryCached.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(memory.Cached))
-	memoryBuffered.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(memory.Buffers))
-	memorySwapTotal.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(memory.SwapTotal))
-	memorySwapFree.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(memory.SwapFree))
+	memoryTotal.WithLabelValues().Set(float64(memory.MemTotal))
+	memoryFree.WithLabelValues().Set(float64(memory.MemFree))
+	memoryCached.WithLabelValues().Set(float64(memory.Cached))
+	memoryBuffered.WithLabelValues().Set(float64(memory.Buffers))
+	memorySwapTotal.WithLabelValues().Set(float64(memory.SwapTotal))
+	memorySwapFree.WithLabelValues().Set(float64(memory.SwapFree))
 
 	return nil
 }
 
 func gatherNICMetrics() error {
-	hostname := config.GetLabel("hostname")
-	subid := config.GetLabel("subid")
-	vpsid := config.GetLabel("vpsid")
-	product := config.GetLabel("product")
-
 	nicStats, err := getNICStats()
 	if err != nil {
 		return err
 	}
 
 	for i := range nicStats {
-		nicBytes.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].Bytes))
-		nicBytesTX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].BytesTX))
-		nicBytesRX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].BytesRX))
-		nicPackets.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].Packets))
-		nicPacketsTX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].PacketsTX))
-		nicPacketsRX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].PacketsRX))
-		nicErrors.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].Errors))
-		nicErrorsTX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].ErrorsTX))
-		nicErrorsRX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].ErrorsRX))
-		nicDrop.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].Drop))
-		nicDropTX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].DropTX))
-		nicDropRX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].DropRX))
-		nicFIFO.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].FIFO))
-		nicFIFOTX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].FIFOTX))
-		nicFIFORX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].FIFORX))
-		nicFrameRX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].FrameRX))
-		nicCollsTX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].CollsTX))
-		nicCompressed.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].Compressed))
-		nicCompressedTX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].CompressedTX))
-		nicCompressedRX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].CompressedRX))
-		nicCarrierTX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].CarrierTX))
-		nicMulticastRX.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], nicStats[i].Interface).Set(float64(nicStats[i].MulticastRX))
+		nicBytes.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].Bytes))
+		nicBytesTX.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].BytesTX))
+		nicBytesRX.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].BytesRX))
+		nicPackets.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].Packets))
+		nicPacketsTX.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].PacketsTX))
+		nicPacketsRX.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].PacketsRX))
+		nicErrors.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].Errors))
+		nicErrorsTX.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].ErrorsTX))
+		nicErrorsRX.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].ErrorsRX))
+		nicDrop.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].Drop))
+		nicDropTX.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].DropTX))
+		nicDropRX.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].DropRX))
+		nicFIFO.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].FIFO))
+		nicFIFOTX.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].FIFOTX))
+		nicFIFORX.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].FIFORX))
+		nicFrameRX.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].FrameRX))
+		nicCollsTX.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].CollsTX))
+		nicCompressed.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].Compressed))
+		nicCompressedTX.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].CompressedTX))
+		nicCompressedRX.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].CompressedRX))
+		nicCarrierTX.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].CarrierTX))
+		nicMulticastRX.WithLabelValues(nicStats[i].Interface).Set(float64(nicStats[i].MulticastRX))
 	}
 
 	return nil
 }
 
 func gatherDiskMetrics() error {
-	hostname := config.GetLabel("hostname")
-	subid := config.GetLabel("subid")
-	vpsid := config.GetLabel("vpsid")
-	product := config.GetLabel("product")
-
 	diskStats, err := getDiskStatsUtil()
 	if err != nil {
 		return err
 	}
 
 	for i := range diskStats {
-		diskStatsReads.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].Reads))
-		diskStatsReadsMerged.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].ReadsMerged))
-		diskStatsSectorsRead.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].SectorsRead))
-		diskStatsMillisecondsReading.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].MillisecondsReading))
-		diskStatsWritesCompleted.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].WritesCompleted))
-		diskStatsWritesMerged.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].WritesMerged))
-		diskStatsSectorsWritten.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].SectorsWritten))
-		diskStatsMillisecondsWriting.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].MillisecondsWriting))
-		diskStatsIOsInProgress.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].IOsInProgress))
-		diskStatsMillisecondsInIOs.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].MillisecondsInIOs))
-		diskStatsWeightedIOsInMS.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].WeightedIOsInMS))
-		diskStatsDiscards.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].Discards))
-		diskStatsDiscardsMerged.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].DiscardsMerged))
-		diskStatsSectorsDiscarded.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].SectorsDiscarded))
-		diskStatsMillisecondsDiscarding.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], diskStats[i].Device).Set(float64(diskStats[i].MillisecondsDiscarding))
+		diskStatsReads.WithLabelValues(diskStats[i].Device).Set(float64(diskStats[i].Reads))
+		diskStatsReadsMerged.WithLabelValues(diskStats[i].Device).Set(float64(diskStats[i].ReadsMerged))
+		diskStatsSectorsRead.WithLabelValues(diskStats[i].Device).Set(float64(diskStats[i].SectorsRead))
+		diskStatsMillisecondsReading.WithLabelValues(diskStats[i].Device).Set(float64(diskStats[i].MillisecondsReading))
+		diskStatsWritesCompleted.WithLabelValues(diskStats[i].Device).Set(float64(diskStats[i].WritesCompleted))
+		diskStatsWritesMerged.WithLabelValues(diskStats[i].Device).Set(float64(diskStats[i].WritesMerged))
+		diskStatsSectorsWritten.WithLabelValues(diskStats[i].Device).Set(float64(diskStats[i].SectorsWritten))
+		diskStatsMillisecondsWriting.WithLabelValues(diskStats[i].Device).Set(float64(diskStats[i].MillisecondsWriting))
+		diskStatsIOsInProgress.WithLabelValues(diskStats[i].Device).Set(float64(diskStats[i].IOsInProgress))
+		diskStatsMillisecondsInIOs.WithLabelValues(diskStats[i].Device).Set(float64(diskStats[i].MillisecondsInIOs))
+		diskStatsWeightedIOsInMS.WithLabelValues(diskStats[i].Device).Set(float64(diskStats[i].WeightedIOsInMS))
+		diskStatsDiscards.WithLabelValues(diskStats[i].Device).Set(float64(diskStats[i].Discards))
+		diskStatsDiscardsMerged.WithLabelValues(diskStats[i].Device).Set(float64(diskStats[i].DiscardsMerged))
+		diskStatsSectorsDiscarded.WithLabelValues(diskStats[i].Device).Set(float64(diskStats[i].SectorsDiscarded))
+		diskStatsMillisecondsDiscarding.WithLabelValues(diskStats[i].Device).Set(float64(diskStats[i].MillisecondsDiscarding))
 	}
 
 	return nil
 }
 
 func gatherFilesystemMetrics() error {
-	hostname := config.GetLabel("hostname")
-	subid := config.GetLabel("subid")
-	vpsid := config.GetLabel("vpsid")
-	product := config.GetLabel("product")
-
 	fsStats, err := getFilesystemUtil()
 	if err != nil {
 		return err
 	}
 
 	for i := range fsStats {
-		fsInodes.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].Inodes))
-		fsInodesUsed.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].InodesUsed))
-		fsInodesUtil.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], fsStats[i].Device, fsStats[i].Mount).Set(fsStats[i].InodesUtil)
-		fsBytes.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].BytesTotal))
-		fsBytesUsed.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].BytesUsed))
-		fsBytesUtil.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"], fsStats[i].Device, fsStats[i].Mount).Set(fsStats[i].BytesUtil)
+		fsInodes.WithLabelValues(fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].Inodes))
+		fsInodesUsed.WithLabelValues(fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].InodesUsed))
+		fsInodesUtil.WithLabelValues(fsStats[i].Device, fsStats[i].Mount).Set(fsStats[i].InodesUtil)
+		fsBytes.WithLabelValues(fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].BytesTotal))
+		fsBytesUsed.WithLabelValues(fsStats[i].Device, fsStats[i].Mount).Set(float64(fsStats[i].BytesUsed))
+		fsBytesUtil.WithLabelValues(fsStats[i].Device, fsStats[i].Mount).Set(fsStats[i].BytesUtil)
 	}
 
 	return nil
@@ -2436,17 +2084,12 @@ func gatherFilesystemMetrics() error {
 func gatherKubernetesMetrics() error {
 	log := zap.L().Sugar()
 
-	hostname := config.GetLabel("hostname")
-	subid := config.GetLabel("subid")
-	vpsid := config.GetLabel("vpsid")
-	product := config.GetLabel("product")
-
 	if err := DoKubeAPIServerHealthCheck(); err != nil {
 		log.Error(err)
 
-		kubeAPIServerHealthz.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(1))
+		kubeAPIServerHealthz.WithLabelValues().Set(float64(1))
 	} else {
-		kubeAPIServerHealthz.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(0))
+		kubeAPIServerHealthz.WithLabelValues().Set(float64(0))
 	}
 
 	if err := ScrapeKubeAPIServerMetrics(); err != nil {
@@ -2459,17 +2102,12 @@ func gatherKubernetesMetrics() error {
 func gatherKonnectivityMetrics() error {
 	log := zap.L().Sugar()
 
-	hostname := config.GetLabel("hostname")
-	subid := config.GetLabel("subid")
-	vpsid := config.GetLabel("vpsid")
-	product := config.GetLabel("product")
-
 	if err := DoKonnectivityHealthCheck(); err != nil {
 		log.Error(err)
 
-		konnectivityHealthz.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(1))
+		konnectivityHealthz.WithLabelValues().Set(float64(1))
 	} else {
-		konnectivityHealthz.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(0))
+		konnectivityHealthz.WithLabelValues().Set(float64(0))
 	}
 
 	if err := ScrapeKonnectivityMetrics(); err != nil {
@@ -2482,17 +2120,12 @@ func gatherKonnectivityMetrics() error {
 func gatherEtcdMetrics() error {
 	log := zap.L().Sugar()
 
-	hostname := config.GetLabel("hostname")
-	subid := config.GetLabel("subid")
-	vpsid := config.GetLabel("vpsid")
-	product := config.GetLabel("product")
-
 	if err := DoEtcdHealthCheck(); err != nil {
 		log.Error(err)
 
-		etcdServerHealth.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(1))
+		etcdServerHealth.WithLabelValues().Set(float64(1))
 	} else {
-		etcdServerHealth.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(0))
+		etcdServerHealth.WithLabelValues().Set(float64(0))
 	}
 
 	if err := ScrapeEtcdMetrics(); err != nil {
@@ -2505,15 +2138,12 @@ func gatherEtcdMetrics() error {
 func gatherNginxVTSMetrics() error {
 	log := zap.L().Sugar()
 
-	hostname := config.GetLabel("hostname")
-	product := config.GetLabel("product")
-
 	if err := DoNginxVTSHealthCheck(); err != nil {
 		log.Error(err)
 
-		nginxVtsHealthy.WithLabelValues(product["product"], hostname["hostname"]).Set(float64(1))
+		nginxVtsHealthy.WithLabelValues().Set(float64(1))
 	} else {
-		nginxVtsHealthy.WithLabelValues(product["product"], hostname["hostname"]).Set(float64(0))
+		nginxVtsHealthy.WithLabelValues().Set(float64(0))
 	}
 
 	if err := ScrapeNginxVTSMetrics(); err != nil {
@@ -2526,15 +2156,12 @@ func gatherNginxVTSMetrics() error {
 func gatherVCDNAgentMetrics() error {
 	log := zap.L().Sugar()
 
-	hostname := config.GetLabel("hostname")
-	product := config.GetLabel("product")
-
 	if err := DoVCDNAgentHealthCheck(); err != nil {
 		log.Error(err)
 
-		vcdnAgentHealth.WithLabelValues(product["product"], hostname["hostname"]).Set(float64(1))
+		vcdnAgentHealth.WithLabelValues().Set(float64(1))
 	} else {
-		vcdnAgentHealth.WithLabelValues(product["product"], hostname["hostname"]).Set(float64(0))
+		vcdnAgentHealth.WithLabelValues().Set(float64(0))
 	}
 
 	if err := ScrapeVCDNAgentMetrics(); err != nil {
@@ -2547,17 +2174,12 @@ func gatherVCDNAgentMetrics() error {
 func gatherHAProxyMetrics() error {
 	log := zap.L().Sugar()
 
-	hostname := config.GetLabel("hostname")
-	subid := config.GetLabel("subid")
-	vpsid := config.GetLabel("vpsid")
-	product := config.GetLabel("product")
-
 	if err := DoHAProxyHealthCheck(); err != nil {
 		log.Error(err)
 
-		haproxyHealthy.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(1))
+		haproxyHealthy.WithLabelValues().Set(float64(1))
 	} else {
-		haproxyHealthy.WithLabelValues(product["product"], hostname["hostname"], subid["subid"], vpsid["vpsid"]).Set(float64(0))
+		haproxyHealthy.WithLabelValues().Set(float64(0))
 	}
 
 	if err := ScrapeHAProxyMetrics(); err != nil {
@@ -2578,15 +2200,12 @@ func gatherCephMetrics() error {
 func gatherVDNSMetrics() error {
 	log := zap.L().Sugar()
 
-	hostname := config.GetLabel("hostname")
-	product := config.GetLabel("product")
-
 	if err := DoVDNSHealthCheck(); err != nil {
 		log.Error(err)
 
-		vdnsHealthy.WithLabelValues(product["product"], hostname["hostname"]).Set(float64(1))
+		vdnsHealthy.WithLabelValues().Set(float64(1))
 	} else {
-		vdnsHealthy.WithLabelValues(product["product"], hostname["hostname"]).Set(float64(0))
+		vdnsHealthy.WithLabelValues().Set(float64(0))
 	}
 
 	if err := ScrapeVDNSMetrics(); err != nil {
