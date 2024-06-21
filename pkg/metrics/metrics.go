@@ -192,7 +192,9 @@ func NewMetrics() {
 			Name: "v_agent_version",
 			Help: "the version of v-agent (metadata)",
 		},
-		[]string{},
+		[]string{
+			"version",
+		},
 	)
 
 	// load avg metrics
