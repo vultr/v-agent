@@ -36,7 +36,7 @@ func GetLabel(label string) map[string]string {
 		}
 	}
 
-	log.Warn("label %s does not exist", label)
+	log.Warnf("label %s does not exist", label)
 
 	l[label] = "unknown"
 
