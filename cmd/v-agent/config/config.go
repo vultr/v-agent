@@ -308,10 +308,11 @@ func initLabels(config *Config) error {
 				if labels[k] == "" {
 					hostname, err := os.Hostname()
 					if err != nil {
-						return err
+						log.Warn(err)
+						labels[k] = "unknown"
+					} else {
+						labels[k] = hostname
 					}
-
-					labels[k] = hostname
 				}
 			} else {
 				labels[k] = v
@@ -327,24 +328,28 @@ func initLabels(config *Config) error {
 
 				subid, err := util.GetSubID(product["product"])
 				if err != nil {
-					return err
+					log.Warn(err)
+					labels[k] = "unknown"
+				} else {
+					labels[k] = *subid
 				}
-
-				labels[k] = *subid
 			} else {
 				labels[k] = v
 			}
+
 		case "vpsid":
 			if v == "" {
 				vpsid, err := util.GetVPSID()
 				if err != nil {
-					return err
+					log.Warn(err)
+					labels[k] = "unknown"
+				} else {
+					labels[k] = *vpsid
 				}
-
-				labels[k] = *vpsid
 			} else {
 				labels[k] = v
 			}
+
 		default:
 			if v == "" {
 				log.Warnf("label %q is empty, will be omitted", k)

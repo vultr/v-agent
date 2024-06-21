@@ -62,7 +62,7 @@ func main() {
 	g, gCtx := errgroup.WithContext(ctx)
 
 	log.With(
-		"context", "v-inf",
+		"context", name,
 	).Info("initializing probes api")
 
 	probe, err := probes.NewProbesAPI(name, config.GetProbesAPIListen(), config.GetProbesAPIPort())
@@ -76,13 +76,13 @@ func main() {
 			select {
 			case <-gCtx.Done():
 				log.With(
-					"context", "v-inf",
+					"context", name,
 				).Info("probes: exited")
 
 				return nil
 			default:
 				log.With(
-					"context", "v-inf",
+					"context", name,
 				).Info("probes: starting")
 
 				if err2 := probe.Start(); err2 != nil {

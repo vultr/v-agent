@@ -36,7 +36,6 @@ func GetVPSID() (*string, error) {
 //
 // vke has one method of extraction of the subid
 // vlb has another method of extraction of the subid
-// vfs will most likely have its own method of extraction of the subid
 func GetSubID(product string) (*string, error) {
 	switch product {
 	case "vke":
@@ -80,36 +79,6 @@ func GetSubID(product string) (*string, error) {
 		subid := gjson.Get(string(body), "load_balancer_config.lb_subid")
 
 		return &subid.Raw, nil
-	case "vfs":
-		resp, err := http.Get("http://169.254.169.254/latest/user-data")
-		if err != nil {
-			return nil, err
-		}
-		defer resp.Body.Close() //nolint
-
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return nil, err
-		}
-
-		subid := gjson.Get(string(body), "data.vfs_subid")
-
-		return &subid.Str, nil
-	case "vcdn":
-		resp, err := http.Get("http://169.254.169.254/latest/user-data")
-		if err != nil {
-			return nil, err
-		}
-		defer resp.Body.Close() //nolint
-
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return nil, err
-		}
-
-		subid := gjson.Get(string(body), "data.vfs_subid")
-
-		return &subid.Str, nil
 	}
 
 	return nil, ErrUnableToGetSUBID
