@@ -6,13 +6,12 @@
 ### Metrics
 All metrics that are specifically created with `v-agent` are prefixed with `v_`. Scraped metrics are not modified other than the addition of labels.
 
-Every metric will have the following labels added if they do not exist already:
-- `product`: Such as `vke`, `vlb`, `vfs`. This is set in `config.yaml`
-- `hostname`: Pulled automatically.
+Every metric will have all metrics in `labels_config` added to it. The following are special labels:
+- `hostname`: Pulled automatically. Set with `HOSTNAME` environment variable or `os.Hostname()`
 - `subid`: The subscription ID for the underlying service. Can be set in `config.yaml`. If it's not set an attempt is made to pull it from metadata API.
 - `vpsid`: The VPS ID. Can be set in `config.yaml`. If it's not set an attempt is made to pull it from the metadata API.
 
-The above labels are added to ensure that the metric is unique within mimir. A lack of uniqueness can result in metrics getting overwritten/clobbered.
+The above labels are added to ensure that the metric is unique. A lack of uniqueness can result in metrics getting overwritten/clobbered.
 
 System metrics that are collected:
 - CPU utilization: system, user, steal, utilization, etc.
