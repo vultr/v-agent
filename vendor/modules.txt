@@ -1,7 +1,7 @@
 # buf.build/gen/go/gogo/protobuf/protocolbuffers/go v1.34.2-20240617172848-e1dbca2775a7.2
 ## explicit; go 1.20
 buf.build/gen/go/gogo/protobuf/protocolbuffers/go/gogoproto
-# buf.build/gen/go/prometheus/prometheus/protocolbuffers/go v1.34.2-20240528093609-8a58dfa894e0.2
+# buf.build/gen/go/prometheus/prometheus/protocolbuffers/go v1.34.2-20240704212942-bbf0a43bf797.2
 ## explicit; go 1.20
 buf.build/gen/go/prometheus/prometheus/protocolbuffers/go
 # github.com/anatol/smart.go v0.0.0-20240606135530-b987830bbb40
@@ -43,7 +43,7 @@ github.com/go-openapi/swag
 # github.com/gofiber/adaptor/v2 v2.2.1
 ## explicit; go 1.17
 github.com/gofiber/adaptor/v2
-# github.com/gofiber/fiber/v2 v2.52.4
+# github.com/gofiber/fiber/v2 v2.52.5
 ## explicit; go 1.20
 github.com/gofiber/fiber/v2
 github.com/gofiber/fiber/v2/internal/schema
@@ -132,10 +132,9 @@ github.com/prometheus/client_golang/prometheus/promhttp
 # github.com/prometheus/client_model v0.6.1
 ## explicit; go 1.19
 github.com/prometheus/client_model/go
-# github.com/prometheus/common v0.54.0
+# github.com/prometheus/common v0.55.0
 ## explicit; go 1.20
 github.com/prometheus/common/expfmt
-github.com/prometheus/common/internal/bitbucket.org/ww/goautoneg
 github.com/prometheus/common/model
 # github.com/prometheus/procfs v0.15.1
 ## explicit; go 1.20
@@ -184,7 +183,7 @@ go.uber.org/zap/internal/exit
 go.uber.org/zap/internal/pool
 go.uber.org/zap/internal/stacktrace
 go.uber.org/zap/zapcore
-# golang.org/x/net v0.26.0
+# golang.org/x/net v0.27.0
 ## explicit; go 1.18
 golang.org/x/net/http/httpguts
 golang.org/x/net/http2
@@ -197,12 +196,12 @@ golang.org/x/oauth2/internal
 # golang.org/x/sync v0.7.0
 ## explicit; go 1.18
 golang.org/x/sync/errgroup
-# golang.org/x/sys v0.21.0
+# golang.org/x/sys v0.22.0
 ## explicit; go 1.18
 golang.org/x/sys/plan9
 golang.org/x/sys/unix
 golang.org/x/sys/windows
-# golang.org/x/term v0.21.0
+# golang.org/x/term v0.22.0
 ## explicit; go 1.18
 golang.org/x/term
 # golang.org/x/text v0.16.0
@@ -495,7 +494,7 @@ k8s.io/klog/v2/internal/dbg
 k8s.io/klog/v2/internal/serialize
 k8s.io/klog/v2/internal/severity
 k8s.io/klog/v2/internal/sloghandler
-# k8s.io/kube-openapi v0.0.0-20240620174524-b456828f718b
+# k8s.io/kube-openapi v0.0.0-20240709000822-3c01b740850f
 ## explicit; go 1.20
 k8s.io/kube-openapi/pkg/cached
 k8s.io/kube-openapi/pkg/common
