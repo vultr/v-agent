@@ -1,0 +1,10 @@
+apiVersion: v2
+name: v-agent
+version: 0.0.5
+description: A Helm chart for v-agent
+type: application
+home: https://github.com/vultr/v-agent
+sources:
+  - https://github.com/vultr/v-agent
+maintainers:
+  - name: Josten Landtroop
