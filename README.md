@@ -3,6 +3,8 @@
 ## Overview
 `v-agent` is a daemon that gathers metrics and writes them to a compatible [remote_write](https://prometheus.io/docs/specs/remote_write_spec/) endpoint.
 
+It acts like prometheus (scraping metrics), re-labeling metrics, then pushing them off to a remote_write compatible endpoint. Internally, we use mimir and write our metrics there but other implementations _should_ work.
+
 ### Metrics
 All metrics that are specifically created with `v-agent` are prefixed with `v_`. Scraped metrics are not modified other than the addition of labels.
 
