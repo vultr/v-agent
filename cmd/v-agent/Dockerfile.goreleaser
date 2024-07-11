@@ -1,0 +1,9 @@
+FROM debian:bullseye-slim
+
+RUN apt update && apt install -y ca-certificates
+
+WORKDIR /app
+COPY v-agent v-agent
+COPY cmd/v-agent/config.yaml config.yaml
+
+CMD "/app/v-agent"

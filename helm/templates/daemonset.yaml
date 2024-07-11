@@ -1,0 +1,59 @@
+{{ if .Values.daemonset_config.enabled }}
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app: v-agent-ds
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+    meta.helm.sh/release-namespace: {{ .Release.Namespace }}
+  name: v-agent-ds
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: v-agent-ds
+  template:
+    metadata:
+      labels:
+        app: v-agent-ds
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/ds-cm.yaml") . | sha256sum }}
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: '/metrics'
+        prometheus.io/port: '{{ .Values.config.port }}'
+    spec:
+      serviceAccountName: v-agent
+      imagePullSecrets:
+      - name: vcr
+      containers:
+      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        name: v-agent-ds
+        imagePullPolicy: "Always"
+        command: [/app/v-agent]
+        args: ["-config", "/app/etc/config.yaml"]
+        env:
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        securityContext:
+          allowPrivilegeEscalation: true
+          privileged: true # must be true to scrape SMART data
+        resources:
+          limits:
+            memory: {{ .Values.resources.limits.memory | quote }}
+          requests:
+            memory: {{ .Values.resources.requests.memory | quote }}
+        ports:
+          - containerPort: {{ .Values.config.port }}
+            name: http
+        volumeMounts:
+        - name: v-agent-ds
+          mountPath: /app/etc
+      volumes:
+      - name: v-agent-ds
+        configMap:
+          name: v-agent-ds
+{{ end }}

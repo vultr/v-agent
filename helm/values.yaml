@@ -1,0 +1,152 @@
+image:
+  repository: ewr.vultrcr.com/vagent/v-agent
+  tag: v0.0.1
+
+replicas: 1
+
+resources:
+  requests:
+    memory: "256Mi"
+  limits:
+    memory: "512Mi"
+
+registryCreds: <base64_encoded_registry_creds>
+
+daemonset_config:
+  enabled: false
+  debug: true
+  interval: 5
+  endpoint: <mimir_or_remote_write_endpoint>
+  basic_auth_user: ""
+  basic_auth_pass: ""
+  check_vendor: false # when true, vendor must be "Vultr"; set to false on bare metal
+  labels_config: # any labels below will be added to all metrics
+    hostname: ""
+    product: "v-inf"
+  probes_api:
+    listen: 0.0.0.0
+    port: 7091
+  metrics_config:
+    agent:
+      load_avg:
+        enabled: true
+      cpu:
+        enabled: true
+      memory:
+        enabled: true
+      nic:
+        enabled: true
+      disk_stats:
+        enabled: true
+        filter: "sr0" # regex
+      file_system:
+        enabled: true
+      kubernetes:
+        enabled: true
+        endpoint: https://localhost:6443
+        kubeconfig: /var/lib/kubernetes/admin.kubeconfig
+      konnectivity:
+        enabled: true
+        metrics_endpoint: http://localhost:8133 # /metrics
+        health_endpoint: http://localhost:8092 # /healthz
+      etcd:
+        enabled: true
+        cacert: /var/lib/kubernetes/ca.pem
+        cert: /var/lib/kubernetes/kubernetes.pem
+        key: /var/lib/kubernetes/kubernetes-key.pem
+        endpoint: https://10.1.96.3:2379 # /metrics
+      nginx_vts:
+        enabled: false
+        endpoint: http://localhost:9001 # /metrics
+      v_cdn_agent:
+        enabled: false
+        endpoint: http://localhost:9093 # /metrics
+      haproxy:
+        enabled: false
+        endpoint: http://localhost:8404 # /metrics
+      ceph:
+        enabled: false
+        endpoint: http://localhost:9283 # /metrics
+      v_dns:
+        enabled: false
+        endpoint: http://localhost:9053 # /metrics
+      smart:
+        enabled: true
+    kubernetes:
+      pods:
+        enabled: false
+        namespaces:
+        - default
+      dcgm:
+        enabled: false
+        namespace: gpu-operator
+        endpoint: nvidia-dcgm-exporter
+
+config:
+  debug: true
+  interval: 5
+  endpoint: https://metrics.vultrlabs.com/api/v1/push
+  basic_auth_user: ""
+  basic_auth_pass: ""
+  check_vendor: false # when true, vendor must be "Vultr"; set to false on bare metal
+  labels_config: # any labels below will be added to all metrics
+    hostname: ""
+    product: "v-inf"
+  probes_api:
+    listen: 0.0.0.0
+    port: 7091
+  metrics_config:
+    agent:
+      load_avg:
+        enabled: true
+      cpu:
+        enabled: true
+      memory:
+        enabled: true
+      nic:
+        enabled: true
+      disk_stats:
+        enabled: true
+        filter: "sr0" # regex
+      file_system:
+        enabled: true
+      kubernetes:
+        enabled: true
+        endpoint: https://localhost:6443
+        kubeconfig: /var/lib/kubernetes/admin.kubeconfig
+      konnectivity:
+        enabled: true
+        metrics_endpoint: http://localhost:8133 # /metrics
+        health_endpoint: http://localhost:8092 # /healthz
+      etcd:
+        enabled: true
+        cacert: /var/lib/kubernetes/ca.pem
+        cert: /var/lib/kubernetes/kubernetes.pem
+        key: /var/lib/kubernetes/kubernetes-key.pem
+        endpoint: https://10.1.96.3:2379 # /metrics
+      nginx_vts:
+        enabled: false
+        endpoint: http://localhost:9001 # /metrics
+      v_cdn_agent:
+        enabled: false
+        endpoint: http://localhost:9093 # /metrics
+      haproxy:
+        enabled: false
+        endpoint: http://localhost:8404 # /metrics
+      ceph:
+        enabled: false
+        endpoint: http://localhost:9283 # /metrics
+      v_dns:
+        enabled: false
+        endpoint: http://localhost:9053 # /metrics
+      smart:
+        enabled: true
+    kubernetes:
+      pods:
+        enabled: false
+        namespaces:
+        - default
+      dcgm:
+        enabled: false
+        namespace: gpu-operator
+        endpoint: nvidia-dcgm-exporter

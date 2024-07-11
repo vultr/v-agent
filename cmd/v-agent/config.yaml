@@ -1,0 +1,72 @@
+debug: true
+interval: 60
+endpoint: http://localhost:8080/api/v1/rw
+basic_auth_user: ""
+basic_auth_pass: ""
+labels_config:              # any labels below will be added to all metrics
+  hostname: ""              # empty string uses local hostname, unset (nil) doesnt use, non-empty string uses specified label
+  subid: ""                 # empty string pulls from userdata, unset (nil) doesnt use, non-empty string uses specified label
+  vpsid: ""                 # empty string pulls from userdata, unset (nil) doesnt use, non-empty string uses specified label
+  product: vke              # unset (nil) doesnt use, non-empty string uses specified label. Note: This label is used to determine subid for vke/vlb/vfs
+  any: any                  # any key/value label
+probes_api:
+  listen: 0.0.0.0
+  port: 7091
+metrics_config:
+  agent:
+    load_avg:
+      enabled: true
+    cpu:
+      enabled: true
+    memory:
+      enabled: true
+    nic:
+      enabled: true
+    disk_stats:
+      enabled: true
+      filter: "sr0" # regex
+    file_system:
+      enabled: true
+    kubernetes:
+      enabled: true
+      endpoint: https://localhost:6443
+      kubeconfig: /var/lib/kubernetes/admin.kubeconfig
+    konnectivity:
+      enabled: true
+      metrics_endpoint: http://localhost:8133 # /metrics
+      health_endpoint: http://localhost:8092 # /healthz
+    etcd:
+      enabled: true
+      cacert: /var/lib/kubernetes/ca.pem
+      cert: /var/lib/kubernetes/kubernetes.pem
+      key: /var/lib/kubernetes/kubernetes-key.pem
+      endpoint: https://10.1.96.3:2379 # /metrics
+    nginx_vts:
+      enabled: false
+      endpoint: http://localhost:9001 # /metrics
+    v_cdn_agent:
+      enabled: false
+      endpoint: http://localhost:9093 # /metrics
+    haproxy:
+      enabled: false
+      endpoint: http://localhost:8404 # /metrics
+    ceph:
+      enabled: false
+      endpoint: http://localhost:9283 # /metrics
+    v_dns:
+      enabled: false
+      endpoint: http://localhost:9053 # /metrics
+    smart:
+      enabled: false
+      block_devices: # must exist, if not set, block devices are used from /sys/block/ (except for dmX and loopX)
+      - /dev/sda
+  kubernetes: # v-agent must be running inside k8s for any of the below metrics to work
+    pods:
+      enabled: false
+      namespaces:
+      - rook-ceph
+      - default
+    dcgm:
+      enabled: false
+      namespace: gpu-operator        # namespace
+      endpoint: nvidia-dcgm-exporter # name of the endpoint: k get endpoints
