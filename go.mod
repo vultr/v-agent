@@ -7,7 +7,7 @@ replace github.com/imdario/mergo => github.com/imdario/mergo v0.3.16
 require (
 	buf.build/gen/go/prometheus/prometheus/protocolbuffers/go v1.34.2-20240704212942-bbf0a43bf797.2
 	github.com/anatol/smart.go v0.0.0-20240606135530-b987830bbb40
-	github.com/ansrivas/fiberprometheus/v2 v2.6.1
+	github.com/ansrivas/fiberprometheus/v2 v2.7.0
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/golang/snappy v0.0.4
 	github.com/prometheus/client_golang v1.19.1
@@ -34,7 +34,6 @@ require (
 	github.com/go-openapi/jsonpointer v0.21.0 // indirect
 	github.com/go-openapi/jsonreference v0.21.0 // indirect
 	github.com/go-openapi/swag v0.23.0 // indirect
-	github.com/gofiber/adaptor/v2 v2.2.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/gnostic-models v0.6.8 // indirect
